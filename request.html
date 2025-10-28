@@ -64,4 +64,80 @@
       <a href="features.html" class="main-nav-btn"><i class="fas fa-gem"></i> الميزات</a>
       <a href="services.html" class="main-nav-btn services-btn"><i class="fas fa-cogs"></i> خدماتنا الرئيسية</a>
       <a href="request.html" class="main-nav-btn"><i class="fas fa-paper-plane"></i> الطلب</a>
-      <a href="contact.html" class="main-nav-btn"><i class="fas fa-phone"></i> تواصل معنا
+      <a href="contact.html" class="main-nav-btn"><i class="fas fa-phone"></i> تواصل معنا</a>
+    </div>
+  </header>
+
+  <section class="request-section fade-in-up">
+    <h2>أرسل طلبك الآن</h2>
+    <p class="section-intro">املأ النموذج وسيتم إرساله مباشرة عبر واتساب</p>
+    <div class="form-container">
+      <form class="request-form" id="orderForm">
+        <div class="form-group">
+          <label for="name"><i class="fas fa-user"></i> الاسم الكامل</label>
+          <input type="text" id="name" placeholder="أدخل اسمك الكامل" required />
+        </div>
+        <div class="form-group">
+          <label for="phone"><i class="fas fa-phone"></i> رقم الهاتف</label>
+          <input type="tel" id="phone" placeholder="09xxxxxxxx" required />
+        </div>
+        <div class="form-group">
+          <label for="city"><i class="fas fa-map-marker-alt"></i> المدينة</label>
+          <input type="text" id="city" placeholder="مدينتك" required />
+        </div>
+        <div class="form-group">
+          <label for="product"><i class="fas fa-box"></i> تفاصيل المنتج المطلوب</label>
+          <textarea id="product" rows="5" placeholder="اكتب تفاصيل المنتج أو الخدمة التي تريدها..." required></textarea>
+        </div>
+        <button type="submit" class="submit-btn bounce">
+          <i class="fab fa-whatsapp"></i> إرسال عبر واتساب
+        </button>
+      </form>
+
+      <div class="direct-contact">
+        <h3>أو تواصل معنا مباشرة</h3>
+        <div class="contact-buttons">
+          <a href="https://wa.me/218918014512" class="contact-btn whatsapp" target="_blank">
+            <i class="fab fa-whatsapp"></i> واتساب
+          </a>
+          <a href="https://www.facebook.com/share/19gV7R8DHB/" class="contact-btn facebook" target="_blank">
+            <i class="fab fa-facebook"></i> فيسبوك
+          </a>
+          <a href="tel:0918014512" class="contact-btn phone">
+            <i class="fas fa-phone"></i> اتصل بنا
+          </a>
+          <a href="mailto:Albarshi.96@gmail.com" class="contact-btn email">
+            <i class="fas fa-envelope"></i> البريد
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+    <div class="social-links">
+      <a href="https://wa.me/218918014512" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const city = document.getElementById('city').value;
+      const product = document.getElementById('product').value;
+      const message = `*طلب جديد من دورلي*\n\n` +
+                    `الاسم: ${name}\n` +
+                    `الهاتف: ${phone}\n` +
+                    `المدينة: ${city}\n` +
+                    `تفاصيل الطلب:\n${product}`;
+      const whatsappUrl = `https://wa.me/218918014512?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    });
+  </script>
+</body>
+</html>
