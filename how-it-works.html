@@ -2,52 +2,146 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>دورلي - كيف يعمل</title>
-  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    .main-nav-btns {display:flex;flex-wrap:wrap;justify-content: center;gap: 0.7rem;margin-top:1rem;}
-    .main-nav-btn {background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;border-radius:20px;font-weight:bold;font-size:1rem;padding:0.6rem 1.6rem;box-shadow:0 4px 14px rgba(0,0,0,0.07);transition:all 0.22s;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:0.5rem;}
-    .main-nav-btn:hover {background:linear-gradient(135deg,var(--secondary),var(--primary-dark));transform:translateY(-4px) scale(1.04);color:#fff;box-shadow:0 10px 20px rgba(35,155,86,0.14);}
-    .main-nav-btn.services-btn {background:linear-gradient(90deg,#ffd700,#239b56);color:#222;font-size:1.1rem;font-weight:900;letter-spacing:1px;border:2px solid var(--secondary);}
-    .main-nav-btn.services-btn:hover {background:linear-gradient(90deg,#239b56,#ffd700);color:var(--dark);}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Tajawal', Arial, sans-serif; background: #f8f9fa; color: #2c3e50; direction: rtl; line-height: 1.6; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes rotating { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .fade-in-up { animation: fadeInUp 1s ease both; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    .rotating { animation: rotating 3s linear infinite; }
+    
+    header { background: #1a5fb4; padding: 1rem 2rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 999; display: flex; flex-direction: column; align-items: center; }
+    
+    .logo { font-size: 1.8rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .logo i { color: #ffd700; }
+    
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; width: 100%; }
+    
+    a { text-decoration: none; color: inherit; }
+    
+    nav a { background: linear-gradient(135deg, #1a5fb4, #239b56); color: #fff; padding: 0.7rem 1.5rem; border-radius: 20px; font-weight: bold; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+    
+    nav a:hover { background: linear-gradient(135deg, #239b56, #0f4a8d); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+    
+    nav a.services-btn { background: linear-gradient(90deg, #ffd700, #239b56); color: #222; font-size: 1rem; font-weight: 900; border: 2px solid #239b56; }
+    
+    .content { padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; background: #fff; }
+    
+    .content h1 { color: #1a5fb4; font-size: 2.5rem; text-align: center; margin-bottom: 1rem; }
+    .content > p { font-size: 1.2rem; color: #7f8c8d; text-align: center; margin-bottom: 2rem; }
+    
+    .intro-box { background: linear-gradient(135deg, #ecf0f1, #bdc3c7); padding: 2rem; border-radius: 12px; margin-bottom: 3rem; border-right: 5px solid #239b56; text-align: center; }
+    
+    .intro-box i { font-size: 3rem; color: #239b56; margin-bottom: 1rem; }
+    .intro-box h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    
+    .step-card { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 3px 15px rgba(0,0,0,0.08); transition: all 0.3s; position: relative; }
+    
+    .step-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    
+    .step-card i { font-size: 2.5rem; color: #1a5fb4; margin-bottom: 1rem; }
+    
+    .step-number { position: absolute; top: 1rem; left: 1rem; background: #239b56; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; }
+    
+    .step-card h3 { color: #2c3e50; margin-bottom: 0.5rem; margin-top: 0.8rem; font-size: 1.2rem; }
+    .step-card p { color: #7f8c8d; font-size: 0.95rem; }
+    
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem; margin-top: 3rem; }
+    footer p { margin-bottom: 1rem; }
+    
+    .social-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .social-links a { color: #fff; font-size: 1.5rem; width: 45px; height: 45px; border-radius: 50%; background: #1a5fb4; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+    .social-links a:hover { background: #239b56; transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      header { padding: 0.8rem 1rem; }
+      .logo { font-size: 1.5rem; }
+      nav a { padding: 0.5rem 1rem; font-size: 0.85rem; }
+      .content { padding: 2rem 1rem; }
+      .content h1 { font-size: 1.8rem; }
+      .steps-grid { gap: 1.5rem; }
+      .step-card { padding: 1.5rem; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo pulse" style="font-size:1.7rem;">
+    <div class="logo pulse">
       <i class="fas fa-link"></i> دورلي
     </div>
-    <div class="main-nav-btns">
-      <a href="index.html" class="main-nav-btn"><i class="fas fa-home"></i> الرئيسية</a>
-      <a href="how-it-works.html" class="main-nav-btn"><i class="fas fa-question"></i> كيف يعمل</a>
-      <a href="features.html" class="main-nav-btn"><i class="fas fa-gem"></i> الميزات</a>
-      <a href="services.html" class="main-nav-btn services-btn"><i class="fas fa-cogs"></i> خدماتنا الرئيسية</a>
-      <a href="request.html" class="main-nav-btn"><i class="fas fa-paper-plane"></i> الطلب</a>
-      <a href="contact.html" class="main-nav-btn"><i class="fas fa-phone"></i> تواصل معنا</a>
-    </div>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
+      <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
+      <a href="services.html" class="services-btn"><i class="fas fa-cogs"></i> خدماتنا</a>
+      <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
+      <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
+    </nav>
   </header>
 
-  <section class="how-it-works-section">
-    <h2 class="fade-in-up">كيف يعمل دورلي؟</h2>
-    <p class="section-intro fade-in-up">خدمة بسيطة وسريعة تربطك بما تحتاج</p>
-    <div class="special-step fade-in-up">
-      <div class="search-animation">
-        <i class="fas fa-search rotating"></i>
-      </div>
-      <h3>نبحث عن أي شيء تحتاجه</h3>
+  <section class="content">
+    <h1 class="fade-in-up">كيف يعمل دورلي؟</h1>
+    <p class="fade-in-up delay-1">خدمة بسيطة وسريعة تربطك بما تحتاج في 4 خطوات</p>
+    
+    <div class="intro-box fade-in-up delay-2">
+      <i class="fas fa-search rotating"></i>
+      <h2>نبحث عن أي شيء تحتاجه</h2>
       <p>حتى لو كان غير متوفر في مدينتك، نبحث عنه في كل المدن الليبية</p>
     </div>
-    <div class="steps-container">
+
+    <div class="steps-grid">
       <div class="step-card fade-in-up">
-        <div class="step-icon">
-          <i class="fas fa-edit"></i>
-        </div>
+        <i class="fas fa-edit"></i>
         <div class="step-number">1</div>
         <h3>اختيار المنتج</h3>
         <p>حدد المنتج أو الخدمة المطلوبة من أي مدينة ليبية.</p>
       </div>
+
       <div class="step-card fade-in-up delay-1">
-        <div class="step-icon">
+        <i class="fas fa-users"></i>
+        <div class="step-number">2</div>
+        <h3>تواصل مع الوكيل</h3>
+        <p>يتواصل معك أحد وكلائنا لتأكيد التفاصيل والسعر.</p>
+      </div>
+
+      <div class="step-card fade-in-up delay-2">
+        <i class="fas fa-shopping-bag"></i>
+        <div class="step-number">3</div>
+        <h3>شراء المنتج وفق الطلب</h3>
+        <p>نشتري المنتج حسب مواصفاتك ومن العنوان الذي تحدده.</p>
+      </div>
+
+      <div class="step-card fade-in-up delay-3">
+        <i class="fas fa-box-open"></i>
+        <div class="step-number">4</div>
+        <h3>استلام المنتج</h3>
+        <p>يتم تسليم المنتج لك في مدينتك بأمان وسرعة.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+    <div class="social-links">
+      <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+      <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
+    </div>
+  </footer>
+</body>
+</html>
