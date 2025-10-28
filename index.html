@@ -7,70 +7,42 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-</head>
-<body>
-  <nav class="slide-down">
-    <div class="logo pulse">
-      <i class="fas fa-link"></i> دورلي
-    </div>
-    <ul class="nav-links">
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="how-it-works.html">كيف يعمل</a></li>
-      <li><a href="features.html">الميزات</a></li>
-      <li><a href="services.html">خدماتنا</a></li>
-      <li><a href="request.html">الطلب</a></li>
-      <li><a href="contact.html">تواصل معنا</a></li>
-    </ul>
-  </nav>
-
-  <section class="hero">
-    <div class="hero-content fade-in-up">
-      <h1 class="typing-effect">مرحباً بك في دورلي</h1>
-      <p class="fade-in-up delay-1">حلقة الوصل بينك وبين كل ما تحتاج</p>
-      <p class="fade-in-up delay-2">نوفر لك أي منتج أو خدمة من أي مدينة ليبية</p>
-      <a href="request.html" class="cta-btn bounce">اطلب الآن</a>
-    </div>
-    <div class="hero-illustration fade-in-up delay-3">
-      <div class="floating-card">
-        <i class="fas fa-box"></i>
-        <p>منتجات</p>
-      </div>
-      <div class="floating-card delay-1">
-        <i class="fas fa-handshake"></i>
-        <p>خدمات</p>
-      </div>
-      <div class="floating-card delay-2">
-        <i class="fas fa-truck"></i>
-        <p>توصيل</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="services-preview">
-    <div class="service-item fade-in-up">
-      <i class="fas fa-search"></i>
-      <h3>نبحث لك</h3>
-      <p>عن أي شيء تحتاجه</p>
-    </div>
-    <div class="service-item fade-in-up delay-1">
-      <i class="fas fa-shopping-cart"></i>
-      <h3>نشتري لك</h3>
-      <p>بأفضل الأسعار</p>
-    </div>
-    <div class="service-item fade-in-up delay-2">
-      <i class="fas fa-shipping-fast"></i>
-      <h3>نوصل لك</h3>
-      <p>في أسرع وقت</p>
-    </div>
-  </section>
-
-  <footer>
-    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
-    <div class="social-links">
-      <a href="https://wa.me/218918014512" target="_blank" class="bounce-icon"><i class="fab fa-whatsapp"></i></a>
-      <a href="https://www.facebook.com/share16JEUw1tZk" target="_blank" class="bounce-icon"><i class="fab fa-facebook"></i></a>
-      <a href="mailto:Albarshi.96@gmail.com" class="bounce-icon"><i class="fas fa-envelope"></i></a>
-    </div>
-  </footer>
-</body>
-</html>
+  <style>
+    .main-nav-btns {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+    .main-nav-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 0.6rem 1.6rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+      transition: all 0.22s;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .main-nav-btn:hover {
+      background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+      transform: translateY(-4px) scale(1.04);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(35,155,86,0.14);
+    }
+    .main-nav-btn.services-btn {
+      background: linear-gradient(90deg, #ffd700, #239b56);
+      color: #222;
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      border: 2px solid var
