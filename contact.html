@@ -1,41 +1,69 @@
-<!-- ... داخل <body> بعد قائمة التنقل ... -->
-<section class="contact-page">
-  <div class="contact-container fade-in-up">
-    <h2>تواصل معنا</h2>
-    <p class="section-intro">نحن هنا لخدمتك على مدار الساعة</p>
-
-    <div class="contact-info">
-      <div class="contact-item bounce">
-        <div class="contact-icon whatsapp-bg">
-          <i class="fab fa-whatsapp"></i>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>دورلي - تواصل معنا</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .main-nav-btns {display:flex;flex-wrap:wrap;justify-content: center;gap: 0.7rem;margin-top:1rem;}
+    .main-nav-btn {background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;border-radius:20px;font-weight:bold;font-size:1rem;padding:0.6rem 1.6rem;box-shadow:0 4px 14px rgba(0,0,0,0.07);transition:all 0.22s;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:0.5rem;}
+    .main-nav-btn:hover {background:linear-gradient(135deg,var(--secondary),var(--primary-dark));transform:translateY(-4px) scale(1.04);color:#fff;box-shadow:0 10px 20px rgba(35,155,86,0.14);}
+    .main-nav-btn.services-btn {background:linear-gradient(90deg,#ffd700,#239b56);color:#222;font-size:1.1rem;font-weight:900;letter-spacing:1px;border:2px solid var(--secondary);}
+    .main-nav-btn.services-btn:hover {background:linear-gradient(90deg,#239b56,#ffd700);color:var(--dark);}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo pulse" style="font-size:1.7rem;">
+      <i class="fas fa-link"></i> دورلي
+    </div>
+    <div class="main-nav-btns">
+      <a href="index.html" class="main-nav-btn"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="how-it-works.html" class="main-nav-btn"><i class="fas fa-question"></i> كيف يعمل</a>
+      <a href="features.html" class="main-nav-btn"><i class="fas fa-gem"></i> الميزات</a>
+      <a href="services.html" class="main-nav-btn services-btn"><i class="fas fa-cogs"></i> خدماتنا الرئيسية</a>
+      <a href="request.html" class="main-nav-btn"><i class="fas fa-paper-plane"></i> الطلب</a>
+      <a href="contact.html" class="main-nav-btn"><i class="fas fa-phone"></i> تواصل معنا</a>
+    </div>
+  </header>
+  <section class="contact-page">
+    <div class="contact-container fade-in-up">
+      <h2>تواصل معنا</h2>
+      <p class="section-intro">نحن هنا لخدمتك على مدار الساعة</p>
+      <div class="contact-info">
+        <div class="contact-item bounce">
+          <div class="contact-icon whatsapp-bg"><i class="fab fa-whatsapp"></i></div>
+          <h3>واتساب</h3>
+          <a href="https://wa.me/218918014512" target="_blank">0918014512</a>
         </div>
-        <h3>واتساب</h3>
-        <a href="https://wa.me/218918014512" target="_blank">0918014512</a>
-      </div>
-
-      <div class="contact-item bounce delay-1">
-        <div class="contact-icon phone-bg">
-          <i class="fas fa-phone"></i>
+        <div class="contact-item bounce delay-1">
+          <div class="contact-icon phone-bg"><i class="fas fa-phone"></i></div>
+          <h3>هاتف</h3>
+          <a href="tel:0918014512">0918014512</a>
         </div>
-        <h3>هاتف</h3>
-        <a href="tel:0918014512">0918014512</a>
-      </div>
-
-      <div class="contact-item bounce delay-2">
-        <div class="contact-icon email-bg">
-          <i class="fas fa-envelope"></i>
+        <div class="contact-item bounce delay-2">
+          <div class="contact-icon email-bg"><i class="fas fa-envelope"></i></div>
+          <h3>البريد الإلكتروني</h3>
+          <a href="mailto:Albarshi.96@gmail.com">Albarshi.96@gmail.com</a>
         </div>
-        <h3>البريد الإلكتروني</h3>
-        <a href="mailto:Albarshi.96@gmail.com">Albarshi.96@gmail.com</a>
-      </div>
-
-      <div class="contact-item bounce delay-3">
-        <div class="contact-icon facebook-bg">
-          <i class="fab fa-facebook"></i>
+        <div class="contact-item bounce delay-3">
+          <div class="contact-icon facebook-bg"><i class="fab fa-facebook"></i></div>
+          <h3>فيسبوك</h3>
+          <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank">صفحتنا الجديدة على فيسبوك</a>
         </div>
-        <h3>فيسبوك</h3>
-        <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank">صفحتنا الجديدة على فيسبوك</a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+  <footer>
+    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+    <div class="social-links">
+      <a href="https://wa.me/218918014512" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+    </div>
+  </footer>
+</body>
+</html>
