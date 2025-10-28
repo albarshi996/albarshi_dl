@@ -5,229 +5,290 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="خدمات دورلي الرئيسية - توفير جميع المنتجات والخدمات من أي مدينة ليبية" />
   <title>دورلي - خدماتنا الرئيسية</title>
-  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Tajawal', Arial, sans-serif; background: #f8f9fa; color: #2c3e50; direction: rtl; line-height: 1.6; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+    
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .fade-in-up { animation: fadeInUp 1s ease both; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    
+    header { background: #1a5fb4; padding: 1rem 2rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 999; display: flex; flex-direction: column; align-items: center; }
+    
+    .logo { font-size: 1.8rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .logo i { color: #ffd700; animation: spin 3s linear infinite; }
+    
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; width: 100%; }
+    
+    a { text-decoration: none; color: inherit; }
+    
+    nav a { background: linear-gradient(135deg, #1a5fb4, #239b56); color: #fff; padding: 0.7rem 1.4rem; border-radius: 20px; font-weight: bold; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.95rem; }
+    
+    nav a:hover { background: linear-gradient(135deg, #239b56, #0f4a8d); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+    
+    nav a.services-btn { background: linear-gradient(90deg, #ffd700, #239b56); color: #222; font-weight: 900; border: 2px solid #239b56; }
+    
+    .hero { background: linear-gradient(135deg, #1a5fb4, #0f4a8d, #239b56); color: #fff; padding: 3rem 2rem; text-align: center; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .hero p { font-size: 1.2rem; opacity: 0.95; }
+    .hero i { font-size: 3rem; opacity: 0.7; margin-top: 1.5rem; }
+    
+    .services-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 2rem; padding: 3rem 2rem; }
+    
+    .service-category { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: all 0.3s; }
+    
+    .category-header { padding: 2rem; text-align: center; color: #fff; }
+    .category-header i { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+    .category-header h2 { font-size: 1.5rem; margin: 0; }
+    
+    .service-items { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem; }
+    
+    .service-item { display: block; padding: 0.9rem; text-align: center; color: #fff; border-radius: 8px; font-weight: bold; transition: all 0.3s; }
+    
+    .service-item:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    
+    .service-item i { margin-left: 0.5rem; }
+    
+    /* الألوان المختلفة لكل فئة */
+    .car-parts .category-header { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .car-parts .service-item { background: linear-gradient(135deg, #3498db, #2980b9); }
+    
+    .truck-parts .category-header { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .truck-parts .service-item { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    
+    .food-items .category-header { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .food-items .service-item { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    
+    .documents .category-header { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    .documents .service-item { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    
+    .wedding-items .category-header { background: linear-gradient(135deg, #e91e63, #ad1457); }
+    .wedding-items .service-item { background: linear-gradient(135deg, #e91e63, #ad1457); }
+    
+    .construction .category-header { background: linear-gradient(135deg, #795548, #5d4037); }
+    .construction .service-item { background: linear-gradient(135deg, #795548, #5d4037); }
+    
+    .beauty-cleaning .category-header { background: linear-gradient(135deg, #ff9800, #f57c00); }
+    .beauty-cleaning .service-item { background: linear-gradient(135deg, #ff9800, #f57c00); }
+    
+    .fashion .category-header { background: linear-gradient(135deg, #607d8b, #455a64); }
+    .fashion .service-item { background: linear-gradient(135deg, #607d8b, #455a64); }
+    
+    .custom-service .category-header { background: linear-gradient(135deg, #ffd700, #ffb300); }
+    .custom-service .service-item { background: linear-gradient(135deg, #ffd700, #ffb300); color: #222; }
+    
+    .cta-section { text-align: center; padding: 3rem 2rem; margin-top: 2rem; background: linear-gradient(135deg, #1a5fb4, #239b56); border-radius: 20px; color: #fff; }
+    .cta-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+    .cta-btn { display: inline-block; background: #e74c3c; color: #fff; padding: 1.2rem 3rem; border-radius: 30px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 5px 20px rgba(231,76,60,0.4); transition: all 0.3s; }
+    .cta-btn:hover { background: #c0392b; transform: translateY(-3px); }
+    
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem; margin-top: 3rem; }
+    footer p { margin-bottom: 1rem; }
+    
+    .social-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .social-links a { color: #fff; font-size: 1.5rem; width: 45px; height: 45px; border-radius: 50%; background: #1a5fb4; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+    .social-links a:hover { background: #239b56; transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      header { padding: 0.8rem 1rem; }
+      .logo { font-size: 1.5rem; }
+      nav a { padding: 0.5rem 1rem; font-size: 0.85rem; }
+      .hero { padding: 2rem 1rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .services-grid { padding: 2rem 1rem; gap: 1.5rem; }
+    }
+  </style>
 </head>
 <body>
-  <header style="background:#1a5fb4;padding:1rem 2rem;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);position:sticky;top:0;z-index:999;">
-    <div class="logo" style="font-size:1.8rem;color:#fff;margin-bottom:1rem;">
+  <header>
+    <div class="logo">
       <i class="fas fa-link"></i> دورلي
     </div>
-    <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.7rem;">
-      <a href="index.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-home"></i> الرئيسية
-      </a>
-      <a href="how-it-works.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-question"></i> كيف يعمل
-      </a>
-      <a href="features.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-gem"></i> الميزات
-      </a>
-      <a href="services.html" style="background:linear-gradient(90deg,#ffd700,#239b56);color:#222;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:900;border:2px solid #239b56;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-cogs"></i> خدماتنا
-      </a>
-      <a href="request.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-paper-plane"></i> اطلب الآن
-      </a>
-      <a href="contact.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:0.3rem;">
-        <i class="fas fa-phone"></i> تواصل معنا
-      </a>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
+      <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
+      <a href="services.html" class="services-btn"><i class="fas fa-cogs"></i> خدماتنا</a>
+      <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
+      <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
     </nav>
   </header>
 
-  <section style="background:linear-gradient(135deg,#1a5fb4,#0f4a8d,#239b56);color:#fff;padding:3rem 2rem;text-align:center;">
-    <h1 style="font-size:2.5rem;margin-bottom:1rem;animation:fadeInUp 1s ease;">خدماتنا الرئيسية</h1>
-    <p style="font-size:1.2rem;opacity:0.95;">نوفر لك كل ما تحتاجه من أي مدينة ليبية</p>
-    <div style="margin-top:1.5rem;">
-      <i class="fas fa-search" style="font-size:3rem;opacity:0.7;animation:spin 3s linear infinite;"></i>
+  <section class="hero">
+    <h1 class="fade-in-up">خدماتنا الرئيسية</h1>
+    <p class="fade-in-up delay-1">نوفر لك كل ما تحتاجه من أي مدينة ليبية</p>
+    <i class="fas fa-search fade-in-up delay-2"></i>
+  </section>
+
+  <section class="services-grid">
+
+    <!-- قطع غيار السيارات -->
+    <div class="service-category car-parts fade-in-up">
+      <div class="category-header">
+        <i class="fas fa-car"></i>
+        <h2>قطع غيار السيارات</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20قطع%20غيار%20أصلية%20للسيارة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-cog"></i> قطع غيار أصلية
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوات%20صيانة%20سيارات%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-tools"></i> أدوات صيانة
+        </a>
+      </div>
+    </div>
+
+    <!-- قطع غيار الشاحنات -->
+    <div class="service-category truck-parts fade-in-up delay-1">
+      <div class="category-header">
+        <i class="fas fa-truck"></i>
+        <h2>قطع غيار الشاحنات</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20قطع%20غيار%20شاحنات%20ثقيلة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-wrench"></i> قطع شاحنات ثقيلة
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بطاريات%20وإطارات%20للشاحنات%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-battery-full"></i> بطاريات وإطارات
+        </a>
+      </div>
+    </div>
+
+    <!-- المواد الغذائية -->
+    <div class="service-category food-items fade-in-up delay-2">
+      <div class="category-header">
+        <i class="fas fa-utensils"></i>
+        <h2>مواد غذائية مميزة</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتجات%20محلية%20مميزة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-cheese"></i> منتجات محلية
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20حلويات%20خاصة%20ومميزة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-cookie-bite"></i> حلويات خاصة
+        </a>
+      </div>
+    </div>
+
+    <!-- إجراءات المستندات -->
+    <div class="service-category documents fade-in-up">
+      <div class="category-header">
+        <i class="fas fa-file-alt"></i>
+        <h2>إجراءات المستندات</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20إنجاز%20معاملات%20حكومية%20ورسمية%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-stamp"></i> أوراق رسمية
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20تصديق%20وتوثيق%20مستندات%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-clipboard-check"></i> تصديق وثائق
+        </a>
+      </div>
+    </div>
+
+    <!-- مستلزمات أفراح وخياطة -->
+    <div class="service-category wedding-items fade-in-up delay-1">
+      <div class="category-header">
+        <i class="fas fa-heart"></i>
+        <h2>أفراح وخياطة</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مستلزمات%20أفراح%20ومناسبات%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-ring"></i> مستلزمات الأفراح
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أقمشة%20فاخرة%20وخدمات%20خياطة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-cut"></i> أقمشة وخياطة
+        </a>
+      </div>
+    </div>
+
+    <!-- مواد البناء -->
+    <div class="service-category construction fade-in-up delay-2">
+      <div class="category-header">
+        <i class="fas fa-hammer"></i>
+        <h2>مواد البناء</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20بناء%20%28أسمنت%2C%20حديد%2C%20إلخ%29%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-cubes"></i> مواد خام
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20دهانات%20وأدوات%20تشطيب%20وديكور%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-paint-roller"></i> أدوات التشطيب
+        </a>
+      </div>
+    </div>
+
+    <!-- التنظيف والعطور والمكياج -->
+    <div class="service-category beauty-cleaning fade-in-up">
+      <div class="category-header">
+        <i class="fas fa-spa"></i>
+        <h2>تنظيف وعطور ومكياج</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20تنظيف%20عالية%20الجودة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-pump-soap"></i> مواد التنظيف
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20عطور%20أصلية%20ومكياج%20من%20ماركات%20معروفة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-magic"></i> عطور ومكياج
+        </a>
+      </div>
+    </div>
+
+    <!-- الملابس والأزياء -->
+    <div class="service-category fashion fade-in-up delay-1">
+      <div class="category-header">
+        <i class="fas fa-tshirt"></i>
+        <h2>ملابس وأزياء</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20ملابس%20رجالية%20وأزياء%20رسمية%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-user-tie"></i> ملابس رجالية
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أزياء%20نسائية%20عصرية%20وتراثية%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-female"></i> ملابس نسائية
+        </a>
+      </div>
+    </div>
+
+    <!-- خدمة حسب الطلب -->
+    <div class="service-category custom-service fade-in-up delay-2">
+      <div class="category-header">
+        <i class="fas fa-star"></i>
+        <h2>★ خدمة حسب الطلب ★</h2>
+      </div>
+      <div class="service-items">
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بحث%20مخصص%20عن%20منتج%20معين%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-search-plus"></i> بحث مخصص
+        </a>
+        <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20شخصية%20مميزة%0Aالرجاء%20توفيرها%20لي%0A%0Aالاسم%20:%0Aرقم%20الهاتف%20:%0Aاشرح%20لنا%20اكثر%20عن%20ماذا%20تحتاج%20:%0A%0Aيمكنك%20ارسال%20صورة%20او%20فيديو%20لتوضيح%0Aوفريقنا%20لخدمتك%20للعثور%20على%20منتجك" target="_blank" class="service-item">
+          <i class="fas fa-concierge-bell"></i> خدمة مميزة
+        </a>
+      </div>
     </div>
   </section>
 
-  <section style="padding:3rem 2rem;background:#f8f9fa;">
-    <div style="max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:2rem;">
-
-      <!-- قطع غيار السيارات -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #3498db;">
-        <div style="background:linear-gradient(135deg,#3498db,#2980b9);padding:2rem;text-align:center;">
-          <i class="fas fa-car" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">قطع غيار السيارات</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20قطع%20غيار%20أصلية%20للسيارة%0Aالرجاء%20مساعدتي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-cog" style="margin-left:0.5rem;"></i> قطع غيار أصلية
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20أدوات%20ومعدات%20صيانة%20سيارات%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-tools" style="margin-left:0.5rem;"></i> أدوات صيانة
-          </a>
-        </div>
-      </div>
-
-      <!-- قطع غيار الشاحنات -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #e74c3c;">
-        <div style="background:linear-gradient(135deg,#e74c3c,#c0392b);padding:2rem;text-align:center;">
-          <i class="fas fa-truck" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">قطع غيار الشاحنات</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20قطع%20غيار%20لشاحنة%20ثقيلة%0Aالرجاء%20مساعدتي%20في%20البحث" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-wrench" style="margin-left:0.5rem;"></i> قطع شاحنات ثقيلة
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20بطاريات%20وإطارات%20لشاحنة%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-battery-full" style="margin-left:0.5rem;"></i> بطاريات وإطارات
-          </a>
-        </div>
-      </div>
-
-      <!-- المواد الغذائية -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #f39c12;">
-        <div style="background:linear-gradient(135deg,#f39c12,#e67e22);padding:2rem;text-align:center;">
-          <i class="fas fa-utensils" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">مواد غذائية مميزة</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20منتجات%20محلية%20مميزة%0Aالرجاء%20توفيرها%20لي%20من%20المدن%20الأخرى" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-cheese" style="margin-left:0.5rem;"></i> منتجات محلية
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20حلويات%20خاصة%20ومميزة%0Aالرجاء%20البحث%20عنها%20وتوفيرها" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-cookie-bite" style="margin-left:0.5rem;"></i> حلويات خاصة
-          </a>
-        </div>
-      </div>
-
-      <!-- إجراءات المستندات -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #9b59b6;">
-        <div style="background:linear-gradient(135deg,#9b59b6,#8e44ad);padding:2rem;text-align:center;">
-          <i class="fas fa-file-alt" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">إجراءات المستندات</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20إنجاز%20معاملات%20حكومية%20ورسمية%0Aالرجاء%20مساعدتي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-stamp" style="margin-left:0.5rem;"></i> أوراق رسمية
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20تصديق%20وتوثيق%20مستندات%0Aالرجاء%20مساعدتي%20بهذه%20الخدمة" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-clipboard-check" style="margin-left:0.5rem;"></i> تصديق وثائق
-          </a>
-        </div>
-      </div>
-
-      <!-- مستلزمات أفراح وخياطة -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #e91e63;">
-        <div style="background:linear-gradient(135deg,#e91e63,#ad1457);padding:2rem;text-align:center;">
-          <i class="fas fa-heart" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">أفراح وخياطة</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20مستلزمات%20للأفراح%20والمناسبات%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#e91e63,#ad1457);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-ring" style="margin-left:0.5rem;"></i> مستلزمات الأفراح
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20أقمشة%20فاخرة%20وخدمات%20خياطة%0Aالرجاء%20مساعدتي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#e91e63,#ad1457);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-cut" style="margin-left:0.5rem;"></i> أقمشة وخياطة
-          </a>
-        </div>
-      </div>
-
-      <!-- مواد البناء -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #795548;">
-        <div style="background:linear-gradient(135deg,#795548,#5d4037);padding:2rem;text-align:center;">
-          <i class="fas fa-hammer" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">مواد البناء</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20مواد%20بناء%20%28أسمنت%2C%20حديد%2C%20إلخ%29%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#795548,#5d4037);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-cubes" style="margin-left:0.5rem;"></i> مواد خام
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20دهانات%20وأدوات%20تشطيب%20وديكور%0Aالرجاء%20مساعدتي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#795548,#5d4037);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-paint-roller" style="margin-left:0.5rem;"></i> أدوات التشطيب
-          </a>
-        </div>
-      </div>
-
-      <!-- التنظيف والعطور والمكياج -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #ff9800;">
-        <div style="background:linear-gradient(135deg,#ff9800,#f57c00);padding:2rem;text-align:center;">
-          <i class="fas fa-spa" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">تنظيف وعطور ومكياج</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20مواد%20تنظيف%20عالية%20الجودة%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-pump-soap" style="margin-left:0.5rem;"></i> مواد التنظيف
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20عطور%20أصلية%20ومكياج%20من%20ماركات%20معروفة%0Aالرجاء%20مساعدتي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#ff9800,#f57c00);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-magic" style="margin-left:0.5rem;"></i> عطور ومكياج
-          </a>
-        </div>
-      </div>
-
-      <!-- الملابس والأزياء -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #607d8b;">
-        <div style="background:linear-gradient(135deg,#607d8b,#455a64);padding:2rem;text-align:center;">
-          <i class="fas fa-tshirt" style="font-size:2.5rem;color:#fff;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#fff;font-size:1.5rem;margin:0;">ملابس وأزياء</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20ملابس%20رجالية%20وأزياء%20رسمية%0Aالرجاء%20توفيرها%20لي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#607d8b,#455a64);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-user-tie" style="margin-left:0.5rem;"></i> ملابس رجالية
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20أزياء%20نسائية%20عصرية%20وتراثية%0Aالرجاء%20البحث%20وتوفيرها" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#607d8b,#455a64);color:#fff;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-female" style="margin-left:0.5rem;"></i> ملابس نسائية
-          </a>
-        </div>
-      </div>
-
-      <!-- خدمة حسب الطلب -->
-      <div style="background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.1);transition:all 0.3s;border-top:5px solid #ffd700;grid-column:span 1;">
-        <div style="background:linear-gradient(135deg,#ffd700,#ffb300);padding:2rem;text-align:center;">
-          <i class="fas fa-star" style="font-size:2.5rem;color:#222;margin-bottom:0.5rem;display:block;"></i>
-          <h2 style="color:#222;font-size:1.5rem;margin:0;">★ خدمة حسب الطلب ★</h2>
-        </div>
-        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:0.8rem;">
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20بحث%20مخصص%20عن%20منتج%20معين%0Aالرجاء%20ساعدني%20في%20البحث%20عنه" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#ffd700,#ffb300);color:#222;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-search-plus" style="margin-left:0.5rem;"></i> بحث مخصص
-          </a>
-          <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%0Aأحتاج%20خدمة%20شخصية%20مميزة%0Aالرجاء%20تقديم%20متابعة%20خاصة%20لطلبي" target="_blank" style="display:block;padding:0.9rem;text-align:center;background:linear-gradient(135deg,#ffd700,#ffb300);color:#222;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s;">
-            <i class="fas fa-concierge-bell" style="margin-left:0.5rem;"></i> خدمة مميزة
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- زر الطلب السريع -->
-    <div style="text-align:center;padding:3rem 2rem;margin-top:2rem;background:linear-gradient(135deg,#1a5fb4,#239b56);border-radius:20px;color:#fff;">
-      <h2 style="font-size:1.8rem;margin-bottom:1.5rem;">هل تحتاج أي من هذه الخدمات؟</h2>
-      <a href="request.html" style="display:inline-block;background:#e74c3c;color:#fff;padding:1.2rem 3rem;border-radius:30px;text-decoration:none;font-weight:bold;font-size:1.2rem;box-shadow:0 5px 20px rgba(231,76,60,0.4);transition:all 0.3s;">
-        <i class="fas fa-paper-plane"></i> اطلب الآن
-      </a>
-    </div>
+  <section class="cta-section fade-in-up">
+    <h2>هل تحتاج أي من هذه الخدمات؟</h2>
+    <a href="request.html" class="cta-btn">
+      <i class="fas fa-paper-plane"></i> اطلب الآن
+    </a>
   </section>
 
-  <footer style="background:#2c3e50;color:#fff;text-align:center;padding:2rem;">
-    <p style="margin-bottom:1rem;">جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
-    <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
-      <a href="https://wa.me/218946507954" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.3s;">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.3s;">
-        <i class="fab fa-facebook"></i>
-      </a>
-      <a href="mailto:Albarshi.96@gmail.com" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.3s;">
-        <i class="fas fa-envelope"></i>
-      </a>
-      <a href="tel:+218946507954" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.3s;">
-        <i class="fas fa-phone"></i>
-      </a>
+  <footer>
+    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+    <div class="social-links">
+      <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+      <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
     </div>
   </footer>
-
-  <style>
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </body>
 </html>
