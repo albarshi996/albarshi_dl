@@ -1,98 +1,160 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a5fb4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="دورلي">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <meta name="description" content="منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا. اطلب منتجاتك من أي مدينة بسهولة وأمان." />
+  <meta name="keywords" content="دورلي، توصيل، ليبيا، منتجات، وسطاء، خدمات" />
+  <title>دورلي - حلقة الوصل بينك وبين ما تحتاج</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Tajawal', Arial, sans-serif; background: #f8f9fa; color: #2c3e50; direction: rtl; line-height: 1.6; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1a5fb4">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="دورلي">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="حلقة الوصل بينك وبين كل ما تحتاج - نوفر لك أي منتج أو خدمة من أي مدينة ليبية">
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
     
-    <title>دورلي - حلقة الوصل بينك وبين كل ما تحتاج</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    .fade-in-up { animation: fadeInUp 1s ease both; }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    
+    header { background: #1a5fb4; padding: 1rem 2rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 999; flex-wrap: wrap; display: flex; flex-direction: column; align-items: center; }
+    
+    .logo { font-size: 1.8rem; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .logo i { color: #ffd700; }
+    
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; width: 100%; }
+    
+    a { text-decoration: none; color: inherit; }
+    
+    nav a { background: linear-gradient(135deg, #1a5fb4, #239b56); color: #fff; padding: 0.7rem 1.5rem; border-radius: 20px; font-weight: bold; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+    
+    nav a:hover { background: linear-gradient(135deg, #239b56, #0f4a8d); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+    
+    nav a.services-btn { background: linear-gradient(90deg, #ffd700, #239b56); color: #222; font-size: 1rem; font-weight: 900; border: 2px solid #239b56; }
+    
+    .hero { background: linear-gradient(135deg, #1a5fb4 0%, #0f4a8d 50%, #239b56 100%); color: #fff; padding: 3rem 2rem; text-align: center; }
+    
+    .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; animation: fadeInUp 1s ease; }
+    .hero h2 { font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 400; }
+    .hero p { font-size: 1.2rem; margin-bottom: 1rem; opacity: 0.95; }
+    
+    .hero-btn { display: inline-block; background: #e74c3c; color: #fff; padding: 1rem 2.5rem; border-radius: 30px; text-decoration: none; font-size: 1.2rem; font-weight: 700; box-shadow: 0 5px 15px rgba(231,76,60,0.3); transition: all 0.3s; margin-top: 1rem; }
+    
+    .hero-btn:hover { background: #c0392b; transform: translateY(-5px); box-shadow: 0 8px 20px rgba(231,76,60,0.4); }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; background: #fff; }
+    
+    .service-box { text-align: center; padding: 2rem; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #ecf0f1 100%); transition: all 0.3s; }
+    
+    .service-box:hover { transform: translateY(-8px); background: linear-gradient(135deg, #1a5fb4, #239b56); color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    
+    .service-box i { font-size: 3rem; color: #1a5fb4; margin-bottom: 1rem; transition: all 0.3s; }
+    
+    .service-box:hover i { color: #fff; }
+    
+    .service-box h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .service-box p { font-size: 0.95rem; }
+    
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem; margin-top: 3rem; }
+    footer p { margin-bottom: 1rem; }
+    
+    .social-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .social-links a { color: #fff; font-size: 1.5rem; width: 45px; height: 45px; border-radius: 50%; background: #1a5fb4; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+    .social-links a:hover { background: #239b56; transform: translateY(-3px); }
+    
+    @media (max-width: 768px) {
+      header { padding: 0.8rem 1rem; }
+      .logo { font-size: 1.5rem; }
+      nav a { padding: 0.5rem 1rem; font-size: 0.85rem; }
+      .hero { padding: 2rem 1rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero h2 { font-size: 1.2rem; }
+      .services-grid { padding: 2rem 1rem; gap: 1.5rem; }
+    }
+  </style>
 </head>
 <body>
-
-    <nav class="navbar slide-down">
-        <div class="container">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">🔗</span>
-                دورلي
-            </a>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active">الرئيسية</a></li>
-                <li><a href="services.html">الخدمات</a></li>
-                <li><a href="features.html">المميزات</a></li>
-                <li><a href="how-it-works.html">كيف يعمل</a></li>
-                <li><a href="request.html" class="btn-cta">اطلب الآن</a></li>
-            </ul>
-        </div>
+  <header>
+    <div class="logo pulse">
+      <i class="fas fa-link"></i> دورلي
+    </div>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
+      <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
+      <a href="services.html" class="services-btn"><i class="fas fa-cogs"></i> خدماتنا</a>
+      <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
+      <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
     </nav>
+  </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content fade-in-up">
-                <h1 class="hero-title">مرحباً بك في <span class="highlight">دورلي</span></h1>
-                <p class="hero-subtitle">حلقة الوصل بينك وبين كل ما تحتاج</p>
-                <p class="hero-description">
-                    نوفر لك أي منتج أو خدمة من أي مدينة ليبية بسرعة وأمان
-                </p>
-                <a href="services.html" class="btn btn-large">تصفح جميع الخدمات</a>
-            </div>
-        </div>
-    </section>
+  <section class="hero">
+    <h1 class="fade-in-up">مرحباً بك في دورلي</h1>
+    <h2 class="fade-in-up delay-1">حلقة الوصل بينك وبين كل ما تحتاج</h2>
+    <p class="fade-in-up delay-2">نوفر لك أي منتج أو خدمة من أي مدينة ليبية بسرعة وأمان</p>
+    <a href="services.html" class="hero-btn fade-in-up delay-3">
+      <i class="fas fa-cogs"></i> تصفح جميع الخدمات
+    </a>
+  </section>
 
-    <section class="features-preview">
-        <div class="container">
-            <div class="feature-card fade-in-up delay-1">
-                <div class="feature-icon float-animation">🔍</div>
-                <h3>نبحث لك</h3>
-                <p>عن أي شيء تحتاجه</p>
-            </div>
-            <div class="feature-card fade-in-up delay-2">
-                <div class="feature-icon float-animation">🛒</div>
-                <h3>نشتري لك</h3>
-                <p>بأفضل الأسعار</p>
-            </div>
-            <div class="feature-card fade-in-up delay-3">
-                <div class="feature-icon float-animation">🚚</div>
-                <h3>نوصل لك</h3>
-                <p>في أسرع وقت</p>
-            </div>
-        </div>
-    </section>
+  <section class="services-grid">
+    <div class="service-box fade-in-up">
+      <i class="fas fa-search"></i>
+      <h3>نبحث لك</h3>
+      <p>عن أي شيء تحتاجه</p>
+    </div>
+    <div class="service-box fade-in-up delay-1">
+      <i class="fas fa-shopping-cart"></i>
+      <h3>نشتري لك</h3>
+      <p>بأفضل الأسعار</p>
+    </div>
+    <div class="service-box fade-in-up delay-2">
+      <i class="fas fa-shipping-fast"></i>
+      <h3>نوصل لك</h3>
+      <p>في أسرع وقت</p>
+    </div>
+  </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 لدى دورلى . جميع الحقوق محفوظة.</p>
-            <div class="footer-links">
-                <a href="contact.html">تواصل معنا</a>
-                <a href="https://wa.me/218946507954" target="_blank">واتساب</a>
-            </div>
-        </div>
-    </footer>
+  <footer>
+    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+    <div class="social-links">
+      <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+      <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
+    </div>
+  </footer>
 
-    <!-- Service Worker Registration -->
-    <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(registration => {
-            console.log('✅ Service Worker مسجل بنجاح');
-          })
-          .catch(error => {
-            console.error('❌ فشل تسجيل Service Worker:', error);
-          });
-      });
-    }
-    </script>
+  <!-- Service Worker Registration -->
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('✅ Service Worker مسجل بنجاح');
+        })
+        .catch(error => {
+          console.error('❌ فشل تسجيل Service Worker:', error);
+        });
+    });
+  }
+  </script>
 
 </body>
 </html>
