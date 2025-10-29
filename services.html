@@ -289,6 +289,23 @@
       <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
       <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
     </div>
-  </footer>
+      </footer>
+
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('✅ Service Worker مسجل بنجاح');
+          })
+          .catch(error => {
+            console.error('❌ فشل تسجيل Service Worker:', error);
+          });
+      });
+    }
+    </script>
+
 </body>
 </html>
+
