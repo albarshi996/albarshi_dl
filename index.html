@@ -3,16 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#1a5fb4">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="دورلي">
-  <link rel="apple-touch-icon" href="/icon-192.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  
   <meta name="description" content="منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا. اطلب منتجاتك من أي مدينة بسهولة وأمان." />
   <meta name="keywords" content="دورلي، توصيل، ليبيا، منتجات، وسطاء، خدمات" />
   <title>دورلي - حلقة الوصل بينك وبين ما تحتاج</title>
@@ -140,21 +130,5 @@
       <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
     </div>
   </footer>
-
-  <!-- Service Worker Registration -->
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => {
-          console.log('✅ Service Worker مسجل بنجاح');
-        })
-        .catch(error => {
-          console.error('❌ فشل تسجيل Service Worker:', error);
-        });
-    });
-  }
-  </script>
-
 </body>
 </html>
