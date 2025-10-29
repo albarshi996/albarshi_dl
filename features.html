@@ -1,84 +1,98 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>دورلي - الميزات</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المميزات - دورلي</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a5fb4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="دورلي">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="حلقة الوصل بينك وبين كل ما تحتاج - نوفر لك أي منتج أو خدمة من أي مدينة ليبية">
 </head>
 <body>
-  <header style="background:#1a5fb4;padding:1rem 2rem;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);position:sticky;top:0;z-index:999;">
-    <div class="logo" style="font-size:1.8rem;color:#fff;margin-bottom:1rem;">
-      <i class="fas fa-link"></i> دورلي
-    </div>
-    <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.7rem;">
-      <a href="index.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-home"></i> الرئيسية
-      </a>
-      <a href="how-it-works.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-question"></i> كيف يعمل
-      </a>
-      <a href="features.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-gem"></i> الميزات
-      </a>
-      <a href="services.html" style="background:linear-gradient(90deg,#ffd700,#239b56);color:#222;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:900;border:2px solid #239b56;">
-        <i class="fas fa-cogs"></i> خدماتنا
-      </a>
-      <a href="request.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-paper-plane"></i> اطلب الآن
-      </a>
-      <a href="contact.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-phone"></i> تواصل معنا
-      </a>
+
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🔗</span>
+                دورلي
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">الرئيسية</a></li>
+                <li><a href="services.html">الخدمات</a></li>
+                <li><a href="features.html" class="active">المميزات</a></li>
+                <li><a href="how-it-works.html">كيف يعمل</a></li>
+                <li><a href="request.html" class="btn-cta">اطلب الآن</a></li>
+            </ul>
+        </div>
     </nav>
-  </header>
 
-  <section style="padding:3rem 2rem;background:#f8f9fa;text-align:center;">
-    <h1 style="color:#1a5fb4;font-size:2.5rem;margin-bottom:1rem;">أهم الميزات</h1>
-    <p style="font-size:1.2rem;color:#7f8c8d;margin-bottom:3rem;">نوفر لك كل ما تحتاجه بسهولة وأمان</p>
+    <section class="page-header">
+        <div class="container">
+            <h1>مميزات دورلي</h1>
+            <p>نوفر لك كل ما تحتاجه بسهولة وأمان</p>
+        </div>
+    </section>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;max-width:1200px;margin:0 auto;">
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-shield-alt" style="font-size:3rem;color:#1a5fb4;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">موثوقية عالية</h3>
-        <p style="color:#7f8c8d;">نوفر وكلاء موثوقين لتلبية طلباتك بأمان تام.</p>
-      </div>
+    <section class="features-section">
+        <div class="container">
+            <div class="feature-item">
+                <div class="feature-icon-large">🔒</div>
+                <h2>أمان تام</h2>
+                <p>نوفر وكلاء موثوقين لتلبية طلباتك بأمان تام.</p>
+            </div>
 
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-bolt" style="font-size:3rem;color:#239b56;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">أسرع خدمة</h3>
-        <p style="color:#7f8c8d;">تسليم سريع ومتابعة دقيقة لطلبك.</p>
-      </div>
+            <div class="feature-item">
+                <div class="feature-icon-large">⚡</div>
+                <h2>سرعة في التسليم</h2>
+                <p>تسليم سريع ومتابعة دقيقة لطلبك.</p>
+            </div>
 
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-star" style="font-size:3rem;color:#f39c12;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">تجربة مميزة</h3>
-        <p style="color:#7f8c8d;">سهولة الاستخدام ودعم مباشر للعملاء.</p>
-      </div>
+            <div class="feature-item">
+                <div class="feature-icon-large">💡</div>
+                <h2>سهولة الاستخدام</h2>
+                <p>سهولة الاستخدام ودعم مباشر للعملاء.</p>
+            </div>
 
-      <div style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.15);border:2px solid #e74c3c;transition:all 0.3s;">
-        <i class="fas fa-magic" style="font-size:3rem;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">نوفر أي شيء تحتاجه</h3>
-        <p>مهما كان طلبك، نبحث عنه ونوفره لك من أي مكان في ليبيا.</p>
-      </div>
-    </div>
-  </section>
+            <div class="feature-item">
+                <div class="feature-icon-large">🌍</div>
+                <h2>خدمة شاملة</h2>
+                <p>مهما كان طلبك، نبحث عنه ونوفره لك من أي مكان في ليبيا.</p>
+            </div>
+        </div>
+    </section>
 
-  <footer style="background:#2c3e50;color:#fff;text-align:center;padding:2rem;">
-    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
-    <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
-      <a href="https://wa.me/218946507954" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fab fa-facebook"></i>
-      </a>
-      <a href="mailto:Albarshi.96@gmail.com" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fas fa-envelope"></i>
-      </a>
-    </div>
-  </footer>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 لدى دورلى . جميع الحقوق محفوظة.</p>
+            <div class="footer-links">
+                <a href="contact.html">تواصل معنا</a>
+                <a href="https://wa.me/218946507954" target="_blank">واتساب</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('✅ Service Worker مسجل بنجاح');
+          })
+          .catch(error => {
+            console.error('❌ فشل تسجيل Service Worker:', error);
+          });
+      });
+    }
+    </script>
+
 </body>
 </html>
