@@ -4,81 +4,242 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>دورلي - الميزات</title>
-  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header style="background:#1a5fb4;padding:1rem 2rem;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);position:sticky;top:0;z-index:999;">
-    <div class="logo" style="font-size:1.8rem;color:#fff;margin-bottom:1rem;">
+  <header>
+    <div class="logo">
       <i class="fas fa-link"></i> دورلي
     </div>
-    <nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.7rem;">
-      <a href="index.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-home"></i> الرئيسية
-      </a>
-      <a href="how-it-works.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-question"></i> كيف يعمل
-      </a>
-      <a href="features.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-gem"></i> الميزات
-      </a>
-      <a href="services.html" style="background:linear-gradient(90deg,#ffd700,#239b56);color:#222;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:900;border:2px solid #239b56;">
-        <i class="fas fa-cogs"></i> خدماتنا
-      </a>
-      <a href="request.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-paper-plane"></i> اطلب الآن
-      </a>
-      <a href="contact.html" style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:0.6rem 1.4rem;border-radius:20px;text-decoration:none;font-weight:bold;">
-        <i class="fas fa-phone"></i> تواصل معنا
-      </a>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+      <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
+      <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
+      <a href="services.html" class="services-btn"><i class="fas fa-cogs"></i> خدماتنا</a>
+      <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
+      <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
     </nav>
   </header>
 
-  <section style="padding:3rem 2rem;background:#f8f9fa;text-align:center;">
-    <h1 style="color:#1a5fb4;font-size:2.5rem;margin-bottom:1rem;">أهم الميزات</h1>
-    <p style="font-size:1.2rem;color:#7f8c8d;margin-bottom:3rem;">نوفر لك كل ما تحتاجه بسهولة وأمان</p>
+  <section class="page-hero">
+    <div class="hero-content">
+      <h1 class="fade-in-up">مميزات دورلي</h1>
+      <p class="fade-in-up delay-1">اكتشف لماذا نتميز عن غيرنا في خدمتنا</p>
+    </div>
+  </section>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;max-width:1200px;margin:0 auto;">
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-shield-alt" style="font-size:3rem;color:#1a5fb4;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">موثوقية عالية</h3>
-        <p style="color:#7f8c8d;">نوفر وكلاء موثوقين لتلبية طلباتك بأمان تام.</p>
+  <section class="features-detailed">
+    <div class="container">
+      <div class="feature-main fade-in-up">
+        <div class="feature-image">
+          <i class="fas fa-search-location"></i>
+        </div>
+        <div class="feature-text">
+          <h2>البحث الشامل</h2>
+          <p>نبحث في جميع المدن الليبية عن أي منتج تطلبه، حتى لو كان نادراً أو غير متوفر في مدينتك. فريقنا من الباحثين المدربين يغطي جميع الأسواق والمتاجر.</p>
+          <ul class="feature-list">
+            <li><i class="fas fa-check"></i> تغطية جميع المدن الليبية</li>
+            <li><i class="fas fa-check"></i> بحث في الأسواق التقليدية والإلكترونية</li>
+            <li><i class="fas fa-check"></i> مقارنة الأسعار والجودة</li>
+            <li><i class="fas fa-check"></i> تأكيد توفر المنتج قبل الشراء</li>
+          </ul>
+        </div>
       </div>
 
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-bolt" style="font-size:3rem;color:#239b56;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">أسرع خدمة</h3>
-        <p style="color:#7f8c8d;">تسليم سريع ومتابعة دقيقة لطلبك.</p>
+      <div class="feature-main fade-in-up delay-1">
+        <div class="feature-text">
+          <h2>الجودة المضمونة</h2>
+          <p>نحرص على فحص جودة المنتجات قبل شرائها وتوصيلها لك. فريق الجودة لدينا يتأكد من أن كل منتج يطابق المواصفات المطلوبة.</p>
+          <ul class="feature-list">
+            <li><i class="fas fa-check"></i> فحص الجودة قبل الشراء</li>
+            <li><i class="fas fa-check"></i> التأكد من سلامة المنتج</li>
+            <li><i class="fas fa-check"></i> فحص تاريخ الصلاحية للمواد الغذائية</li>
+            <li><i class="fas fa-check"></i> ضمان استبدال المنتج المعيب</li>
+          </ul>
+        </div>
+        <div class="feature-image">
+          <i class="fas fa-award"></i>
+        </div>
       </div>
 
-      <div style="background:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);transition:all 0.3s;">
-        <i class="fas fa-star" style="font-size:3rem;color:#f39c12;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">تجربة مميزة</h3>
-        <p style="color:#7f8c8d;">سهولة الاستخدام ودعم مباشر للعملاء.</p>
-      </div>
-
-      <div style="background:linear-gradient(135deg,#1a5fb4,#239b56);color:#fff;padding:2rem;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.15);border:2px solid #e74c3c;transition:all 0.3s;">
-        <i class="fas fa-magic" style="font-size:3rem;margin-bottom:1rem;"></i>
-        <h3 style="margin-bottom:0.5rem;">نوفر أي شيء تحتاجه</h3>
-        <p>مهما كان طلبك، نبحث عنه ونوفره لك من أي مكان في ليبيا.</p>
+      <div class="feature-main fade-in-up delay-2">
+        <div class="feature-image">
+          <i class="fas fa-shipping-fast"></i>
+        </div>
+        <div class="feature-text">
+          <h2>التوصيل السريع</h2>
+          <p>نوصل طلباتك في أسرع وقت ممكن بفضل شبكتنا الواسعة من الموزعين والوسطاء في جميع المدن الليبية.</p>
+          <ul class="feature-list">
+            <li><i class="fas fa-check"></i> توصيل لجميع المدن الليبية</li>
+            <li><i class="fas fa-check"></i> وقت توصيل محدد مسبقاً</li>
+            <li><i class="fas fa-check"></i> إشعارات بمكان الشحنة</li>
+            <li><i class="fas fa-check"></i> توصيل آمن ومضمون</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <footer style="background:#2c3e50;color:#fff;text-align:center;padding:2rem;">
-    <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
-    <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem;">
-      <a href="https://wa.me/218946507954" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fab fa-whatsapp"></i>
-      </a>
-      <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fab fa-facebook"></i>
-      </a>
-      <a href="mailto:Albarshi.96@gmail.com" style="color:#fff;font-size:1.5rem;width:45px;height:45px;border-radius:50%;background:#1a5fb4;display:flex;align-items:center;justify-content:center;text-decoration:none;">
-        <i class="fas fa-envelope"></i>
-      </a>
+  <section class="advantages-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>مزايا إضافية</h2>
+        <p>نقدم لك أكثر مما تتوقع</p>
+      </div>
+      <div class="advantages-grid">
+        <div class="advantage-card fade-in-up">
+          <div class="advantage-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>أمان في الدفع</h3>
+          <p>نظام دفع آمن مع خيارات متعددة تناسب جميع العملاء</p>
+        </div>
+        <div class="advantage-card fade-in-up delay-1">
+          <div class="advantage-icon">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h3>دعم فني 24/7</h3>
+          <p>فريق دعم فني متاح على مدار الساعة لمساعدتك</p>
+        </div>
+        <div class="advantage-card fade-in-up delay-2">
+          <div class="advantage-icon">
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <h3>مرونة في الطلبات</h3>
+          <p>يمكنك تعديل أو إلغاء طلبك في أي وقت قبل الشحن</p>
+        </div>
+        <div class="advantage-card fade-in-up delay-3">
+          <div class="advantage-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <h3>أسعار تنافسية</h3>
+          <p>نوفر لك أفضل الأسعار مع الحفاظ على الجودة</p>
+        </div>
+        <div class="advantage-card fade-in-up">
+          <div class="advantage-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>حماية البيانات</h3>
+          <p>بياناتك الشخصية محمية ولا نشاركها مع أي طرف ثالث</p>
+        </div>
+        <div class="advantage-card fade-in-up delay-1">
+          <div class="advantage-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3>خدمة سريعة</h3>
+          <p>معالجة الطلبات في وقت قياسي لا يتجاوز 24 ساعة</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>آراء عملائنا</h2>
+        <p>ماذا يقول عملاؤنا عن خدماتنا</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-in-up">
+          <div class="testimonial-content">
+            <p>"خدمة رائعة! حصلت على الدواء النادر الذي كنت أبحث عنه لأسابيع في يومين فقط."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">أحمد منصور</div>
+            <div class="author-location">طرابلس</div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in-up delay-1">
+          <div class="testimonial-content">
+            <p>"شكراً لدورلي على توفير قطع الغيار لشاحنتي من بنغازي إلى سبها بأسعار معقولة."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">محمد الفرجاني</div>
+            <div class="author-location">سبها</div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in-up delay-2">
+          <div class="testimonial-content">
+            <p>"لم أتوقع أن أحصل على الحلويات التقليدية من زليتن وأنا في البيضاء. شكراً لدورلي!"</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">فاطمة عبدالله</div>
+            <div class="author-location">البيضاء</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2 class="fade-in-up">جرب مميزات دورلي بنفسك</h2>
+      <p class="fade-in-up delay-1">انضم إلى آلاف العملاء الراضين عن خدماتنا</p>
+      <div class="cta-buttons fade-in-up delay-2">
+        <a href="request.html" class="hero-btn">
+          <i class="fas fa-paper-plane"></i> ابدأ طلبك الآن
+        </a>
+        <a href="contact.html" class="hero-btn secondary">
+          <i class="fas fa-question-circle"></i> استفسر عن المزيد
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>عن دورلي</h3>
+        <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
+        <div class="social-links">
+          <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
+          <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+          <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
+          <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
+          <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
+          <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>تواصل معنا</h3>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span>0946507954</span>
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-whatsapp"></i>
+            <span>0946507954</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>Albarshi.96@gmail.com</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>ليبيا</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
     </div>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
