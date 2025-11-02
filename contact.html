@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="تواصل مع دورلي - نحن هنا لخدمتك على مدار الساعة" />
+  <meta name="keywords" content="تواصل دورلي، اتصل بنا، واتساب دورلي، فيسبوك دورلي" />
   <title>دورلي - تواصل معنا</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -13,7 +15,7 @@
     <div class="logo">
       <i class="fas fa-link"></i> دورلي
     </div>
-    <nav>
+    <nav id="mainNav">
       <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
       <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
       <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
@@ -21,6 +23,9 @@
       <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
       <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
     </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+      <i class="fas fa-bars"></i>
+    </button>
   </header>
 
   <section class="page-hero">
@@ -190,7 +195,7 @@
           <div class="location-icon">
             <i class="fas fa-desert"></i>
           </div>
-          <h3>كفرة</h4>
+          <h3>كفرة</h3>
           <p>خدمات متميزة للمنطقة</p>
           <span class="delivery-time">توصيل خلال 72-96 ساعة</span>
         </div>
@@ -265,54 +270,56 @@
   </section>
 
   <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>عن دورلي</h3>
-        <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
-        <div class="social-links">
-          <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
-          <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
-          <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
-          <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>عن دورلي</h3>
+          <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
+          <div class="social-links">
+            <a href="https://wa.me/218946507954" target="_blank" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook"></i></a>
+            <a href="mailto:Albarshi.96@gmail.com" aria-label="البريد الإلكتروني"><i class="fas fa-envelope"></i></a>
+            <a href="tel:+218946507954" aria-label="هاتف"><i class="fas fa-phone"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h3>روابط سريعة</h3>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
+            <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
+            <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
+            <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>تواصل معنا</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>0946507954</span>
+            </div>
+            <div class="contact-item">
+              <i class="fab fa-whatsapp"></i>
+              <span>0946507954</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>Albarshi.96@gmail.com</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>ليبيا</span>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class="footer-section">
-        <h3>روابط سريعة</h3>
-        <ul class="footer-links">
-          <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-          <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
-          <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
-          <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
-          <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
-        </ul>
+      <div class="copyright">
+        <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
       </div>
-      
-      <div class="footer-section">
-        <h3>تواصل معنا</h3>
-        <div class="contact-info">
-          <div class="contact-item">
-            <i class="fas fa-phone"></i>
-            <span>0946507954</span>
-          </div>
-          <div class="contact-item">
-            <i class="fab fa-whatsapp"></i>
-            <span>0946507954</span>
-          </div>
-          <div class="contact-item">
-            <i class="fas fa-envelope"></i>
-            <span>Albarshi.96@gmail.com</span>
-          </div>
-          <div class="contact-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>ليبيا</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="copyright">
-      <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
     </div>
   </footer>
 
