@@ -4,17 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="خدمات دورلي الرئيسية - توفير جميع المنتجات والخدمات من أي مدينة ليبية" />
+  <meta name="keywords" content="خدمات دورلي، توصيل ليبيا، شراء من ليبيا، منتجات ليبية، خدمات توصيل، قطع غيار، مواد غذائية، مستندات، أدوية، توصيل شحنات" />
+  <meta name="author" content="دورلي" />
   <title>دورلي - خدماتنا الرئيسية</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <!-- Structured Data for Services -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "دورلي - خدمات الوساطة التجارية",
+    "description": "خدمات توفير المنتجات والخدمات من أي مدينة ليبية",
+    "provider": {
+      "@type": "Organization",
+      "name": "دورلي"
+    },
+    "areaServed": "ليبيا",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "خدمات دورلي",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "الأدوية والمستلزمات الطبية"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "خدمات التوصيل والشحن"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "المواد الغذائية"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "إجراءات المستندات"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "مستلزمات أفراح وخياطة"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "مواد البناء"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "تنظيف وعطور ومكياج"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "ملابس وأزياء"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "خدمة حسب الطلب"
+          }
+        }
+      ]
+    }
+  }
+  </script>
 </head>
 <body>
+  <!-- الهيدر -->
   <header>
     <div class="logo">
       <i class="fas fa-link"></i> دورلي
     </div>
-    <nav>
+    <nav id="mainNav">
       <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
       <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
       <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
@@ -22,8 +108,12 @@
       <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
       <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
     </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة">
+      <i class="fas fa-bars"></i>
+    </button>
   </header>
 
+  <!-- قسم البطل -->
   <section class="page-hero">
     <div class="hero-content">
       <h1 class="fade-in-up">خدماتنا الشاملة</h1>
@@ -31,75 +121,139 @@
     </div>
   </section>
 
+  <!-- قسم خدمات البحث السريع -->
+  <section class="quick-search-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>ابحث عن خدمة سريعة</h2>
+        <p>اختر من الخدمات الأكثر طلباً</p>
+      </div>
+      <div class="quick-search-grid">
+        <a href="#medicines" class="quick-search-item fade-in-up">
+          <div class="search-icon">
+            <i class="fas fa-pills"></i>
+          </div>
+          <span>أدوية ومستلزمات طبية</span>
+        </a>
+        <a href="#delivery" class="quick-search-item fade-in-up delay-1">
+          <div class="search-icon">
+            <i class="fas fa-shipping-fast"></i>
+          </div>
+          <span>خدمات التوصيل والشحن</span>
+        </a>
+        <a href="#food" class="quick-search-item fade-in-up delay-2">
+          <div class="search-icon">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <span>مواد غذائية</span>
+        </a>
+        <a href="#documents" class="quick-search-item fade-in-up delay-3">
+          <div class="search-icon">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <span>مستندات رسمية</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم فئات الخدمات -->
   <section class="services-categories">
     <div class="container">
       <div class="categories-grid">
-        <!-- قطع غيار السيارات -->
-        <div class="category-card fade-in-up">
-          <div class="category-header car-parts">
-            <i class="fas fa-car"></i>
-            <h3>قطع غيار السيارات</h3>
+        <!-- الأدوية والمستلزمات الطبية -->
+        <div class="category-card fade-in-up" id="medicines">
+          <div class="category-header medicine">
+            <i class="fas fa-pills"></i>
+            <h3>الأدوية والمستلزمات الطبية</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20قطع%20غيار%20أصلية%20للسيارة" target="_blank" class="service-link">
-              <i class="fas fa-cog"></i> قطع غيار أصلية
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوية%20وصفات%20طبية" target="_blank" class="service-link" data-service="أدوية بوصفات طبية">
+              <i class="fas fa-prescription-bottle"></i> أدوية بوصفات طبية
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوات%20صيانة%20سيارات" target="_blank" class="service-link">
-              <i class="fas fa-tools"></i> أدوات صيانة
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوية%20بدون%20وصفة" target="_blank" class="service-link" data-service="أدوية بدون وصفة">
+              <i class="fas fa-capsules"></i> أدوية بدون وصفة
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20إطارات%20وبطاريات%20سيارات" target="_blank" class="service-link">
-              <i class="fas fa-battery-full"></i> إطارات وبطاريات
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مستلزمات%20طبية%20وأجهزة" target="_blank" class="service-link" data-service="مستلزمات طبية">
+              <i class="fas fa-stethoscope"></i> مستلزمات طبية
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مكملات%20غذائية%20وفيتامينات" target="_blank" class="service-link" data-service="مكملات غذائية">
+              <i class="fas fa-heartbeat"></i> مكملات غذائية
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوية%20مزمنة%20ونادرة" target="_blank" class="service-link" data-service="أدوية مزمنة ونادرة">
+              <i class="fas fa-clinic-medical"></i> أدوية مزمنة ونادرة
             </a>
           </div>
         </div>
 
-        <!-- قطع غيار الشاحنات -->
-        <div class="category-card fade-in-up delay-1">
-          <div class="category-header truck-parts">
-            <i class="fas fa-truck"></i>
-            <h3>قطع غيار الشاحنات</h3>
+        <!-- خدمات التوصيل والشحن -->
+        <div class="category-card fade-in-up delay-1" id="delivery">
+          <div class="category-header delivery">
+            <i class="fas fa-shipping-fast"></i>
+            <h3>خدمات التوصيل والشحن</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20قطع%20غيار%20شاحنات%20ثقيلة" target="_blank" class="service-link">
-              <i class="fas fa-wrench"></i> قطع شاحنات ثقيلة
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20توصيل%20بين%20المدن" target="_blank" class="service-link" data-service="توصيل بين المدن">
+              <i class="fas fa-truck-moving"></i> توصيل بين المدن
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بطاريات%20وإطارات%20للشاحنات" target="_blank" class="service-link">
-              <i class="fas fa-tire"></i> بطاريات وإطارات
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20استلام%20شحنات" target="_blank" class="service-link" data-service="استلام شحنات">
+              <i class="fas fa-dolly"></i> استلام شحنات
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20تسليم%20شحنات" target="_blank" class="service-link" data-service="تسليم شحنات">
+              <i class="fas fa-box-open"></i> تسليم شحنات
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20توصيل%20عاجل%24سريع" target="_blank" class="service-link" data-service="توصيل عاجل">
+              <i class="fas fa-clock"></i> توصيل عاجل
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20تتبع%20الشحنات" target="_blank" class="service-link" data-service="تتبع الشحنات">
+              <i class="fas fa-map-marked-alt"></i> تتبع الشحنات
             </a>
           </div>
         </div>
 
         <!-- المواد الغذائية -->
-        <div class="category-card fade-in-up delay-2">
+        <div class="category-card fade-in-up delay-2" id="food">
           <div class="category-header food-items">
             <i class="fas fa-utensils"></i>
             <h3>مواد غذائية مميزة</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتجات%20محلية%20مميزة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20لحوم%20وطيور%20طازجة" target="_blank" class="service-link" data-service="لحوم وطيور">
+              <i class="fas fa-drumstick-bite"></i> لحوم وطيور
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مجمدات%20و frozen%20foods" target="_blank" class="service-link" data-service="مجمدات">
+              <i class="fas fa-ice-cream"></i> مجمدات
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خضروات%20وفواكه%20طازجة" target="_blank" class="service-link" data-service="خضروات وفواكه">
+              <i class="fas fa-carrot"></i> خضروات وفواكه
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتجات%20محلية%20مميزة" target="_blank" class="service-link" data-service="منتجات محلية">
               <i class="fas fa-cheese"></i> منتجات محلية
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20حلويات%20خاصة%20ومميزة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20حلويات%20خاصة%20ومميزة" target="_blank" class="service-link" data-service="حلويات خاصة">
               <i class="fas fa-cookie-bite"></i> حلويات خاصة
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتجات%20طازجة%20وموسمية" target="_blank" class="service-link">
-              <i class="fas fa-apple-alt"></i> منتجات طازجة
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بهارات%20وتوابل%20محلية" target="_blank" class="service-link" data-service="بهارات وتوابل">
+              <i class="fas fa-mortar-pestle"></i> بهارات وتوابل
             </a>
           </div>
         </div>
 
         <!-- إجراءات المستندات -->
-        <div class="category-card fade-in-up">
+        <div class="category-card fade-in-up" id="documents">
           <div class="category-header documents">
             <i class="fas fa-file-alt"></i>
             <h3>إجراءات المستندات</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20إنجاز%20معاملات%20حكومية%20ورسمية" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20إنجاز%20معاملات%20حكومية%20ورسمية" target="_blank" class="service-link" data-service="أوراق رسمية">
               <i class="fas fa-stamp"></i> أوراق رسمية
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20تصديق%20وتوثيق%20مستندات" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20تصديق%20وتوثيق%20مستندات" target="_blank" class="service-link" data-service="تصديق وثائق">
               <i class="fas fa-clipboard-check"></i> تصديق وثائق
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20ترجمة%20مستندات%20رسمية" target="_blank" class="service-link" data-service="ترجمة مستندات">
+              <i class="fas fa-language"></i> ترجمة مستندات
             </a>
           </div>
         </div>
@@ -111,11 +265,14 @@
             <h3>أفراح وخياطة</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مستلزمات%20أفراح%20ومناسبات" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مستلزمات%20أفراح%20ومناسبات" target="_blank" class="service-link" data-service="مستلزمات الأفراح">
               <i class="fas fa-ring"></i> مستلزمات الأفراح
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أقمشة%20فاخرة%20وخدمات%20خياطة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أقمشة%20فاخرة%20وخدمات%20خياطة" target="_blank" class="service-link" data-service="أقمشة وخياطة">
               <i class="fas fa-cut"></i> أقمشة وخياطة
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20هدايا%20وزينة%20حفلات" target="_blank" class="service-link" data-service="هدايا وزينة">
+              <i class="fas fa-gift"></i> هدايا وزينة
             </a>
           </div>
         </div>
@@ -127,11 +284,14 @@
             <h3>مواد البناء</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20بناء%20%28أسمنت%2C%20حديد%2C%20إلخ%29" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20بناء%20%28أسمنت%2C%20حديد%2C%20إلخ%29" target="_blank" class="service-link" data-service="مواد بناء خام">
               <i class="fas fa-cubes"></i> مواد خام
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20دهانات%20وأدوات%20تشطيب%20وديكور" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20دهانات%20وأدوات%20تشطيب%20وديكور" target="_blank" class="service-link" data-service="أدوات التشطيب">
               <i class="fas fa-paint-roller"></i> أدوات التشطيب
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أدوات%20كهربائية%20وإنارة" target="_blank" class="service-link" data-service="أدوات كهربائية">
+              <i class="fas fa-lightbulb"></i> أدوات كهربائية
             </a>
           </div>
         </div>
@@ -143,11 +303,14 @@
             <h3>تنظيف وعطور ومكياج</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20تنظيف%20عالية%20الجودة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20مواد%20تنظيف%20عالية%20الجودة" target="_blank" class="service-link" data-service="مواد التنظيف">
               <i class="fas fa-pump-soap"></i> مواد التنظيف
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20عطور%20أصلية%20ومكياج%20من%20ماركات%20معروفة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20عطور%20أصلية%20ومكياج%20من%20ماركات%20معروفة" target="_blank" class="service-link" data-service="عطور ومكياج">
               <i class="fas fa-magic"></i> عطور ومكياج
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتجات%20عناية%20بالبشرة%20والشعر" target="_blank" class="service-link" data-service="عناية شخصية">
+              <i class="fas fa-spa"></i> عناية شخصية
             </a>
           </div>
         </div>
@@ -159,11 +322,14 @@
             <h3>ملابس وأزياء</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20ملابس%20رجالية%20وأزياء%20رسمية" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20ملابس%20رجالية%20وأزياء%20رسمية" target="_blank" class="service-link" data-service="ملابس رجالية">
               <i class="fas fa-user-tie"></i> ملابس رجالية
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أزياء%20نسائية%20عصرية%20وتراثية" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20أزياء%20نسائية%20عصرية%20وتراثية" target="_blank" class="service-link" data-service="ملابس نسائية">
               <i class="fas fa-female"></i> ملابس نسائية
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20ملابس%20أطفال%20وأحذية" target="_blank" class="service-link" data-service="ملابس أطفال">
+              <i class="fas fa-child"></i> ملابس أطفال
             </a>
           </div>
         </div>
@@ -175,11 +341,17 @@
             <h3>خدمة حسب الطلب</h3>
           </div>
           <div class="category-services">
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بحث%20مخصص%20عن%20منتج%20معين" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20قطع%20غيار%20سيارات" target="_blank" class="service-link" data-service="قطع غيار سيارات">
+              <i class="fas fa-car"></i> قطع غيار سيارات
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20بحث%20مخصص%20عن%20منتج%20معين" target="_blank" class="service-link" data-service="بحث مخصص">
               <i class="fas fa-search-plus"></i> بحث مخصص
             </a>
-            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20شخصية%20مميزة" target="_blank" class="service-link">
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20خدمة%20شخصية%20مميزة" target="_blank" class="service-link" data-service="خدمة مميزة">
               <i class="fas fa-concierge-bell"></i> خدمة مميزة
+            </a>
+            <a href="https://wa.me/218946507954?text=مرحبا%20دورلي%20ابحث%20عن%20منتج%20غير%20مدرج%20في%20القائمة" target="_blank" class="service-link" data-service="منتجات خاصة">
+              <i class="fas fa-gem"></i> منتجات خاصة
             </a>
           </div>
         </div>
@@ -187,6 +359,7 @@
     </div>
   </section>
 
+  <!-- قسم العروض الخاصة -->
   <section class="special-offers">
     <div class="container">
       <div class="section-header fade-in-up">
@@ -216,6 +389,48 @@
     </div>
   </section>
 
+  <!-- قسم الأسئلة الشائعة للخدمات -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>أسئلة شائعة عن الخدمات</h2>
+        <p>إجابات على الأسئلة الأكثر شيوعاً حول خدماتنا</p>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item fade-in-up">
+          <div class="faq-question">
+            <h4>هل يمكنني طلب أدوية بوصفات طبية؟</h4>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>نعم، يمكننا توفير الأدوية التي تتطلب وصفات طبية. نحن نتعامل مع الصيدليات المرخصة ونتأكد من صحة الوصفات الطبية قبل توفير الأدوية.</p>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in-up delay-1">
+          <div class="faq-question">
+            <h4>كيف يتم توصيل المواد الغذائية القابلة للتلف؟</h4>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>نستخدم وسائل تبريد مناسبة للحفاظ على جودة المواد الغذائية القابلة للتلف. اللحوم والمجمدات تنقل في ثلاجات متنقلة لضمان وصولها بحالة ممتازة.</p>
+          </div>
+        </div>
+
+        <div class="faq-item fade-in-up delay-2">
+          <div class="faq-question">
+            <h4>هل تقدمون خدمة التوصيل العاجل للشحنات؟</h4>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">
+            <p>نعم، نوفر خدمة توصيل عاجل للشحنات المهمة. يمكن توصيل الشحنات العاجلة خلال 24 ساعة في معظم المدن الليبية.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم الدعوة للعمل -->
   <section class="cta-section">
     <div class="cta-content">
       <h2 class="fade-in-up">لا تجد ما تبحث عنه؟</h2>
@@ -231,58 +446,132 @@
     </div>
   </section>
 
+  <!-- الفوتر -->
   <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>عن دورلي</h3>
-        <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
-        <div class="social-links">
-          <a href="https://wa.me/218946507954" target="_blank"><i class="fab fa-whatsapp"></i></a>
-          <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank"><i class="fab fa-facebook"></i></a>
-          <a href="mailto:Albarshi.96@gmail.com"><i class="fas fa-envelope"></i></a>
-          <a href="tel:+218946507954"><i class="fas fa-phone"></i></a>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>عن دورلي</h3>
+          <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
+          <div class="social-links">
+            <a href="https://wa.me/218946507954" target="_blank" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook"></i></a>
+            <a href="mailto:Albarshi.96@gmail.com" aria-label="البريد الإلكتروني"><i class="fas fa-envelope"></i></a>
+            <a href="tel:+218946507954" aria-label="هاتف"><i class="fas fa-phone"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h3>روابط سريعة</h3>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
+            <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
+            <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
+            <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>تواصل معنا</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>0946507954</span>
+            </div>
+            <div class="contact-item">
+              <i class="fab fa-whatsapp"></i>
+              <span>0946507954</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>Albarshi.96@gmail.com</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>ليبيا</span>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class="footer-section">
-        <h3>روابط سريعة</h3>
-        <ul class="footer-links">
-          <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-          <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
-          <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
-          <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
-          <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
-        </ul>
+      <div class="copyright">
+        <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
       </div>
-      
-      <div class="footer-section">
-        <h3>تواصل معنا</h3>
-        <div class="contact-info">
-          <div class="contact-item">
-            <i class="fas fa-phone"></i>
-            <span>0946507954</span>
-          </div>
-          <div class="contact-item">
-            <i class="fab fa-whatsapp"></i>
-            <span>0946507954</span>
-          </div>
-          <div class="contact-item">
-            <i class="fas fa-envelope"></i>
-            <span>Albarshi.96@gmail.com</span>
-          </div>
-          <div class="contact-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>ليبيا</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="copyright">
-      <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
     </div>
   </footer>
 
   <script src="script.js"></script>
+
+  <style>
+    /* أنماط إضافية للبحث السريع */
+    .quick-search-section {
+      padding: 4rem 2rem;
+      background: var(--light);
+    }
+
+    .quick-search-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .quick-search-item {
+      background: var(--white);
+      padding: 2rem 1.5rem;
+      border-radius: var(--border-radius-lg);
+      text-decoration: none;
+      color: var(--dark);
+      text-align: center;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--light-gray);
+    }
+
+    .quick-search-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      color: var(--primary);
+    }
+
+    .search-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      transition: var(--transition);
+    }
+
+    .quick-search-item:hover .search-icon {
+      transform: scale(1.1);
+      color: var(--secondary);
+    }
+
+    .quick-search-item span {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    /* ألوان جديدة للفئات */
+    .medicine { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .delivery { background: linear-gradient(135deg, #059669, #047857); }
+
+    @media (max-width: 768px) {
+      .quick-search-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .quick-search-item {
+        padding: 1.5rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quick-search-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </body>
 </html>
