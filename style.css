@@ -2605,3 +2605,94 @@ footer::before {
   opacity: 1;
   transform: translateY(0);
 }
+/* أضف هذه الأنماط في نهاية الملف */
+
+/* أنماط إضافية للجدول الزمني */
+.timeline-section {
+  padding: 5rem 2rem;
+  background: var(--white);
+}
+
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.timeline-card {
+  background: var(--light);
+  padding: 2.5rem 2rem;
+  border-radius: var(--border-radius-lg);
+  text-align: center;
+  transition: var(--transition);
+  border: 1px solid var(--light-gray);
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.timeline-icon {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+}
+
+.timeline-card:hover .timeline-icon {
+  color: var(--secondary);
+  transform: scale(1.1);
+}
+
+.timeline-card h3 {
+  color: var(--dark);
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.timeline-duration {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--white);
+  padding: 0.7rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.timeline-card p {
+  color: var(--dark-gray);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .timeline-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* تحسينات إضافية للاستجابة */
+@media (max-width: 768px) {
+  .timeline-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-grid {
+    grid-template-columns: 1fr;
+  }
+}
