@@ -55,16 +55,78 @@
   <!-- قسم الهيرو -->
   <section class="hero">
     <div class="hero-content">
-      <h1 class="fade-in-up">مرحباً بك في دورلي</h1>
-      <h2 class="fade-in-up delay-1">حلقة الوصل بينك وبين كل ما تحتاج</h2>
-      <p class="fade-in-up delay-2">نوفر لك أي منتج أو خدمة من أي مدينة ليبية بسرعة وأمان. مهما كان طلبك، نبحث عنه ونوفره لك.</p>
+      <h1 class="fade-in-up">حلقة الوصل بينك وبين كل ما تحتاج</h1>
+      <h2 class="fade-in-up delay-1">مهما كان طلبك، نبحث عنه ونوفره لك</h2>
+      <p class="fade-in-up delay-2">نوفر لك أي منتج أو خدمة من أي مدينة ليبية بسرعة وأمان. انضم إلى آلاف العملاء الراضين عن خدماتنا.</p>
       <div class="hero-buttons fade-in-up delay-3">
-        <a href="services.html" class="hero-btn">
-          <i class="fas fa-cogs"></i> تصفح جميع الخدمات
+        <a href="#quick-order" class="hero-btn">
+          <i class="fas fa-bolt"></i> ابدأ طلبك السريع
         </a>
-        <a href="how-it-works.html" class="hero-btn secondary">
-          <i class="fas fa-play-circle"></i> شاهد كيف يعمل
+        <a href="services.html" class="hero-btn secondary">
+          <i class="fas fa-cogs"></i> استعرض الخدمات
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- نموذج الطلب السريع -->
+  <section id="quick-order" class="quick-order-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>اطلب الآن بسهولة</h2>
+        <p>املأ النموذج وسنتصل بك خلال دقائق</p>
+      </div>
+      <div class="quick-order-form fade-in-up delay-1">
+        <form id="quickOrderForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quickName"><i class="fas fa-user"></i> الاسم الكامل *</label>
+              <input type="text" id="quickName" name="quickName" required placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+              <label for="quickPhone"><i class="fas fa-phone"></i> رقم الهاتف *</label>
+              <input type="tel" id="quickPhone" name="quickPhone" required placeholder="09xxxxxxxx">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quickCity"><i class="fas fa-map-marker-alt"></i> المدينة *</label>
+              <select id="quickCity" name="quickCity" required>
+                <option value="">اختر مدينتك</option>
+                <option value="طرابلس">طرابلس</option>
+                <option value="بنغازي">بنغازي</option>
+                <option value="مصراتة">مصراتة</option>
+                <option value="سبها">سبها</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quickService"><i class="fas fa-tags"></i> نوع الخدمة *</label>
+              <select id="quickService" name="quickService" required>
+                <option value="">اختر الخدمة</option>
+                <option value="أدوية ومستلزمات طبية">أدوية ومستلزمات طبية</option>
+                <option value="مواد غذائية">مواد غذائية</option>
+                <option value="قطع غيار سيارات">قطع غيار سيارات</option>
+                <option value="مستندات رسمية">مستندات رسمية</option>
+                <option value="خدمات توصيل">خدمات توصيل</option>
+                <option value="أخرى">أخرى</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="quickDetails"><i class="fas fa-edit"></i> تفاصيل الطلب *</label>
+            <textarea id="quickDetails" name="quickDetails" rows="3" required placeholder="صف ما تريد بالتفصيل..."></textarea>
+          </div>
+
+          <div class="form-submit">
+            <button type="submit" class="submit-btn">
+              <i class="fab fa-whatsapp"></i> أرسل الطلب عبر واتساب
+            </button>
+            <p class="form-note">سنقوم بالاتصال بك خلال 30 دقيقة لتأكيد الطلب</p>
+          </div>
+        </form>
       </div>
     </div>
   </section>
@@ -115,22 +177,22 @@
           <div class="feature-icon">
             <i class="fas fa-search"></i>
           </div>
-          <h3>نبحث لك</h3>
-          <p>نبحث عن أي شيء تحتاجه في جميع المدن الليبية، حتى لو كان غير متوفر في مدينتك</p>
+          <h3>نبحث لك في كل مكان</h3>
+          <p>نبحث عن أي شيء تحتاجه في جميع المدن الليبية، حتى لو كان نادراً أو غير متوفر في مدينتك</p>
         </div>
         <div class="feature-card fade-in-up delay-1">
           <div class="feature-icon">
-            <i class="fas fa-shopping-cart"></i>
+            <i class="fas fa-shield-alt"></i>
           </div>
-          <h3>نشتري لك</h3>
-          <p>نشتري لك المنتج بأفضل سعر ونتأكد من جودته قبل الشحن</p>
+          <h3>جودة مضمونة</h3>
+          <p>نتأكد من جودة المنتج قبل الشراء ونضمن لك استبداله في حال وجود أي عيوب</p>
         </div>
         <div class="feature-card fade-in-up delay-2">
           <div class="feature-icon">
             <i class="fas fa-shipping-fast"></i>
           </div>
-          <h3>نوصل لك</h3>
-          <p>نوصل طلبك إلى باب منزلك في أسرع وقت ممكن وبأمان تام</p>
+          <h3>توصيل سريع وآمن</h3>
+          <p>نوصل طلبك إلى باب منزلك في أسرع وقت ممكن وبأمان تام مع إمكانية تتبع الشحنة</p>
         </div>
       </div>
     </div>
@@ -147,29 +209,68 @@
         <div class="step fade-in-up">
           <div class="step-number">1</div>
           <div class="step-content">
-            <h3>اختر منتجك</h3>
-            <p>حدد المنتج أو الخدمة التي تريدها من أي مدينة ليبية</p>
+            <h3>أرسل طلبك</h3>
+            <p>اختر المنتج أو الخدمة التي تريدها من أي مدينة ليبية</p>
           </div>
         </div>
         <div class="step fade-in-up delay-1">
           <div class="step-number">2</div>
           <div class="step-content">
-            <h3>تواصل مع الوسيط</h3>
-            <p>يتواصل معك أحد وكلائنا الموثوقين لتأكيد التفاصيل والسعر</p>
+            <h3>نتواصل معك</h3>
+            <p>نتصل بك لتأكيد التفاصيل والسعر النهائي</p>
           </div>
         </div>
         <div class="step fade-in-up delay-2">
           <div class="step-number">3</div>
           <div class="step-content">
-            <h3>شراء المنتج</h3>
-            <p>نشتري المنتج حسب مواصفاتك ومن العنوان الذي تحدده</p>
+            <h3>نشتري المنتج</h3>
+            <p>نشتري المنتج حسب مواصفاتك ونتأكد من جودته</p>
           </div>
         </div>
         <div class="step fade-in-up delay-3">
           <div class="step-number">4</div>
           <div class="step-content">
-            <h3>استلام المنتج</h3>
+            <h3>استلم طلبك</h3>
             <p>يتم تسليم المنتج لك في مدينتك بأمان وسرعة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم شهادات العملاء -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header fade-in-up">
+        <h2>ماذا يقول عملاؤنا؟</h2>
+        <p>انضم إلى آلاف العملاء الراضين عن خدماتنا</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-in-up">
+          <div class="testimonial-content">
+            <p>"خدمة رائعة! حصلت على الدواء النادر الذي كنت أبحث عنه لأسابيع في يومين فقط. شكراً لدورلي!"</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">أحمد منصور</div>
+            <div class="author-location">طرابلس</div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in-up delay-1">
+          <div class="testimonial-content">
+            <p>"شكراً لدورلي على توفير قطع الغيار لشاحنتي من بنغازي إلى سبها بأسعار معقولة وفي وقت قياسي."</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">محمد الفرجاني</div>
+            <div class="author-location">سبها</div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in-up delay-2">
+          <div class="testimonial-content">
+            <p>"لم أتوقع أن أحصل على الحلويات التقليدية من زليتن وأنا في البيضاء. شكراً لدورلي على الخدمة المميزة!"</p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-name">فاطمة عبدالله</div>
+            <div class="author-location">البيضاء</div>
           </div>
         </div>
       </div>
@@ -182,11 +283,11 @@
       <h2 class="fade-in-up">جاهز لطلب أول منتج لك؟</h2>
       <p class="fade-in-up delay-1">انضم إلى آلاف العملاء الراضين عن خدماتنا واطلب منتجك الآن</p>
       <div class="cta-buttons fade-in-up delay-2">
-        <a href="request.html" class="hero-btn">
-          <i class="fas fa-paper-plane"></i> اطلب الآن
+        <a href="#quick-order" class="hero-btn">
+          <i class="fas fa-paper-plane"></i> ابدأ طلبك الآن
         </a>
         <a href="contact.html" class="hero-btn secondary">
-          <i class="fas fa-question-circle"></i> اسألنا
+          <i class="fas fa-question-circle"></i> اسألنا مباشرة
         </a>
       </div>
     </div>
@@ -248,5 +349,120 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <style>
+    /* أنماط إضافية لنموذج الطلب السريع */
+    .quick-order-section {
+      padding: 5rem 2rem;
+      background: var(--white);
+    }
+
+    .quick-order-form {
+      background: var(--light);
+      padding: 3rem;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--light-gray);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .quick-order-form .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .quick-order-form .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .quick-order-form .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .quick-order-form label {
+      display: block;
+      color: var(--dark);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .quick-order-form input,
+    .quick-order-form select,
+    .quick-order-form textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      font-family: 'Tajawal', Arial, sans-serif;
+      font-size: 1rem;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .quick-order-form input:focus,
+    .quick-order-form select:focus,
+    .quick-order-form textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .quick-order-form .form-submit {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .quick-order-form {
+        padding: 2rem;
+      }
+      
+      .quick-order-form .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>
+    // إضافة وظيفة لنموذج الطلب السريع
+    document.addEventListener('DOMContentLoaded', function() {
+      const quickOrderForm = document.getElementById('quickOrderForm');
+      
+      if (quickOrderForm) {
+        quickOrderForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          // جمع بيانات النموذج
+          const formData = new FormData(this);
+          const data = Object.fromEntries(formData);
+          
+          // إنشاء رسالة واتساب
+          const whatsappMessage = `طلب سريع من دورلي:%0A%0A` +
+            `الاسم: ${data.quickName}%0A` +
+            `الهاتف: ${data.quickPhone}%0A` +
+            `المدينة: ${data.quickCity}%0A` +
+            `نوع الخدمة: ${data.quickService}%0A` +
+            `تفاصيل الطلب: ${data.quickDetails}`;
+          
+          // فتح واتساب
+          window.open(`https://wa.me/218946507954?text=${whatsappMessage}`, '_blank');
+          
+          // إظهار رسالة نجاح
+          if (typeof showNotification === 'function') {
+            showNotification('تم إرسال طلبك بنجاح! سنتواصل معك قريباً.', 'success');
+          }
+          
+          // إعادة تعيين النموذج
+          this.reset();
+        });
+      }
+    });
+  </script>
 </body>
 </html>
