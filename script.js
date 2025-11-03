@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initForms();
   initFAQ();
   initScrollToTop();
+  initQuickOrder(); // إضافة تهيئة نموذج الطلب السريع
 });
 
 // ==================== القائمة المتنقلة للموبايل ====================
@@ -156,6 +157,38 @@ function initForms() {
       
       // إظهار رسالة نجاح
       showNotification('تم إرسال رسالتك بنجاح! سنرد عليك في أقرب وقت.', 'success');
+      
+      // إعادة تعيين النموذج
+      this.reset();
+    });
+  }
+}
+
+// ==================== نموذج الطلب السريع ====================
+function initQuickOrder() {
+  const quickOrderForm = document.getElementById('quickOrderForm');
+  
+  if (quickOrderForm) {
+    quickOrderForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // جمع بيانات النموذج
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+      
+      // إنشاء رسالة واتساب
+      const whatsappMessage = `طلب سريع من دورلي:%0A%0A` +
+        `الاسم: ${data.quickName}%0A` +
+        `الهاتف: ${data.quickPhone}%0A` +
+        `المدينة: ${data.quickCity}%0A` +
+        `نوع الخدمة: ${data.quickService}%0A` +
+        `تفاصيل الطلب: ${data.quickDetails}`;
+      
+      // فتح واتساب
+      window.open(`https://wa.me/218946507954?text=${whatsappMessage}`, '_blank');
+      
+      // إظهار رسالة نجاح
+      showNotification('تم إرسال طلبك بنجاح! سنتواصل معك خلال 30 دقيقة.', 'success');
       
       // إعادة تعيين النموذج
       this.reset();
