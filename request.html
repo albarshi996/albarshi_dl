@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="نموذج طلب دورلي - أرسل طلبك الآن واحصل على ما تريد من أي مدينة ليبية" />
-  <meta name="keywords" content="طلب دورلي، نموذج طلب، شراء من ليبيا، توصيل سريع" />
-  <title>دورلي - نموذج الطلب</title>
+  <meta name="description" content="اطلب الآن من دورلي - احصل على أي منتج تريده من أي مدينة ليبية" />
+  <meta name="keywords" content="طلب دورلي، اطلب الآن، خدمة التوصيل، منتجات ليبيا" />
+  <title>دورلي - اطلب الآن</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -30,186 +30,262 @@
 
   <section class="page-hero">
     <div class="hero-content">
-      <h1 class="fade-in-up">أرسل طلبك الآن</h1>
-      <p class="fade-in-up delay-1">املأ النموذج وسنعاود الاتصال بك خلال دقائق</p>
+      <h1 class="fade-in-up">اطلب أي شيء تريده</h1>
+      <p class="fade-in-up delay-1">من أي مدينة ليبية إلى باب منزلك</p>
     </div>
   </section>
 
+  <!-- قسم نموذج الطلب -->
   <section class="request-form-section">
     <div class="container">
-      <div class="form-container fade-in-up">
-        <div class="form-header">
-          <h2><i class="fas fa-shopping-cart"></i> نموذج طلب جديد</h2>
-          <p>املأ البيانات التالية وسنقوم بالاتصال بك لتأكيد الطلب</p>
+      <div class="request-steps fade-in-up">
+        <div class="step active">
+          <div class="step-number">1</div>
+          <span>معلومات الطلب</span>
         </div>
-
-        <form id="orderForm" class="request-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="name"><i class="fas fa-user"></i> الاسم الكامل *</label>
-              <input type="text" id="name" name="name" required placeholder="أدخل اسمك الكامل">
-            </div>
-            <div class="form-group">
-              <label for="phone"><i class="fas fa-phone"></i> رقم الهاتف *</label>
-              <input type="tel" id="phone" name="phone" required placeholder="09xxxxxxxx" pattern="[0-9]{10}">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="city"><i class="fas fa-map-marker-alt"></i> المدينة *</label>
-              <select id="city" name="city" required>
-                <option value="">اختر مدينتك</option>
-                <option value="طرابلس">طرابلس</option>
-                <option value="بنغازي">بنغازي</option>
-                <option value="مصراتة">مصراتة</option>
-                <option value="سبها">سبها</option>
-                <option value="طبرق">طبرق</option>
-                <option value="البيضاء">البيضاء</option>
-                <option value="درنة">درنة</option>
-                <option value="زليتن">زليتن</option>
-                <option value="اجدابيا">اجدابيا</option>
-                <option value="غريان">غريان</option>
-                <option value="أخرى">أخرى</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="category"><i class="fas fa-tags"></i> فئة المنتج *</label>
-              <select id="category" name="category" required>
-                <option value="">اختر الفئة</option>
-                <option value="قطع غيار السيارات">قطع غيار السيارات</option>
-                <option value="قطع غيار الشاحنات">قطع غيار الشاحنات</option>
-                <option value="مواد غذائية">مواد غذائية</option>
-                <option value="مستندات وأوراق رسمية">مستندات وأوراق رسمية</option>
-                <option value="مستلزمات أفراح">مستلزمات أفراح</option>
-                <option value="مواد بناء">مواد بناء</option>
-                <option value="منتجات تجميل وعطور">منتجات تجميل وعطور</option>
-                <option value="ملابس وأزياء">ملابس وأزياء</option>
-                <option value="أخرى">أخرى</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group full-width">
-            <label for="product"><i class="fas fa-box"></i> تفاصيل المنتج المطلوب *</label>
-            <textarea id="product" name="product" rows="5" required placeholder="اكتب تفاصيل المنتج أو الخدمة التي تريدها... 
-
-مثال: 
-- اسم المنتج الدقيق
-- المواصفات المطلوبة
-- الكمية
-- أي معلومات إضافية"></textarea>
-          </div>
-
-          <div class="form-group full-width">
-            <label for="budget"><i class="fas fa-money-bill-wave"></i> الميزانية المتوقعة (اختياري)</label>
-            <input type="text" id="budget" name="budget" placeholder="المبلغ الذي تتوقعه للمنتج">
-          </div>
-
-          <div class="form-group full-width">
-            <label for="notes"><i class="fas fa-sticky-note"></i> ملاحظات إضافية (اختياري)</label>
-            <textarea id="notes" name="notes" rows="3" placeholder="أي ملاحظات إضافية أو متطلبات خاصة..."></textarea>
-          </div>
-
-          <div class="form-submit">
-            <button type="submit" class="submit-btn">
-              <i class="fab fa-whatsapp"></i> إرسال الطلب عبر واتساب
-            </button>
-            <p class="form-note">سيتم إرسال طلبك مباشرة إلى واتساب وسنتصل بك خلال 30 دقيقة</p>
-          </div>
-        </form>
+        <div class="step">
+          <div class="step-number">2</div>
+          <span>التوصيل والدفع</span>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <span>تأكيد الطلب</span>
+        </div>
       </div>
 
-      <div class="direct-contact fade-in-up delay-1">
-        <div class="contact-header">
-          <h3>أو تواصل معنا مباشرة</h3>
-          <p>اختر الطريقة التي تناسبك للتواصل معنا</p>
+      <form class="request-form fade-in-up delay-1">
+        <div class="form-section active">
+          <h3>معلومات الطلب الأساسية</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="productName">اسم المنتج / الخدمة المطلوبة *</label>
+              <input type="text" id="productName" name="productName" required placeholder="مثال: دواء معين، قطعة غيار، منتج غذائي...">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="productCategory">فئة المنتج *</label>
+              <select id="productCategory" name="productCategory" required>
+                <option value="">اختر فئة المنتج</option>
+                <option value="medical">منتجات طبية وأدوية</option>
+                <option value="electronics">إلكترونيات وأجهزة</option>
+                <option value="auto">قطع غيار سيارات</option>
+                <option value="food">مواد غذائية</option>
+                <option value="clothing">ملابس وأزياء</option>
+                <option value="home">منتجات منزلية</option>
+                <option value="books">كتب ومراجع</option>
+                <option value="other">أخرى</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="productDetails">مواصفات المنتج التفصيلية *</label>
+              <textarea id="productDetails" name="productDetails" rows="4" required placeholder="اذكر جميع المواصفات المطلوبة، الماركة، اللون، الحجم، الكمية، أي تفاصيل تساعدنا في البحث..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="maxPrice">أقصى سعر متوقع (اختياري)</label>
+              <input type="number" id="maxPrice" name="maxPrice" placeholder="أدخل الحد الأقصى للسعر الذي ترغب في دفعه">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="next-btn">التالي <i class="fas fa-arrow-left"></i></button>
+          </div>
         </div>
-        <div class="contact-methods">
-          <a href="https://wa.me/218946507954" class="contact-method whatsapp" target="_blank">
-            <div class="method-icon">
-              <i class="fab fa-whatsapp"></i>
-            </div>
-            <div class="method-info">
-              <h4>واتساب</h4>
-              <p>راسلنا مباشرة على واتساب</p>
-              <span class="method-detail">0946507954</span>
-            </div>
-          </a>
 
-          <a href="tel:0946507954" class="contact-method phone">
-            <div class="method-icon">
-              <i class="fas fa-phone"></i>
+        <div class="form-section">
+          <h3>معلومات التوصيل والدفع</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="sourceCity">المدينة المصدر *</label>
+              <select id="sourceCity" name="sourceCity" required>
+                <option value="">اختر المدينة المصدر</option>
+                <option value="any">أي مدينة (ابحث في جميع المدن)</option>
+                <option value="tripoli">طرابلس</option>
+                <option value="benghazi">بنغازي</option>
+                <option value="misurata">مصراتة</option>
+                <option value="zawiya">الزاوية</option>
+                <option value="sabha">سبها</option>
+                <option value="zuwara">زوارة</option>
+                <option value="beida">البيضاء</option>
+                <option value="derna">درنة</option>
+                <option value="other">مدينة أخرى</option>
+              </select>
             </div>
-            <div class="method-info">
-              <h4>اتصال هاتفي</h4>
-              <p>اتصل بنا مباشرة</p>
-              <span class="method-detail">0946507954</span>
+            <div class="form-group">
+              <label for="destinationCity">مدينة التوصيل *</label>
+              <select id="destinationCity" name="destinationCity" required>
+                <option value="">اختر مدينة التوصيل</option>
+                <option value="tripoli">طرابلس</option>
+                <option value="benghazi">بنغازي</option>
+                <option value="misurata">مصراتة</option>
+                <option value="zawiya">الزاوية</option>
+                <option value="sabha">سبها</option>
+                <option value="zuwara">زوارة</option>
+                <option value="beida">البيضاء</option>
+                <option value="derna">درنة</option>
+                <option value="other">مدينة أخرى</option>
+              </select>
             </div>
-          </a>
+          </div>
 
-          <a href="https://www.facebook.com/share/19gV7R8DHB/" class="contact-method facebook" target="_blank">
-            <div class="method-icon">
-              <i class="fab fa-facebook"></i>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="deliveryAddress">عنوان التوصيل التفصيلي *</label>
+              <textarea id="deliveryAddress" name="deliveryAddress" rows="3" required placeholder="اكتب العنوان التفصيلي بما في ذلك الشارع، الحي، المعلم..."></textarea>
             </div>
-            <div class="method-info">
-              <h4>فيسبوك</h4>
-              <p>راسلنا على صفحتنا</p>
-              <span class="method-detail">دورلي على فيسبوك</span>
-            </div>
-          </a>
+          </div>
 
-          <a href="mailto:Albarshi.96@gmail.com" class="contact-method email">
-            <div class="method-icon">
-              <i class="fas fa-envelope"></i>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="deliveryType">نوع التوصيل *</label>
+              <select id="deliveryType" name="deliveryType" required>
+                <option value="">اختر نوع التوصيل</option>
+                <option value="standard">توصيل عادي (1-3 أيام)</option>
+                <option value="express">توصيل سريع (24 ساعة)</option>
+                <option value="urgent">توصيل عاجل (12 ساعة)</option>
+              </select>
             </div>
-            <div class="method-info">
-              <h4>البريد الإلكتروني</h4>
-              <p>أرسل لنا بريد إلكتروني</p>
-              <span class="method-detail">Albarshi.96@gmail.com</span>
+            <div class="form-group">
+              <label for="paymentMethod">طريقة الدفع *</label>
+              <select id="paymentMethod" name="paymentMethod" required>
+                <option value="">اختر طريقة الدفع</option>
+                <option value="cash">دفع نقدي عند الاستلام</option>
+                <option value="bank">تحويل بنكي</option>
+              </select>
             </div>
-          </a>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="prev-btn"><i class="fas fa-arrow-right"></i> السابق</button>
+            <button type="button" class="next-btn">التالي <i class="fas fa-arrow-left"></i></button>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>معلوماتك الشخصية</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fullName">الاسم الكامل *</label>
+              <input type="text" id="fullName" name="fullName" required placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+              <label for="phone">رقم الهاتف *</label>
+              <input type="tel" id="phone" name="phone" required placeholder="أدخل رقم هاتفك">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">البريد الإلكتروني (اختياري)</label>
+              <input type="email" id="email" name="email" placeholder="أدخل بريدك الإلكتروني">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="notes">ملاحظات إضافية (اختياري)</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="أي ملاحظات إضافية أو متطلبات خاصة..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-summary">
+            <h4>ملخص الطلب</h4>
+            <div class="summary-content">
+              <!-- سيتم ملؤها بالبيانات من الخطوات السابقة -->
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="prev-btn"><i class="fas fa-arrow-right"></i> السابق</button>
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-paper-plane"></i> إرسال الطلب
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="request-info fade-in-up delay-2">
+        <div class="info-card">
+          <i class="fas fa-clock"></i>
+          <h4>معالجة سريعة</h4>
+          <p>نبدأ البحث عن منتجك فور استلام الطلب خلال 30 دقيقة</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-shield-alt"></i>
+          <h4>أمان تام</h4>
+          <p>بياناتك محمية ولا نشاركها مع أي طرف ثالث</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-headset"></i>
+          <h4>دعم فوري</h4>
+          <p>فريق الدعم متاح لمساعدتك في أي استفسار</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="faq-section">
+  <!-- قسم الطلبات الشائعة -->
+  <section class="popular-requests">
     <div class="container">
       <div class="section-header fade-in-up">
-        <h2>أسئلة شائعة</h2>
-        <p>إجابات على الأسئلة الأكثر شيوعاً</p>
+        <h2>الطلبات الشائعة</h2>
+        <p>هذه بعض المنتجات والخدمات التي يطلبها عملاؤنا بشكل متكرر</p>
       </div>
-      <div class="faq-grid">
-        <div class="faq-item fade-in-up">
-          <div class="faq-question">
-            <h4>كم تستغرق مدة التوصيل؟</h4>
-            <i class="fas fa-chevron-down"></i>
+      <div class="requests-grid">
+        <div class="request-category fade-in-up">
+          <div class="category-icon">
+            <i class="fas fa-pills"></i>
           </div>
-          <div class="faq-answer">
-            <p>مدة التوصيل تتراوح بين 1-3 أيام عمل حسب المدينة والمنتج. الطلبات داخل نفس المدينة تستغرق 24 ساعة، بينما الطلبات بين المدن تستغرق 2-3 أيام.</p>
-          </div>
+          <h3>أدوية ومنتجات طبية</h3>
+          <p>أدوية نادرة، مستلزمات طبية، أجهزة قياس</p>
         </div>
+        <div class="request-category fade-in-up delay-1">
+          <div class="category-icon">
+            <i class="fas fa-laptop"></i>
+          </div>
+          <h3>إلكترونيات وتقنية</h3>
+          <p>قطع غيار أجهزة، إكسسوارات، أجهزة متخصصة</p>
+        </div>
+        <div class="request-category fade-in-up delay-2">
+          <div class="category-icon">
+            <i class="fas fa-car"></i>
+          </div>
+          <h3>قطع غيار سيارات</h3>
+          <p>قطع غيار أصلية، إطارات، زيوت متخصصة</p>
+        </div>
+        <div class="request-category fade-in-up delay-3">
+          <div class="category-icon">
+            <i class="fas fa-tshirt"></i>
+          </div>
+          <h3>ملابس وأزياء</h3>
+          <p>ملابس تقليدية، أزياء عالمية، أحذية</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="faq-item fade-in-up delay-1">
-          <div class="faq-question">
-            <h4>كيف أدفع ثمن الطلب؟</h4>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>يمكنك الدفع نقداً عند الاستلام، أو عبر التحويل البنكي. نحن نضمن أمان معاملاتك ونوفر إيصالاً رسمياً لكل عملية شراء.</p>
-          </div>
-        </div>
-
-        <div class="faq-item fade-in-up delay-2">
-          <div class="faq-question">
-            <h4>ماذا لو لم يعجبني المنتج؟</h4>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>يمكنك إرجاع المنتج خلال 24 ساعة من استلامه إذا كان بحالته الأصلية. رسوم الإرجاع تختلف حسب سبب الإرجاع.</p>
-          </div>
-        </div>
+  <!-- قسم الدعوة للعمل -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2 class="fade-in-up">لديك استفسار عن طلب معين؟</h2>
+      <p class="fade-in-up delay-1">اتصل بنا مباشرة للاستفسار عن أي منتج أو خدمة</p>
+      <div class="cta-buttons fade-in-up delay-2">
+        <a href="https://wa.me/218946507954" class="hero-btn whatsapp-btn">
+          <i class="fab fa-whatsapp"></i> تواصل عبر واتساب
+        </a>
+        <a href="tel:+218946507954" class="hero-btn">
+          <i class="fas fa-phone"></i> اتصل بنا الآن
+        </a>
       </div>
     </div>
   </section>
@@ -269,5 +345,391 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <style>
+    /* أنماط إضافية لصفحة الطلب */
+    .request-form-section {
+      padding: 3rem 2rem;
+      background: var(--light);
+    }
+
+    .request-steps {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 25px;
+      right: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--light-gray);
+      z-index: 1;
+    }
+
+    .step.active:not(:last-child)::after {
+      background: var(--primary);
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      color: var(--dark-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+      transition: var(--transition);
+    }
+
+    .step.active .step-number {
+      background: var(--primary);
+      color: var(--white);
+      transform: scale(1.1);
+    }
+
+    .step span {
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+      text-align: center;
+    }
+
+    .step.active span {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .request-form {
+      background: var(--white);
+      padding: 3rem;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .form-section h3 {
+      color: var(--dark);
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--light);
+      padding-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid var(--light-gray);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .prev-btn,
+    .next-btn,
+    .submit-btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .prev-btn {
+      background: var(--light-gray);
+      color: var(--dark);
+    }
+
+    .prev-btn:hover {
+      background: var(--gray);
+    }
+
+    .next-btn,
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+    }
+
+    .next-btn:hover,
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .form-summary {
+      background: var(--light);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      margin: 2rem 0;
+    }
+
+    .form-summary h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .request-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 800px;
+      margin: 3rem auto 0;
+    }
+
+    .info-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--white);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .info-card i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .info-card h4 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .info-card p {
+      color: var(--dark-gray);
+      line-height: 1.6;
+    }
+
+    .popular-requests {
+      padding: 5rem 2rem;
+      background: var(--white);
+    }
+
+    .requests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .request-category {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      background: var(--light);
+      border-radius: var(--border-radius-lg);
+      transition: var(--transition);
+      border: 1px solid var(--light-gray);
+    }
+
+    .request-category:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      background: var(--white);
+    }
+
+    .category-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .request-category:hover .category-icon {
+      color: var(--secondary);
+      transform: scale(1.1);
+    }
+
+    .request-category h3 {
+      color: var(--dark);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .request-category p {
+      color: var(--dark-gray);
+      line-height: 1.6;
+    }
+
+    .whatsapp-btn {
+      background: linear-gradient(135deg, #25D366, #128C7E) !important;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .request-steps {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .step:not(:last-child)::after {
+        display: none;
+      }
+
+      .request-form {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .prev-btn,
+      .next-btn,
+      .submit-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .request-info {
+        grid-template-columns: 1fr;
+      }
+
+      .requests-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script>
+    // script for multi-step form
+    document.addEventListener('DOMContentLoaded', function() {
+      const formSections = document.querySelectorAll('.form-section');
+      const steps = document.querySelectorAll('.step');
+      const nextButtons = document.querySelectorAll('.next-btn');
+      const prevButtons = document.querySelectorAll('.prev-btn');
+      let currentStep = 0;
+
+      function showStep(stepIndex) {
+        formSections.forEach((section, index) => {
+          section.classList.toggle('active', index === stepIndex);
+        });
+        
+        steps.forEach((step, index) => {
+          step.classList.toggle('active', index <= stepIndex);
+        });
+        
+        currentStep = stepIndex;
+      }
+
+      nextButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          if (validateStep(currentStep)) {
+            showStep(currentStep + 1);
+          }
+        });
+      });
+
+      prevButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          showStep(currentStep - 1);
+        });
+      });
+
+      function validateStep(stepIndex) {
+        const currentSection = formSections[stepIndex];
+        const inputs = currentSection.querySelectorAll('input[required], select[required], textarea[required]');
+        
+        for (let input of inputs) {
+          if (!input.value.trim()) {
+            input.focus();
+            input.style.borderColor = 'var(--error)';
+            return false;
+          }
+          input.style.borderColor = '';
+        }
+        return true;
+      }
+
+      // Initialize first step
+      showStep(0);
+    });
+  </script>
 </body>
 </html>
