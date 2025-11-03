@@ -500,6 +500,93 @@ nav a.services-btn:hover {
   margin: 0 auto;
 }
 
+/* ==================== قسم نموذج الطلب السريع ==================== */
+.quick-order-section {
+  padding: 5rem 2rem;
+  background: var(--white);
+}
+
+.quick-order-form {
+  background: var(--light);
+  padding: 3rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--light-gray);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quick-order-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.quick-order-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.quick-order-form .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.quick-order-form label {
+  display: block;
+  color: var(--dark);
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quick-order-form input,
+.quick-order-form select,
+.quick-order-form textarea {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--border-radius);
+  font-family: 'Tajawal', Arial, sans-serif;
+  font-size: 1rem;
+  transition: var(--transition);
+  background: var(--white);
+}
+
+.quick-order-form input:focus,
+.quick-order-form select:focus,
+.quick-order-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.quick-order-form .form-submit {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .quick-order-form {
+    padding: 2rem;
+  }
+  
+  .quick-order-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-order-section {
+    padding: 3rem 1rem;
+  }
+  
+  .quick-order-form {
+    padding: 1.5rem;
+  }
+}
+
 /* ==================== قسم الإحصائيات المحسن ==================== */
 .stats-section {
   background: var(--white);
@@ -831,6 +918,74 @@ nav a.services-btn:hover {
   z-index: 2;
 }
 
+/* ==================== قسم شهادات العملاء ==================== */
+.testimonials-section {
+  padding: 5rem 2rem;
+  background: var(--white);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  background: var(--light);
+  padding: 2.5rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  position: relative;
+  border: 1px solid var(--light-gray);
+  transition: var(--transition);
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 4rem;
+  color: var(--primary);
+  opacity: 0.1;
+  font-family: serif;
+  line-height: 1;
+}
+
+.testimonial-content {
+  margin-bottom: 2rem;
+  font-style: italic;
+  color: var(--dark);
+  line-height: 1.7;
+  position: relative;
+  z-index: 2;
+}
+
+.testimonial-author {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.author-name {
+  font-weight: bold;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.author-location {
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+}
+
 /* ==================== قسم الدعوة للعمل المحسن ==================== */
 .cta-section {
   padding: 6rem 2rem;
@@ -1140,6 +1295,10 @@ footer::before {
     gap: 1.5rem;
   }
   
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .footer-content {
     text-align: center;
     grid-template-columns: 1fr;
@@ -1169,11 +1328,11 @@ footer::before {
     font-size: 1.1rem;
   }
   
-  .stat-card, .feature-card, .step-content {
+  .stat-card, .feature-card, .step-content, .testimonial-card {
     padding: 2rem 1.5rem;
   }
   
-  .stats-section, .features-section, .how-it-works, .cta-section {
+  .stats-section, .features-section, .how-it-works, .cta-section, .testimonials-section {
     padding: 4rem 1rem;
   }
 }
@@ -1439,73 +1598,6 @@ footer::before {
   line-height: 1.7;
 }
 
-.testimonials-section {
-  padding: 5rem 2rem;
-  background: var(--white);
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.testimonial-card {
-  background: var(--light);
-  padding: 2.5rem;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow);
-  position: relative;
-  border: 1px solid var(--light-gray);
-  transition: var(--transition);
-}
-
-.testimonial-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-}
-
-.testimonial-card::before {
-  content: '"';
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  font-size: 4rem;
-  color: var(--primary);
-  opacity: 0.1;
-  font-family: serif;
-  line-height: 1;
-}
-
-.testimonial-content {
-  margin-bottom: 2rem;
-  font-style: italic;
-  color: var(--dark);
-  line-height: 1.7;
-  position: relative;
-  z-index: 2;
-}
-
-.testimonial-author {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 1.5rem;
-  position: relative;
-  z-index: 2;
-}
-
-.author-name {
-  font-weight: bold;
-  color: var(--primary);
-  font-size: 1.1rem;
-}
-
-.author-location {
-  color: var(--dark-gray);
-  font-size: 0.9rem;
-}
-
 /* صفحة الخدمات */
 .services-categories {
   padding: 5rem 2rem;
@@ -1614,6 +1706,57 @@ footer::before {
 .beauty-cleaning { background: linear-gradient(135deg, #f97316, #ea580c); }
 .fashion { background: linear-gradient(135deg, #64748b, #475569); }
 .custom-service { background: linear-gradient(135deg, #eab308, #ca8a04); }
+.medicine { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.delivery { background: linear-gradient(135deg, #059669, #047857); }
+
+/* قسم البحث السريع */
+.quick-search-section {
+  padding: 4rem 2rem;
+  background: var(--light);
+}
+
+.quick-search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quick-search-item {
+  background: var(--white);
+  padding: 2rem 1.5rem;
+  border-radius: var(--border-radius-lg);
+  text-decoration: none;
+  color: var(--dark);
+  text-align: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--light-gray);
+}
+
+.quick-search-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  color: var(--primary);
+}
+
+.search-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.quick-search-item:hover .search-icon {
+  transform: scale(1.1);
+  color: var(--secondary);
+}
+
+.quick-search-item span {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
 
 .special-offers {
   padding: 5rem 2rem;
@@ -2362,6 +2505,10 @@ footer::before {
   .categories-grid {
     grid-template-columns: 1fr;
   }
+  
+  .quick-search-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 480px) {
@@ -2392,6 +2539,10 @@ footer::before {
     width: 100px;
     height: 3px;
     margin: 0;
+  }
+  
+  .quick-search-grid {
+    grid-template-columns: 1fr;
   }
 }
 
