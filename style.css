@@ -567,26 +567,6 @@ nav a.services-btn:hover {
   margin-top: 2rem;
 }
 
-@media (max-width: 768px) {
-  .quick-order-form {
-    padding: 2rem;
-  }
-  
-  .quick-order-form .form-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .quick-order-section {
-    padding: 3rem 1rem;
-  }
-  
-  .quick-order-form {
-    padding: 1.5rem;
-  }
-}
-
 /* ==================== قسم الإحصائيات المحسن ==================== */
 .stats-section {
   background: var(--white);
@@ -1172,169 +1152,6 @@ footer::before {
   color: #94a3b8;
   font-size: 0.9rem;
   text-align: center;
-}
-
-/* ==================== وسائط الاستعلام للاستجابة ==================== */
-@media (max-width: 1024px) {
-  .hero h1 {
-    font-size: 3rem;
-  }
-  
-  .page-hero h1 {
-    font-size: 2.5rem;
-  }
-  
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  :root {
-    --header-height: 70px;
-  }
-  
-  header {
-    padding: 0 1rem;
-  }
-  
-  .logo {
-    font-size: 1.5rem;
-    padding: 0 1rem;
-  }
-  
-  .logo i {
-    font-size: 1.7rem;
-  }
-  
-  nav {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--white);
-    flex-direction: column;
-    padding: 1rem;
-    box-shadow: var(--shadow-lg);
-    gap: 0;
-  }
-  
-  nav.active {
-    display: flex;
-  }
-  
-  nav a {
-    color: var(--dark);
-    padding: 1rem;
-    border-radius: 8px;
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  nav a:hover {
-    background: var(--light-gray);
-  }
-  
-  .mobile-menu-btn {
-    display: block;
-  }
-  
-  .hero {
-    padding: 6rem 1rem 4rem;
-    min-height: 70vh;
-  }
-  
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-  
-  .hero h2 {
-    font-size: 1.5rem;
-  }
-  
-  .hero p {
-    font-size: 1.1rem;
-  }
-  
-  .page-hero {
-    padding: 5rem 1rem 3rem;
-  }
-  
-  .page-hero h1 {
-    font-size: 2rem;
-  }
-  
-  .hero-buttons, .cta-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .hero-btn {
-    width: 100%;
-    max-width: 300px;
-    justify-content: center;
-  }
-  
-  .steps-container::before {
-    display: none;
-  }
-  
-  .step {
-    flex-direction: column !important;
-    text-align: center;
-    gap: 1.5rem;
-  }
-  
-  .step-number {
-    margin-bottom: 0;
-  }
-  
-  .stats-grid, .features-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .footer-content {
-    text-align: center;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  
-  .footer-section h3::after {
-    right: 50%;
-    transform: translateX(50%);
-  }
-}
-
-@media (max-width: 480px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-  
-  .page-hero h1 {
-    font-size: 1.8rem;
-  }
-  
-  .section-header h2 {
-    font-size: 2rem;
-  }
-  
-  .section-header p {
-    font-size: 1.1rem;
-  }
-  
-  .stat-card, .feature-card, .step-content, .testimonial-card {
-    padding: 2rem 1.5rem;
-  }
-  
-  .stats-section, .features-section, .how-it-works, .cta-section, .testimonials-section {
-    padding: 4rem 1rem;
-  }
 }
 
 /* ==================== أنماط إضافية للصفحات الأخرى ==================== */
@@ -2605,7 +2422,6 @@ footer::before {
   opacity: 1;
   transform: translateY(0);
 }
-/* أضف هذه الأنماط في نهاية الملف */
 
 /* أنماط إضافية للجدول الزمني */
 .timeline-section {
@@ -2684,15 +2500,55 @@ footer::before {
   }
 }
 
-/* تحسينات إضافية للاستجابة */
-@media (max-width: 768px) {
-  .timeline-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* ==================== الوضع الليلي (Dark Mode) ==================== */
+body.dark-mode {
+  /* تغيير الألوان الرئيسية لتناسب الوضع الليلي */
+  --light: #0f172a; 
+  --light-gray: #1e293b; 
+  --white: #1e293b; 
+  
+  --dark: #f8fafc; 
+  --dark-gray: #cbd5e1; 
+  --black: #ffffff; 
+
+  /* تعديل الظلال لتكون أخف ومناسبة للون الغامق */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-@media (max-width: 480px) {
-  .timeline-grid {
-    grid-template-columns: 1fr;
-  }
+/* تعديل الهيدر عند النزول في الوضع الليلي */
+body.dark-mode header.scrolled {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* تعديل نماذج الإدخال في الوضع الليلي */
+body.dark-mode .quick-order-form input,
+body.dark-mode .quick-order-form select,
+body.dark-mode .quick-order-form textarea,
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: #0f172a;
+  border-color: #334155;
+  color: var(--dark);
+}
+
+/* تصميم زر الوضع الليلي في القائمة العلوية */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.3rem;
+  cursor: pointer;
+  margin-right: auto;
+  padding: 0.5rem;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(15deg);
+  color: var(--accent-light);
 }
