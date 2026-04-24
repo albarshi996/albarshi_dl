@@ -1,517 +1,174 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="تواصل مع دورلي - نحن هنا لمساعدتك في أي استفسار أو طلب" />
-  <meta name="keywords" content="تواصل مع دورلي، اتصل بنا، دعم فني، خدمة عملاء" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="تواصل مع دورلي - نحن هنا لمساعدتك في أي استفسار أو طلب في أي وقت.">
   <title>دورلي - تواصل معنا</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
     <div class="logo">
-      <i class="fas fa-link"></i> دورلي
+      <i class="fas fa-link pulse"></i> دورلي
     </div>
+    
+    <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
+      <i class="fas fa-moon"></i>
+    </button>
+
     <nav id="mainNav">
       <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
       <a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a>
       <a href="features.html"><i class="fas fa-gem"></i> الميزات</a>
-      <a href="services.html" class="services-btn"><i class="fas fa-cogs"></i> خدماتنا</a>
-      <a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
-      <a href="contact.html"><i class="fas fa-phone"></i> تواصل معنا</a>
+      <a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a>
+      <a href="contact.html" style="color: var(--accent-light);"><i class="fas fa-envelope"></i> تواصل معنا</a>
+      <a href="request.html" class="services-btn"><i class="fas fa-paper-plane"></i> اطلب الآن</a>
     </nav>
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
+
+    <button id="mobileMenuBtn" class="mobile-menu-btn">
       <i class="fas fa-bars"></i>
     </button>
   </header>
 
   <section class="page-hero">
-    <div class="hero-content">
-      <h1 class="fade-in-up">تواصل معنا</h1>
-      <p class="fade-in-up delay-1">نحن هنا لمساعدتك في أي وقت. لا تتردد في التواصل معنا</p>
+    <div class="hero-content reveal">
+      <h1>نبقى على تواصل دائم</h1>
+      <p>فريق خدمة العملاء لدينا مستعد دائماً للرد على استفساراتك ومساعدتك في تلبية طلباتك بأسرع وقت ممكن.</p>
     </div>
   </section>
 
-  <!-- قسم معلومات التواصل -->
-  <section class="contact-info-section">
-    <div class="container">
+  <section class="contact-main">
+    <div class="container reveal">
       <div class="contact-grid">
-        <div class="contact-card fade-in-up">
-          <div class="contact-icon">
-            <i class="fab fa-whatsapp"></i>
-          </div>
-          <h3>واتساب</h3>
-          <p>تواصل معنا مباشرة عبر واتساب</p>
-          <a href="https://wa.me/218946507954" class="contact-link">0946507954</a>
-          <span class="contact-status">متاح 24/7</span>
-        </div>
-
-        <div class="contact-card fade-in-up delay-1">
-          <div class="contact-icon">
-            <i class="fas fa-phone"></i>
-          </div>
-          <h3>هاتف</h3>
-          <p>اتصل بنا مباشرة</p>
-          <a href="tel:+218946507954" class="contact-link">0946507954</a>
-          <span class="contact-status">من 8 صباحاً إلى 10 مساءً</span>
-        </div>
-
-        <div class="contact-card fade-in-up delay-2">
-          <div class="contact-icon">
-            <i class="fas fa-envelope"></i>
-          </div>
-          <h3>بريد إلكتروني</h3>
-          <p>أرسل لنا بريداً إلكترونياً</p>
-          <a href="mailto:Albarshi.96@gmail.com" class="contact-link">Albarshi.96@gmail.com</a>
-          <span class="contact-status">الرد خلال 4 ساعات</span>
-        </div>
-
-        <div class="contact-card fade-in-up delay-3">
-          <div class="contact-icon">
-            <i class="fab fa-facebook"></i>
-          </div>
-          <h3>فيسبوك</h3>
-          <p>تابعنا على فيسبوك</p>
-          <a href="https://www.facebook.com/share/19gV7R8DHB/" class="contact-link">صفحتنا على فيسبوك</a>
-          <span class="contact-status">متاح 24/7</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- قسم نموذج التواصل -->
-  <section class="contact-form-section">
-    <div class="container">
-      <div class="contact-form-wrapper">
-        <div class="form-info fade-in-up">
-          <h2>ابق على تواصل</h2>
-          <p>لديك سؤال أو استفسار؟ نحن هنا لمساعدتك. املأ النموذج وسنرد عليك في أقرب وقت ممكن.</p>
+        
+        <div class="contact-info">
+          <h2>كيف يمكننا مساعدتك؟</h2>
+          <p>اختر الوسيلة الأنسب لك للتواصل معنا، نحن نرد على جميع الرسائل والمكالمات في أقرب وقت.</p>
           
-          <div class="info-item">
-            <i class="fas fa-clock"></i>
-            <div>
-              <h4>أوقات العمل</h4>
-              <p>الأحد - الخميس: 8 صباحاً - 10 مساءً</p>
-              <p>الجمعة - السبت: 10 صباحاً - 8 مساءً</p>
+          <div class="contact-details">
+            <div class="contact-item-detailed">
+              <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+              <div class="contact-text">
+                <h4>اتصال هاتفي</h4>
+                <p>متاح خلال ساعات العمل</p>
+                <a href="tel:0918014512">0918014512</a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #25D366, #128C7E);"><i class="fab fa-whatsapp"></i></div>
+              <div class="contact-text">
+                <h4>واتساب</h4>
+                <p>متاح على مدار الساعة للطلبات</p>
+                <a href="https://wa.me/218918014512" target="_blank">0918014512</a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #1877F2, #0d5aeb);"><i class="fab fa-facebook-f"></i></div>
+              <div class="contact-text">
+                <h4>فيسبوك</h4>
+                <p>تابع جديدنا وتواصل معنا عبر الصفحة</p>
+                <a href="https://www.facebook.com/share16JEUw1tZk" target="_blank">صفحة دورلي</a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #64748b, #475569);"><i class="fas fa-envelope"></i></div>
+              <div class="contact-text">
+                <h4>البريد الإلكتروني</h4>
+                <p>للاستفسارات والطلبات الرسمية</p>
+                <a href="mailto:Albarshi.96@gmail.com">Albarshi.96@gmail.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-extra">
+          <div class="business-hours">
+            <h3><i class="fas fa-clock"></i> ساعات العمل</h3>
+            <div class="hours-list">
+              <div class="hour-item">
+                <span>السبت - الخميس</span>
+                <span>09:00 صباحاً - 10:00 مساءً</span>
+              </div>
+              <div class="hour-item">
+                <span>الجمعة</span>
+                <span>04:00 مساءً - 10:00 مساءً</span>
+              </div>
+              <div class="hour-item" style="color: var(--secondary); font-weight: 900; justify-content: center; margin-top: 1.5rem; background: var(--light-gray); padding: 1rem; border-radius: 8px;">
+                <i class="fab fa-whatsapp" style="margin-left: 5px;"></i> نستقبل طلبات الواتساب 24/7
+              </div>
             </div>
           </div>
 
-          <div class="info-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <div>
-              <h4>مناطق الخدمة</h4>
-              <p>نغطي جميع المدن الليبية الرئيسية والمناطق المحيطة بها</p>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <i class="fas fa-headset"></i>
-            <div>
-              <h4>الدعم الفني</h4>
-              <p>متاح على مدار الساعة عبر الواتساب والهاتف</p>
+          <div style="margin-top: 2rem;">
+            <div class="emergency-card" style="padding: 2.5rem 2rem; flex-direction: column; text-align: center; border-radius: var(--border-radius-lg);">
+              <div class="emergency-icon" style="font-size: 3.5rem; margin-bottom: 1rem;"><i class="fas fa-headset"></i></div>
+              <div class="emergency-content">
+                <h3 style="font-size: 1.6rem; margin-bottom: 0.5rem;">دعم فني مستمر</h3>
+                <p style="font-size: 1rem; opacity: 0.9;">نحن هنا لضمان حصولك على أفضل تجربة. لا تتردد في مراسلتنا لأي استفسار، اقتراح، أو حتى شكوى.</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <form class="contact-form fade-in-up delay-1">
-          <div class="form-group">
-            <label for="name">الاسم الكامل</label>
-            <input type="text" id="name" name="name" required placeholder="أدخل اسمك الكامل">
-          </div>
-
-          <div class="form-group">
-            <label for="phone">رقم الهاتف</label>
-            <input type="tel" id="phone" name="phone" required placeholder="أدخل رقم هاتفك">
-          </div>
-
-          <div class="form-group">
-            <label for="email">البريد الإلكتروني (اختياري)</label>
-            <input type="email" id="email" name="email" placeholder="أدخل بريدك الإلكتروني">
-          </div>
-
-          <div class="form-group">
-            <label for="city">المدينة</label>
-            <select id="city" name="city" required>
-              <option value="">اختر مدينتك</option>
-              <option value="tripoli">طرابلس</option>
-              <option value="benghazi">بنغازي</option>
-              <option value="misurata">مصراتة</option>
-              <option value="zawiya">الزاوية</option>
-              <option value="sabha">سبها</option>
-              <option value="zuwara">زوارة</option>
-              <option value="beida">البيضاء</option>
-              <option value="derna">درنة</option>
-              <option value="other">مدينة أخرى</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="subject">موضوع الرسالة</label>
-            <select id="subject" name="subject" required>
-              <option value="">اختر موضوع الرسالة</option>
-              <option value="inquiry">استفسار عام</option>
-              <option value="order">متابعة طلب</option>
-              <option value="complaint">شكوى</option>
-              <option value="suggestion">اقتراح</option>
-              <option value="partnership">شراكة</option>
-              <option value="other">موضوع آخر</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="message">الرسالة</label>
-            <textarea id="message" name="message" rows="5" required placeholder="اكتب رسالتك هنا..."></textarea>
-          </div>
-
-          <button type="submit" class="submit-btn">
-            <i class="fas fa-paper-plane"></i> إرسال الرسالة
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- قسم الأسئلة الشائعة -->
-  <section class="faq-section">
-    <div class="container">
-      <div class="section-header fade-in-up">
-        <h2>أسئلة شائعة حول التواصل</h2>
-        <p>إجابات على الأسئلة الأكثر شيوعاً حول كيفية التواصل معنا</p>
-      </div>
-      <div class="faq-grid">
-        <div class="faq-item fade-in-up">
-          <div class="faq-question">
-            <h4>ما هي أوقات استقبال المكالمات الهاتفية؟</h4>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>نستقبل المكالمات الهاتفية من الأحد إلى الخميس من الساعة 8 صباحاً حتى 10 مساءً، وفي أيام الجمعة والسبت من الساعة 10 صباحاً حتى 8 مساءً. للطلبات العاجلة خارج أوقات العمل، يمكنكم التواصل عبر الواتساب.</p>
-          </div>
-        </div>
-
-        <div class="faq-item fade-in-up delay-1">
-          <div class="faq-question">
-            <h4>كم تستغرق مدة الرد على البريد الإلكتروني؟</h4>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>نرد على جميع رسائل البريد الإلكتروني خلال 4 ساعات كحد أقصى خلال أوقات العمل. للاستفسارات العاجلة، ننصح بالتواصل عبر الواتساب أو الهاتف للحصول على رد فوري.</p>
-          </div>
-        </div>
-
-        <div class="faq-item fade-in-up delay-2">
-          <div class="faq-question">
-            <h4>هل يمكنني التواصل خارج أوقات العمل الرسمية؟</h4>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="faq-answer">
-            <p>نعم، يمكنكم التواصل عبر الواتساب على مدار الساعة طوال أيام الأسبوع. فريق الدعم متاح عبر الواتساب للرد على استفساراتكم وطلباتكم العاجلة في أي وقت.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- قسم الدعوة للعمل -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2 class="fade-in-up">هل لديك طلب عاجل؟</h2>
-      <p class="fade-in-up delay-1">اتصل بنا الآن واحصل على خدمة سريعة ومميزة</p>
-      <div class="cta-buttons fade-in-up delay-2">
-        <a href="https://wa.me/218946507954" class="hero-btn whatsapp-btn">
-          <i class="fab fa-whatsapp"></i> تواصل عبر واتساب
-        </a>
-        <a href="tel:+218946507954" class="hero-btn">
-          <i class="fas fa-phone"></i> اتصل بنا الآن
-        </a>
       </div>
     </div>
   </section>
 
   <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>عن دورلي</h3>
-          <p>منصة ليبية تربطك بكل ما تحتاجه من أي مدينة ليبية. نحن حلقة الوصل بينك وبين منتجاتك المفضلة.</p>
-          <div class="social-links">
-            <a href="https://wa.me/218946507954" target="_blank" aria-label="واتساب"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://www.facebook.com/share/19gV7R8DHB/" target="_blank" aria-label="فيسبوك"><i class="fab fa-facebook"></i></a>
-            <a href="mailto:Albarshi.96@gmail.com" aria-label="البريد الإلكتروني"><i class="fas fa-envelope"></i></a>
-            <a href="tel:+218946507954" aria-label="هاتف"><i class="fas fa-phone"></i></a>
-          </div>
-        </div>
-        
-        <div class="footer-section">
-          <h3>روابط سريعة</h3>
-          <ul class="footer-links">
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="how-it-works.html"><i class="fas fa-question"></i> كيف يعمل</a></li>
-            <li><a href="features.html"><i class="fas fa-gem"></i> الميزات</a></li>
-            <li><a href="services.html"><i class="fas fa-cogs"></i> خدماتنا</a></li>
-            <li><a href="request.html"><i class="fas fa-paper-plane"></i> اطلب الآن</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h3>تواصل معنا</h3>
-          <div class="contact-info">
-            <div class="contact-item">
-              <i class="fas fa-phone"></i>
-              <span>0946507954</span>
-            </div>
-            <div class="contact-item">
-              <i class="fab fa-whatsapp"></i>
-              <span>0946507954</span>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-envelope"></i>
-              <span>Albarshi.96@gmail.com</span>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>ليبيا</span>
-            </div>
-          </div>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>عن دورلي</h3>
+        <p>منصتك الأولى للوساطة التجارية في ليبيا. نهدف لتسهيل حياتك وتوفير وقتك وجهدك في البحث والشراء.</p>
+        <div class="social-links">
+          <a href="https://wa.me/218918014512" target="_blank" title="واتساب"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.facebook.com/share16JEUw1tZk" target="_blank" title="فيسبوك"><i class="fab fa-facebook-f"></i></a>
+          <a href="mailto:Albarshi.96@gmail.com" title="البريد"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       
-      <div class="copyright">
-        <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
+      <div class="footer-section">
+        <h3>روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="fas fa-angle-left"></i> الرئيسية</a></li>
+          <li><a href="how-it-works.html"><i class="fas fa-angle-left"></i> كيف يعمل</a></li>
+          <li><a href="features.html"><i class="fas fa-angle-left"></i> الميزات</a></li>
+          <li><a href="services.html"><i class="fas fa-angle-left"></i> خدماتنا</a></li>
+        </ul>
       </div>
+      
+      <div class="footer-section">
+        <h3>تواصل معنا</h3>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <a href="tel:0918014512" style="color: inherit; text-decoration: none;">0918014512</a>
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-whatsapp"></i>
+            <a href="https://wa.me/218918014512" style="color: inherit; text-decoration: none;" target="_blank">0918014512</a>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <a href="mailto:Albarshi.96@gmail.com" style="color: inherit; text-decoration: none;">Albarshi.96@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>جميع الحقوق محفوظة &copy; 2025 لدى محمد إبراهيم البرشي</p>
     </div>
   </footer>
 
   <script src="script.js"></script>
-
-  <style>
-    /* أنماط إضافية لصفحة التواصل */
-    .contact-info-section {
-      padding: 4rem 2rem;
-      background: var(--light);
-    }
-
-    .contact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .contact-card {
-      background: var(--white);
-      padding: 2.5rem 2rem;
-      border-radius: var(--border-radius-lg);
-      text-align: center;
-      transition: var(--transition);
-      border: 1px solid var(--light-gray);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .contact-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .contact-icon {
-      font-size: 3rem;
-      color: var(--primary);
-      margin-bottom: 1.5rem;
-      transition: var(--transition);
-    }
-
-    .contact-card:hover .contact-icon {
-      color: var(--secondary);
-      transform: scale(1.1);
-    }
-
-    .contact-card h3 {
-      color: var(--dark);
-      margin-bottom: 1rem;
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .contact-card p {
-      color: var(--dark-gray);
-      margin-bottom: 1rem;
-      line-height: 1.6;
-    }
-
-    .contact-link {
-      display: block;
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .contact-link:hover {
-      color: var(--secondary);
-    }
-
-    .contact-status {
-      background: var(--success-light);
-      color: var(--success);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .contact-form-section {
-      padding: 5rem 2rem;
-      background: var(--white);
-    }
-
-    .contact-form-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 4rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      align-items: start;
-    }
-
-    .form-info h2 {
-      color: var(--dark);
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-      font-weight: 800;
-    }
-
-    .form-info > p {
-      color: var(--dark-gray);
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
-      font-size: 1.1rem;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: var(--light);
-      border-radius: var(--border-radius);
-      transition: var(--transition);
-    }
-
-    .info-item:hover {
-      background: var(--light-gray);
-    }
-
-    .info-item i {
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-top: 0.2rem;
-      flex-shrink: 0;
-    }
-
-    .info-item h4 {
-      color: var(--dark);
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-
-    .info-item p {
-      color: var(--dark-gray);
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .contact-form {
-      background: var(--light);
-      padding: 2.5rem;
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--shadow-md);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: var(--dark);
-      font-weight: 600;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 1rem;
-      border: 1px solid var(--light-gray);
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      font-family: inherit;
-      transition: var(--transition);
-      background: var(--white);
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
-    }
-
-    .submit-btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: var(--white);
-      border: none;
-      padding: 1.2rem 2rem;
-      border-radius: var(--border-radius);
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .whatsapp-btn {
-      background: linear-gradient(135deg, #25D366, #128C7E) !important;
-    }
-
-    @media (max-width: 768px) {
-      .contact-form-wrapper {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-      }
-
-      .contact-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .contact-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .contact-form {
-        padding: 2rem 1.5rem;
-      }
-    }
-  </style>
 </body>
 </html>
+
