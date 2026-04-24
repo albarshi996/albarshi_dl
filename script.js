@@ -164,4 +164,14 @@ function initQuickOrder() {
       window.open(whatsappUrl, "_blank");
     });
   }
+}function initMobileMenu() {
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mainNav = document.getElementById('mainNav');
+  
+  if (mobileMenuBtn && mainNav) {
+    mobileMenuBtn.addEventListener('click', function() {
+      mainNav.classList.toggle('active'); // هذا السطر هو الذي يفتح القائمة ويغلقها
+    });
+  }
 }
+
