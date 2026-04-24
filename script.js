@@ -2,419 +2,166 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   // ==================== تهيئة جميع المكونات ====================
+  initDarkMode();
   initMobileMenu();
   initScrollEffects();
   initAnimations();
-  initForms();
   initFAQ();
-  initScrollToTop();
-  initQuickOrder(); // إضافة تهيئة نموذج الطلب السريع
+  initQuickOrder();
 });
 
-// ==================== القائمة المتنقلة للموبايل ====================
-function initMobileMenu() {
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const mainNav = document.getElementById('mainNav');
-  
-  if (mobileMenuBtn && mainNav) {
-    mobileMenuBtn.addEventListener('click', function() {
-      mainNav.classList.toggle('active');
-      const icon = this.querySelector('i');
-      if (mainNav.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
+// ==================== 1. الوضع الليلي (Dark Mode) ====================
+function initDarkMode() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  if (toggleBtn) {
+    const icon = toggleBtn.querySelector('i');
+
+    // التحقق من الخيار المحفوظ مسبقاً في المتصفح
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode');
+      if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    // الاستماع لحدث النقر على زر الوضع الليلي
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      
+      // تغيير الأيقونة وحفظ الإعداد
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
       } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
+        localStorage.setItem('theme', 'light');
+        if(icon) icon.classList.replace('fa-sun', 'fa-moon');
       }
     });
-    
-    // إغلاق القائمة عند النقر على رابط
-    const navLinks = mainNav.querySelectorAll('a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mainNav.classList.remove('active');
-        mobileMenuBtn.querySelector('i').classList.remove('fa-times');
-        mobileMenuBtn.querySelector('i').classList.add('fa-bars');
-      });
+  }
+}
+
+// ==================== 2. القائمة المتنقلة للموبايل ====================
+function initMobileMenu() {
+  const mobileMenuBtn = document.querySelector('.mobile-menu-btn') || document.getElementById('mobileMenuBtn');
+  const navLinks = document.querySelector('.nav-links') || document.getElementById('mainNav');
+  
+  if (mobileMenuBtn && navLinks) {
+    mobileMenuBtn.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      const icon = this.querySelector('i');
+      if (icon) {
+        if (navLinks.classList.contains('active')) {
+          icon.classList.replace('fa-bars', 'fa-times');
+        } else {
+          icon.classList.replace('fa-times', 'fa-bars');
+        }
+      }
     });
   }
 }
 
-// ==================== تأثيرات التمرير ====================
+// ==================== 3. تأثيرات التمرير (Scroll Effects) ====================
 function initScrollEffects() {
-  // تأثير التمرير على الهيدر
-  const header = document.querySelector('header');
+  const header = document.querySelector('header') || document.querySelector('nav');
   
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 100) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  });
-  
-  // تأثير الظهور عند التمرير
-  const revealElements = document.querySelectorAll('.reveal');
-  
-  if (revealElements.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
+  if(header) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
         }
       });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
-    
-    revealElements.forEach(element => {
-      observer.observe(element);
-    });
   }
 }
 
-// ==================== الحركات والتأثيرات ====================
+// ==================== 4. حركات الظهور (Animations) ====================
 function initAnimations() {
-  // إضافة تأثيرات للبطاقات عند التمرير
-  const animatedCards = document.querySelectorAll('.feature-card, .stat-card, .step-content');
+  const reveals = document.querySelectorAll('.reveal');
   
-  if (animatedCards.length > 0) {
-    const cardObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, {
-      threshold: 0.1
+  const revealOnScroll = () => {
+    const windowHeight = window.innerHeight;
+    const elementVisible = 100;
+
+    reveals.forEach(reveal => {
+      const elementTop = reveal.getBoundingClientRect().top;
+      if (elementTop < windowHeight - elementVisible) {
+        reveal.classList.add('active');
+      }
     });
-    
-    animatedCards.forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      cardObserver.observe(card);
-    });
-  }
+  };
+
+  window.addEventListener('scroll', revealOnScroll);
+  revealOnScroll(); // تشغيلها مرة عند التحميل
 }
 
-// ==================== نماذج التواصل ====================
-function initForms() {
-  // نموذج الطلب
-  const orderForm = document.getElementById('orderForm');
-  if (orderForm) {
-    orderForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // جمع بيانات النموذج
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
-      
-      // إنشاء رسالة واتساب
-      const whatsappMessage = `طلب جديد من دورلي:%0A%0A` +
-        `الاسم: ${data.name}%0A` +
-        `الهاتف: ${data.phone}%0A` +
-        `المدينة: ${data.city}%0A` +
-        `فئة المنتج: ${data.category}%0A` +
-        `تفاصيل المنتج: ${data.product}%0A` +
-        `الميزانية: ${data.budget || 'غير محدد'}%0A` +
-        `ملاحظات: ${data.notes || 'لا يوجد'}`;
-      
-      // فتح واتساب
-      window.open(`https://wa.me/218946507954?text=${whatsappMessage}`, '_blank');
-      
-      // إظهار رسالة نجاح
-      showNotification('تم إرسال طلبك بنجاح! سنتواصل معك قريباً.', 'success');
-      
-      // إعادة تعيين النموذج
-      this.reset();
-    });
-  }
-  
-  // نموذج التواصل
-  const contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // جمع بيانات النموذج
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
-      
-      // إنشاء رسالة واتساب
-      const whatsappMessage = `رسالة تواصل جديدة من دورلي:%0A%0A` +
-        `الاسم: ${data.contactName}%0A` +
-        `البريد الإلكتروني: ${data.contactEmail}%0A` +
-        `الهاتف: ${data.contactPhone}%0A` +
-        `الموضوع: ${data.contactSubject}%0A` +
-        `الرسالة: ${data.contactMessage}`;
-      
-      // فتح واتساب
-      window.open(`https://wa.me/218946507954?text=${whatsappMessage}`, '_blank');
-      
-      // إظهار رسالة نجاح
-      showNotification('تم إرسال رسالتك بنجاح! سنرد عليك في أقرب وقت.', 'success');
-      
-      // إعادة تعيين النموذج
-      this.reset();
-    });
-  }
-}
-
-// ==================== نموذج الطلب السريع ====================
-function initQuickOrder() {
-  const quickOrderForm = document.getElementById('quickOrderForm');
-  
-  if (quickOrderForm) {
-    quickOrderForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // جمع بيانات النموذج
-      const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
-      
-      // إنشاء رسالة واتساب
-      const whatsappMessage = `طلب سريع من دورلي:%0A%0A` +
-        `الاسم: ${data.quickName}%0A` +
-        `الهاتف: ${data.quickPhone}%0A` +
-        `المدينة: ${data.quickCity}%0A` +
-        `نوع الخدمة: ${data.quickService}%0A` +
-        `تفاصيل الطلب: ${data.quickDetails}`;
-      
-      // فتح واتساب
-      window.open(`https://wa.me/218946507954?text=${whatsappMessage}`, '_blank');
-      
-      // إظهار رسالة نجاح
-      showNotification('تم إرسال طلبك بنجاح! سنتواصل معك خلال 30 دقيقة.', 'success');
-      
-      // إعادة تعيين النموذج
-      this.reset();
-    });
-  }
-}
-
-// ==================== الأسئلة الشائعة ====================
+// ==================== 5. الأسئلة الشائعة (FAQ) ====================
 function initFAQ() {
   const faqItems = document.querySelectorAll('.faq-item');
   
   faqItems.forEach(item => {
     const question = item.querySelector('.faq-question');
-    
-    question.addEventListener('click', () => {
-      // إغلاق جميع العناصر الأخرى
-      faqItems.forEach(otherItem => {
-        if (otherItem !== item) {
-          otherItem.classList.remove('active');
-        }
+    if (question) {
+      question.addEventListener('click', () => {
+        // إغلاق جميع الأسئلة الأخرى
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('active');
+          }
+        });
+        // تبديل حالة السؤال الحالي
+        item.classList.toggle('active');
       });
+    }
+  });
+}
+
+// ==================== 6. نموذج الطلب السريع (Quick Order & Request Form) ====================
+function initQuickOrder() {
+  // يبحث عن النموذج سواء كان في الصفحة الرئيسية أو صفحة الطلب
+  const form = document.getElementById('orderForm') || document.getElementById('quickOrderForm');
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // منع إعادة تحميل الصفحة
       
-      // فتح/إغلاق العنصر الحالي
-      item.classList.toggle('active');
-    });
-  });
-}
-
-// ==================== زر العودة للأعلى ====================
-function initScrollToTop() {
-  // إنشاء زر العودة للأعلى
-  const scrollToTopBtn = document.createElement('button');
-  scrollToTopBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
-  scrollToTopBtn.className = 'scroll-to-top';
-  scrollToTopBtn.setAttribute('aria-label', 'العودة إلى الأعلى');
-  document.body.appendChild(scrollToTopBtn);
-  
-  // إضافة الأنماط
-  const style = document.createElement('style');
-  style.textContent = `
-    .scroll-to-top {
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      width: 50px;
-      height: 50px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      box-shadow: var(--shadow-lg);
-      transition: var(--transition);
-      opacity: 0;
-      visibility: hidden;
-      z-index: 1000;
-    }
-    
-    .scroll-to-top.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .scroll-to-top:hover {
-      background: var(--primary-dark);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-xl);
-    }
-    
-    @media (max-width: 768px) {
-      .scroll-to-top {
-        bottom: 20px;
-        left: 20px;
-        width: 45px;
-        height: 45px;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  // التحكم في ظهور الزر
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-      scrollToTopBtn.classList.add('visible');
-    } else {
-      scrollToTopBtn.classList.remove('visible');
-    }
-  });
-  
-  // حدث النقر
-  scrollToTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-}
-
-// ==================== وظائف مساعدة ====================
-function showNotification(message, type = 'info') {
-  // إنشاء عنصر الإشعار
-  const notification = document.createElement('div');
-  notification.className = `notification ${type}`;
-  notification.textContent = message;
-  
-  // إضافة الأنماط
-  const style = document.createElement('style');
-  style.textContent = `
-    .notification {
-      position: fixed;
-      top: 100px;
-      right: 30px;
-      padding: 1rem 1.5rem;
-      border-radius: var(--border-radius);
-      color: white;
-      font-weight: 600;
-      box-shadow: var(--shadow-lg);
-      z-index: 10000;
-      transform: translateX(400px);
-      transition: transform 0.3s ease;
-      max-width: 400px;
-    }
-    
-    .notification.success {
-      background: var(--secondary);
-    }
-    
-    .notification.error {
-      background: #ef4444;
-    }
-    
-    .notification.info {
-      background: var(--primary);
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-    
-    @media (max-width: 768px) {
-      .notification {
-        right: 15px;
-        left: 15px;
-        max-width: none;
-        transform: translateY(-100px);
-      }
+      // جلب الحقول بأكثر من طريقة لضمان التوافق مع كل صفحاتك
+      const nameInput = document.getElementById("name") || this.querySelector('[name="name"]') || this.querySelector('[name="quickName"]');
+      const phoneInput = document.getElementById("phone") || this.querySelector('[name="phone"]') || this.querySelector('[name="quickPhone"]');
+      const cityInput = document.getElementById("city") || this.querySelector('[name="city"]') || this.querySelector('[name="quickCity"]');
+      const productInput = document.getElementById("product") || this.querySelector('[name="product"]') || this.querySelector('[name="quickDetails"]');
       
-      .notification.show {
-        transform: translateY(0);
-      }
-    }
-  `;
-  
-  if (!document.querySelector('#notification-styles')) {
-    style.id = 'notification-styles';
-    document.head.appendChild(style);
-  }
-  
-  document.body.appendChild(notification);
-  
-  // إظهار الإشعار
-  setTimeout(() => notification.classList.add('show'), 100);
-  
-  // إخفاء الإشعار بعد 5 ثواني
-  setTimeout(() => {
-    notification.classList.remove('show');
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 300);
-  }, 5000);
-}
+      if (!nameInput || !phoneInput || !productInput) return;
 
-// ==================== تحميل الصفحة ====================
-window.addEventListener('load', function() {
-  // إخفاء شاشة التحميل إذا كانت موجودة
-  const loader = document.getElementById('loader');
-  if (loader) {
-    loader.style.display = 'none';
-  }
-  
-  // تحسين أداء الصور
-  const images = document.querySelectorAll('img');
-  images.forEach(img => {
-    img.loading = 'lazy';
-  });
-});
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const city = cityInput ? cityInput.value.trim() : "غير محدد";
+      const product = productInput.value.trim();
 
-// ==================== تحسينات SEO ====================
-// تتبع الأحداث الهامة
-function trackEvent(category, action, label) {
-  if (typeof gtag !== 'undefined') {
-    gtag('event', action, {
-      'event_category': category,
-      'event_label': label
+      // التحقق 1: الحقول فارغة
+      if(!name || !phone || !product) {
+          alert("الرجاء تعبئة جميع الحقول المطلوبة.");
+          return;
+      }
+
+      // التحقق 2: رقم هاتف ليبي (يبدأ بـ 09 وبعده 8 أرقام)
+      const phoneRegex = /^09[0-9]{8}$/;
+      if (!phoneRegex.test(phone)) {
+          alert("الرجاء إدخال رقم هاتف صحيح (يبدأ بـ 09 ويتكون من 10 أرقام، مثل: 0918014512).");
+          return;
+      }
+
+      // تجهيز رسالة الواتساب
+      const message =
+        "*طلب جديد من دورلي*\n\n" +
+        "الاسم: " + name + "\n" +
+        "الهاتف: " + phone + "\n" +
+        "المدينة: " + city + "\n" +
+        "تفاصيل الطلب:\n" + product;
+        
+      // تحويل المستخدم لواتساب
+      const whatsappUrl = `https://wa.me/218918014512?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, "_blank");
     });
   }
 }
-
-// تتبع النقر على الروابط الهامة
-document.addEventListener('DOMContentLoaded', function() {
-  const trackableLinks = document.querySelectorAll('a[href^="https://wa.me"], a[href^="tel:"], a[href^="mailto:"]');
-  
-  trackableLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      let action = 'click';
-      let label = href;
-      
-      if (href.includes('wa.me')) {
-        action = 'whatsapp_click';
-        label = 'whatsapp_contact';
-      } else if (href.includes('tel:')) {
-        action = 'phone_click';
-        label = 'phone_contact';
-      } else if (href.includes('mailto:')) {
-        action = 'email_click';
-        label = 'email_contact';
-      }
-      
-      trackEvent('Contact', action, label);
-    });
-  });
-});
