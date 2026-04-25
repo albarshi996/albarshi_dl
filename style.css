@@ -2751,6 +2751,63 @@ input, select, textarea {
   margin-top: 1rem;
   cursor: pointer;
 }
+/* ==================== تحديثات دورلي الجديدة (UX & UI) ==================== */
+
+/* تحسين الوضع الليلي لتخفيف إجهاد العين */
+body.dark-mode {
+  --light: #0b0f19; 
+  --light-gray: #161e2e;
+  --white: #1f2937;
+  --dark: #f3f4f6;
+  --dark-gray: #9ca3af;
+  --black: #ffffff;
+}
+
+body.dark-mode .hero, 
+body.dark-mode .page-hero,
+body.dark-mode .cta-section {
+  background: linear-gradient(135deg, #1e3a8a 0%, #111827 100%);
+}
+
+body.dark-mode .quick-order-form input,
+body.dark-mode .quick-order-form select,
+body.dark-mode .quick-order-form textarea,
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: #1f2937;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+
+/* تنسيق حقل التصنيف الجديد (Category Select) ليكون متناسقاً */
+select#category, select#city {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 1rem center;
+  background-size: 1.5em;
+  padding-left: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* تأثير التحديد عند النقر (Focus) */
+input:focus, select:focus, textarea:focus {
+  border-color: var(--secondary) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  background: var(--white) !important;
+}
+
+/* تحسين مظهر الزر عند التعطيل أثناء الإرسال للواتساب (Disabled State) */
+.submit-btn:disabled {
+  background: var(--dark-gray);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.8;
+}
 
 /* ==================== 6. الفوتر والوضع الليلي ==================== */
 footer {
