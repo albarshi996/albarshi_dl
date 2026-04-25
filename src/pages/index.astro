@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="دورلي - الرئيسية">
+  <section class="hero">
+    <div class="hero-content reveal">
+      <h1>حلقة الوصل بينك وبين ما تحتاج</h1>
+      <p>منصة دورلي توفر لك كل ما تحتاجه من أي مدينة في ليبيا، بأسرع وقت وأقل تكلفة. نحن نبحث، نشتري، ونوصل لك!</p>
+      <div class="hero-buttons">
+        <a href="/request" class="hero-btn">اطلب الآن <i class="fas fa-arrow-left"></i></a>
+        <a href="/services" class="hero-btn secondary">تصفح الخدمات</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-order-section">
+    <div class="container reveal">
+      <div class="section-header">
+        <h2>الطلب السريع</h2>
+        <p>أرسل طلبك مباشرة وسنتواصل معك فوراً لتأكيد التفاصيل</p>
+      </div>
+      
+      <form id="quickOrderForm" class="quick-order-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name"><i class="fas fa-user"></i> الاسم الكريم</label>
+            <input type="text" id="name" name="name" placeholder="اكتب اسمك هنا" required>
+          </div>
+          <div class="form-group">
+            <label for="phone"><i class="fas fa-phone"></i> رقم الهاتف (واتساب)</label>
+            <input type="text" id="phone" name="phone" placeholder="مثال: 0946507954" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="product"><i class="fas fa-box"></i> ماذا تحتاج؟ (تفاصيل الطلب)</label>
+            <textarea id="product" name="product" placeholder="اكتب تفاصيل المنتج أو الخدمة التي تبحث عنها..." required></textarea>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="submit-btn">
+            إرسال الطلب عبر واتساب <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="container reveal">
+      <div class="section-header">
+        <h2>لماذا تختار دورلي؟</h2>
+        <p>نحن نقدم لك تجربة فريدة توفر عليك الوقت والجهد</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-search"></i></div>
+          <h3>نبحث لك</h3>
+          <p>عن أي شيء تحتاجه في أي مدينة ليبية بأفضل الأسعار وبجودة عالية.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
+          <h3>نشتري لك</h3>
+          <p>نقوم بعملية الشراء نيابة عنك لضمان جودة المنتج ومطابقته لطلبك.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+          <h3>نوصل لك</h3>
+          <p>توصيل سريع وآمن حتى باب بيتك أينما كنت في أسرع وقت ممكن.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="container reveal">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-number">+500</div>
+          <div class="stat-label">عميل سعيد</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-box-open"></i></div>
+          <div class="stat-number">+1000</div>
+          <div class="stat-label">طلب منفذ</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-map-marked-alt"></i></div>
+          <div class="stat-number">+15</div>
+          <div class="stat-label">مدينة مغطاة</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
