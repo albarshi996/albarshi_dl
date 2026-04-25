@@ -1,0 +1,8 @@
+# robots.txt - موقع دورلي
+# https://dawerli.org.ly
+
+User-agent: *
+Allow: /
+
+# السماح لجميع محركات البحث بالوصول
+Sitemap: https://dawerli.org.ly/sitemap.xml
