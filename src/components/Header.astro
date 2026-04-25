@@ -1,0 +1,40 @@
+---
+// src/components/Header.astro
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1);
+---
+
+<header>
+  <div class="logo">
+    <i class="fas fa-link pulse"></i> دورلي
+  </div>
+  
+  <button id="theme-toggle" class="theme-toggle" title="تبديل المظهر">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <nav id="mainNav">
+    <a href="/" class={currentPath === "" ? "active" : ""}>
+      <i class="fas fa-home"></i> الرئيسية
+    </a>
+    <a href="/how-it-works" class={currentPath === "how-it-works" ? "active" : ""}>
+      <i class="fas fa-question"></i> كيف يعمل
+    </a>
+    <a href="/features" class={currentPath === "features" ? "active" : ""}>
+      <i class="fas fa-gem"></i> الميزات
+    </a>
+    <a href="/services" class={currentPath === "services" ? "active" : ""}>
+      <i class="fas fa-cogs"></i> خدماتنا
+    </a>
+    <a href="/contact" class={currentPath === "contact" ? "active" : ""}>
+      <i class="fas fa-envelope"></i> تواصل معنا
+    </a>
+    <a href="/request" class="services-btn">
+      <i class="fas fa-paper-plane"></i> اطلب الآن
+    </a>
+  </nav>
+
+  <button id="mobileMenuBtn" class="mobile-menu-btn">
+    <i class="fas fa-bars"></i>
+  </button>
+</header>
