@@ -1,0 +1,258 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="دورلي - اطلب الآن" description="نموذج طلب دورلي - اطلب أي منتج أو خدمة من أي مدينة في ليبيا وسنقوم بتوفيرها لك فوراً">
+  <style>
+    /* أنماط خاصة بصفحة الطلب فقط (لن تؤثر على باقي الموقع) */
+    .steps-bar { display:flex; justify-content:center; align-items:center; gap:0.5rem; padding:1.5rem 1rem; margin-bottom:1rem; }
+    .step { display:flex; flex-direction:column; align-items:center; gap:0.3rem; opacity:0.4; transition:all 0.3s; }
+    .step.active { opacity:1; }
+    .step.done { opacity:1; }
+    .step-circle { width:36px; height:36px; border-radius:50%; background:var(--glass-bg); border:2px solid var(--glass-border); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; color:var(--text-muted); }
+    .step.active .step-circle { background:var(--primary); border-color:var(--primary); color:white; }
+    .step.done .step-circle { background:#10b981; border-color:#10b981; color:white; }
+    .step-label { font-size:0.7rem; color:var(--text-muted); }
+    .step.active .step-label { color:var(--accent-light); }
+    .step-line { width:40px; height:2px; background:var(--glass-border); margin-bottom:1.2rem; }
+    .quantity-group { display:flex; align-items:center; gap:0.8rem; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:var(--border-radius); padding:0.5rem 1rem; }
+    .qty-btn { width:36px; height:36px; border-radius:50%; border:1px solid var(--glass-border); background:var(--bg-card); color:var(--text-main); font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+    .qty-btn:hover { background:var(--primary); border-color:var(--primary); }
+    .qty-display { flex:1; text-align:center; font-size:1.3rem; font-weight:700; color:var(--white); }
+    .urgency-options { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; }
+    .urgency-btn { padding:0.7rem 0.5rem; border-radius:12px; border:1px solid var(--glass-border); background:var(--bg-card); color:var(--text-muted); font-family:'Tajawal',sans-serif; font-size:0.8rem; cursor:pointer; text-align:center; transition:all 0.2s; }
+    .urgency-btn i { display:block; font-size:1.2rem; margin-bottom:0.3rem; }
+    .urgency-btn.sel-normal { background:rgba(16,185,129,0.15); border-color:#10b981; color:#10b981; }
+    .urgency-btn.sel-medium { background:rgba(245,158,11,0.15); border-color:#f59e0b; color:#f59e0b; }
+    .urgency-btn.sel-urgent { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#ef4444; }
+    .success-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,5,0.96); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+    .success-overlay.show { display:flex; animation:fadeIn 0.4s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+    .success-icon { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#10b981,#059669); display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; margin-bottom:1.5rem; }
+    .success-overlay h2 { font-size:1.8rem; margin-bottom:0.5rem; color:white; }
+    .success-overlay p { color:var(--text-muted); margin-bottom:2rem; line-height:1.8; }
+    .success-actions { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+    .success-actions a { padding:0.8rem 1.5rem; border-radius:12px; text-decoration:none; font-family:'Tajawal',sans-serif; font-weight:600; font-size:0.95rem; }
+    .btn-whatsapp { background:#25d366; color:white; }
+    .btn-home { background:var(--glass-bg); border:1px solid var(--glass-border); color:var(--text-main); }
+    .badge-required { font-size:0.65rem; background:rgba(239,68,68,0.2); color:#ef4444; padding:0.1rem 0.4rem; border-radius:6px; margin-right:auto; }
+  </style>
+
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon">🎉</div>
+    <h2>تم إرسال طلبك!</h2>
+    <p>سيتم تحويلك الآن إلى واتساب<br>للتواصل مع فريق دورلي<br>وتأكيد تفاصيل طلبك</p>
+    <div class="success-actions">
+      <a href="#" id="whatsappLink" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> فتح واتساب</a>
+      <a href="/" class="btn-home"><i class="fas fa-home"></i> الرئيسية</a>
+    </div>
+  </div>
+
+  <section class="page-hero">
+    <div class="hero-content reveal">
+      <h1>أرسل طلبك الآن</h1>
+      <p>قم بتعبئة النموذج بتفاصيل طلبك وسنتواصل معك فوراً عبر الواتساب</p>
+    </div>
+  </section>
+
+  <div class="steps-bar reveal">
+    <div class="step active" id="step1"><div class="step-circle">1</div><div class="step-label">بياناتك</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="step2"><div class="step-circle">2</div><div class="step-label">الطلب</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="step3"><div class="step-circle">3</div><div class="step-label">الإرسال</div></div>
+  </div>
+
+  <section class="request-form-section">
+    <div class="container reveal">
+      <div class="form-container">
+        <div class="form-header">
+          <h2><i class="fas fa-shopping-cart"></i> تفاصيل الطلب</h2>
+          <p>يرجى إدخال معلوماتك بدقة لضمان سرعة الخدمة</p>
+        </div>
+
+        <form id="orderForm" class="request-form">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name"><i class="fas fa-user"></i> الاسم الكريم <span class="badge-required">مطلوب</span></label>
+              <input type="text" id="name" name="name" placeholder="اكتب اسمك الثلاثي" required>
+            </div>
+            <div class="form-group">
+              <label for="phone"><i class="fas fa-phone"></i> رقم الواتساب <span class="badge-required">مطلوب</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="مثال: 0946507954" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="city"><i class="fas fa-map-marker-alt"></i> مدينة التسليم <span class="badge-required">مطلوب</span></label>
+              <select id="city" name="city" required>
+                <option value="" disabled selected>اختر مدينتك...</option>
+                <option value="طرابلس">طرابلس</option>
+                <option value="بنغازي">بنغازي</option>
+                <option value="مصراتة">مصراتة</option>
+                <option value="الزاوية">الزاوية</option>
+                <option value="زليتن">زليتن</option>
+                <option value="البيضاء">البيضاء</option>
+                <option value="الخمس">الخمس</option>
+                <option value="سبها">سبها</option>
+                <option value="درنة">درنة</option>
+                <option value="سرت">سرت</option>
+                <option value="جالو">جالو</option>
+                <option value="أوجلة">أوجلة</option>
+                <option value="شخرة">شخرة</option>
+                <option value="أخرى">مدينة أخرى (وضّحها في التفاصيل)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="category"><i class="fas fa-tags"></i> نوع الطلب <span class="badge-required">مطلوب</span></label>
+              <select id="category" name="category" required>
+                <option value="" disabled selected>اختر نوع الطلب...</option>
+                <option value="قطع غيار سيارات">🚗 قطع غيار سيارات</option>
+                <option value="قطع غيار شاحنات">🚛 قطع غيار شاحنات</option>
+                <option value="مواد غذائية وحلويات">🍔 مواد غذائية وحلويات</option>
+                <option value="أوراق ومستندات">📄 أوراق ومستندات</option>
+                <option value="مستلزمات أفراح">💍 مستلزمات أفراح</option>
+                <option value="ملابس وأزياء">👗 ملابس وأزياء</option>
+                <option value="إلكترونيات">📱 إلكترونيات</option>
+                <option value="أخرى">📦 أخرى</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label><i class="fas fa-layer-group"></i> الكمية المطلوبة</label>
+            <div class="quantity-group">
+              <button type="button" class="qty-btn" id="qtyMinus">−</button>
+              <div class="qty-display" id="qtyDisplay">1</div>
+              <button type="button" class="qty-btn" id="qtyPlus">+</button>
+              <input type="hidden" id="quantity" name="quantity" value="1">
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label><i class="fas fa-clock"></i> درجة الاستعجال</label>
+            <div class="urgency-options">
+              <button type="button" class="urgency-btn sel-normal" data-urgency="عادي">
+                <i class="fas fa-leaf"></i> عادي
+              </button>
+              <button type="button" class="urgency-btn" data-urgency="متوسط">
+                <i class="fas fa-bolt"></i> متوسط
+              </button>
+              <button type="button" class="urgency-btn" data-urgency="عاجل">
+                <i class="fas fa-fire"></i> عاجل
+              </button>
+            </div>
+            <input type="hidden" id="urgency" name="urgency" value="عادي">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="product"><i class="fas fa-box-open"></i> تفاصيل طلبك <span class="badge-required">مطلوب</span></label>
+            <textarea id="product" name="product" placeholder="اكتب وصفاً دقيقاً للمنتج أو الخدمة (النوع، المواصفات، وأي تفاصيل هامة)..." required></textarea>
+          </div>
+
+          <div class="form-submit">
+            <button type="submit" class="submit-btn">
+              تأكيد وإرسال عبر واتساب <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i>
+            </button>
+            <p class="form-note"><i class="fas fa-lock"></i> معلوماتك آمنة ولن يتم مشاركتها مع أي طرف ثالث.</p>
+          </div>
+        </form>
+      </div>
+
+      <div class="direct-contact reveal">
+        <div class="contact-header">
+          <h3>هل تفضل التواصل المباشر؟</h3>
+          <p>يمكنك مراسلتنا أو الاتصال بنا مباشرة</p>
+        </div>
+        <div class="contact-methods">
+          <a href="https://wa.me/218946507954" target="_blank" class="contact-method whatsapp">
+            <div class="method-icon"><i class="fab fa-whatsapp"></i></div>
+            <div class="method-info"><h4>واتساب</h4><p>متاح على مدار الساعة</p><span class="method-detail">0946507954</span></div>
+          </a>
+          <a href="tel:0946507954" class="contact-method phone">
+            <div class="method-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="method-info"><h4>مكالمة هاتفية</h4><p>تحدث مع فريقنا مباشرة</p><span class="method-detail">0946507954</span></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    /* سكربت الجافاسكريبت الخاص بتفاعلات صفحة الطلب فقط */
+    document.addEventListener('DOMContentLoaded', () => {
+      let qty = 1;
+      const qtyPlus = document.getElementById('qtyPlus');
+      const qtyMinus = document.getElementById('qtyMinus');
+      const qtyDisplay = document.getElementById('qtyDisplay');
+      const quantityInput = document.getElementById('quantity');
+
+      if(qtyPlus && qtyMinus) {
+        qtyPlus.onclick = () => { qty = Math.min(qty+1,99); qtyDisplay.textContent = qty; quantityInput.value = qty; };
+        qtyMinus.onclick = () => { qty = Math.max(qty-1,1); qtyDisplay.textContent = qty; quantityInput.value = qty; };
+      }
+
+      document.querySelectorAll('.urgency-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.urgency-btn').forEach(b => b.className = 'urgency-btn');
+          const val = btn.dataset.urgency;
+          btn.classList.add(val==='عادي'?'sel-normal':val==='متوسط'?'sel-medium':'sel-urgent');
+          document.getElementById('urgency').value = val;
+        });
+      });
+
+      const fields = ['name','phone','city','category','product'];
+      function updateSteps() {
+        const v = f => document.getElementById(f) ? document.getElementById(f).value.trim() : '';
+        const s1 = v('name') && v('phone');
+        const s2 = s1 && v('city') && v('category') && v('product');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        if(step1) step1.className = 'step '+(s1?'done':'active');
+        if(step2) step2.className = 'step '+(s2?'done':s1?'active':'');
+        if(step3) step3.className = 'step '+(s2?'active':'');
+      }
+      
+      fields.forEach(f => { 
+        const el = document.getElementById(f);
+        if(el) { el.addEventListener('input', updateSteps); el.addEventListener('change', updateSteps); }
+      });
+
+      const orderForm = document.getElementById('orderForm');
+      if(orderForm) {
+        orderForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const name = document.getElementById('name').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const city = document.getElementById('city').value;
+          const category = document.getElementById('category').value;
+          const product = document.getElementById('product').value.trim();
+          const quantity = document.getElementById('quantity').value;
+          const urgency = document.getElementById('urgency').value;
+
+          if (!/^(091|092|094|095)[0-9]{7}$/.test(phone)) {
+            alert('الرجاء إدخال رقم هاتف ليبي صحيح (يبدأ بـ 091، 092، 094، أو 095)');
+            return;
+          }
+
+          const emo = urgency==='عاجل'?'🔴':urgency==='متوسط'?'🟡':'🟢';
+          const msg = `*طلب جديد - دورلي* 📦\n━━━━━━━━━━━━━━━\n👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n📍 *مدينة التسليم:* ${city}\n🏷️ *نوع الطلب:* ${category}\n🔢 *الكمية:* ${quantity}\n${emo} *الاستعجال:* ${urgency}\n━━━━━━━━━━━━━━━\n📝 *التفاصيل:*\n${product}`;
+
+          const url = `https://wa.me/218946507954?text=${encodeURIComponent(msg)}`;
+          const successOverlay = document.getElementById('successOverlay');
+          const whatsappLink = document.getElementById('whatsappLink');
+          
+          if(whatsappLink) whatsappLink.href = url;
+          if(successOverlay) successOverlay.classList.add('show');
+          setTimeout(() => window.open(url, '_blank'), 1500);
+        });
+      }
+    });
+  </script>
+</Layout>
