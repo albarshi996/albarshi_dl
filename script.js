@@ -1,7 +1,6 @@
 // script.js - ملف الجافاسكريبت المحسن لموقع دورلي
 
 document.addEventListener('DOMContentLoaded', function() {
-  // ==================== تهيئة جميع المكونات ====================
   initDarkMode();
   initMobileMenu();
   initScrollEffects();
@@ -18,17 +17,14 @@ function initDarkMode() {
   if (toggleBtn) {
     const icon = toggleBtn.querySelector('i');
 
-    // التحقق من الخيار المحفوظ مسبقاً في المتصفح
     if (localStorage.getItem('theme') === 'dark') {
       body.classList.add('dark-mode');
       if(icon) icon.classList.replace('fa-moon', 'fa-sun');
     }
 
-    // الاستماع لحدث النقر على زر الوضع الليلي
     toggleBtn.addEventListener('click', () => {
       body.classList.toggle('dark-mode');
       
-      // تغيير الأيقونة وحفظ الإعداد
       if (body.classList.contains('dark-mode')) {
         localStorage.setItem('theme', 'dark');
         if(icon) icon.classList.replace('fa-moon', 'fa-sun');
@@ -92,7 +88,7 @@ function initAnimations() {
   };
 
   window.addEventListener('scroll', revealOnScroll);
-  revealOnScroll(); // تشغيلها مرة عند التحميل
+  revealOnScroll();
 }
 
 // ==================== 5. الأسئلة الشائعة (FAQ) ====================
@@ -103,13 +99,11 @@ function initFAQ() {
     const question = item.querySelector('.faq-question');
     if (question) {
       question.addEventListener('click', () => {
-        // إغلاق جميع الأسئلة الأخرى
         faqItems.forEach(otherItem => {
           if (otherItem !== item) {
             otherItem.classList.remove('active');
           }
         });
-        // تبديل حالة السؤال الحالي
         item.classList.toggle('active');
       });
     }
@@ -118,60 +112,69 @@ function initFAQ() {
 
 // ==================== 6. نموذج الطلب السريع (Quick Order & Request Form) ====================
 function initQuickOrder() {
-  // يبحث عن النموذج سواء كان في الصفحة الرئيسية أو صفحة الطلب
   const form = document.getElementById('orderForm') || document.getElementById('quickOrderForm');
   
   if (form) {
     form.addEventListener('submit', function(e) {
-      e.preventDefault(); // منع إعادة تحميل الصفحة
+      e.preventDefault(); 
       
-      // جلب الحقول بأكثر من طريقة لضمان التوافق مع كل صفحاتك
-      const nameInput = document.getElementById("name") || this.querySelector('[name="name"]') || this.querySelector('[name="quickName"]');
-      const phoneInput = document.getElementById("phone") || this.querySelector('[name="phone"]') || this.querySelector('[name="quickPhone"]');
-      const cityInput = document.getElementById("city") || this.querySelector('[name="city"]') || this.querySelector('[name="quickCity"]');
-      const productInput = document.getElementById("product") || this.querySelector('[name="product"]') || this.querySelector('[name="quickDetails"]');
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalBtnText = submitBtn.innerHTML;
+
+      const nameInput = document.getElementById("name") || this.querySelector('[name="name"]');
+      const phoneInput = document.getElementById("phone") || this.querySelector('[name="phone"]');
+      const cityInput = document.getElementById("city") || this.querySelector('[name="city"]');
+      const categoryInput = document.getElementById("category") || this.querySelector('[name="category"]');
+      const productInput = document.getElementById("product") || this.querySelector('[name="product"]');
       
       if (!nameInput || !phoneInput || !productInput) return;
 
       const name = nameInput.value.trim();
       const phone = phoneInput.value.trim();
       const city = cityInput ? cityInput.value.trim() : "غير محدد";
+      const category = categoryInput ? categoryInput.value : "طلب عام";
       const product = productInput.value.trim();
 
-      // التحقق 1: الحقول فارغة
       if(!name || !phone || !product) {
           alert("الرجاء تعبئة جميع الحقول المطلوبة.");
           return;
       }
 
-      // التحقق 2: رقم هاتف ليبي (يبدأ بـ 09 وبعده 8 أرقام)
-      const phoneRegex = /^09[0-9]{8}$/;
+      // التحقق من رقم الهاتف لجميع الشبكات الليبية
+      const phoneRegex = /^(091|092|094|095)[0-9]{7}$/;
       if (!phoneRegex.test(phone)) {
-          alert("الرجاء إدخال رقم هاتف صحيح (يبدأ بـ 09 ويتكون من 10 أرقام، مثل: 0918014512).");
+          alert("الرجاء إدخال رقم هاتف ليبي صحيح (يبدأ بـ 091, 092, 094, أو 095 ويتكون من 10 أرقام).");
           return;
       }
 
-      // تجهيز رسالة الواتساب
-      const message =
-        "*طلب جديد من دورلي*\n\n" +
-        "الاسم: " + name + "\n" +
-        "الهاتف: " + phone + "\n" +
-        "المدينة: " + city + "\n" +
-        "تفاصيل الطلب:\n" + product;
+      // تغيير حالة الزر لمنع التكرار
+      submitBtn.innerHTML = 'جاري التحويل للواتساب... <i class="fas fa-spinner fa-spin"></i>';
+      submitBtn.disabled = true;
+
+      // تجهيز رسالة الواتساب بناءً على الفئة
+      let message = "";
+      if (category === "قطع غيار سيارات") {
+          message = `*طلب قطع غيار جديد - دورلي*\n\n` +
+                    `👤 الاسم: ${name}\n` +
+                    `📍 مدينة التسليم: ${city}\n` +
+                    `📦 القطعة المطلوبة: ${product}\n` +
+                    `🔧 الحالة: (جديد / مستعمل)\n` +
+                    `📸 *ملاحظة: يرجى إرفاق صورة للقطعة أو كتيب السيارة في هذه المحادثة.*`;
+      } else {
+          message = `*طلب جديد (${category}) - دورلي*\n\n` +
+                    `👤 الاسم: ${name}\n` +
+                    `📍 المدينة: ${city}\n` +
+                    `📝 التفاصيل: ${product}`;
+      }
         
-      // تحويل المستخدم لواتساب
-      const whatsappUrl = `https://wa.me/218918014512?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, "_blank");
-    });
-  }
-}function initMobileMenu() {
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const mainNav = document.getElementById('mainNav');
-  
-  if (mobileMenuBtn && mainNav) {
-    mobileMenuBtn.addEventListener('click', function() {
-      mainNav.classList.toggle('active'); // هذا السطر هو الذي يفتح القائمة ويغلقها
+      const whatsappUrl = `https://wa.me/218946507954?text=${encodeURIComponent(message)}`;
+      
+      // فتح الواتساب وإعادة الزر لحالته الأصلية بعد ثانية
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank");
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      }, 1000);
     });
   }
 }
-
