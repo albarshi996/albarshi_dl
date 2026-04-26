@@ -773,3 +773,16 @@ header.scrolled {
     transform: none !important;
   }
 }
+/* تحسين أداء تأثير الزجاج للأجهزة الضعيفة */
+.glass-panel {
+    background: rgba(25, 25, 25, 0.85); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .glass-panel {
+        background: rgba(25, 25, 25, 0.4);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+}
