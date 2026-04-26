@@ -187,27 +187,6 @@ function initQuickOrder() {
       }, 1000);
     }
   });
-}// ... [الأكواد القديمة الموجودة في ملفك] ...
-// ... [دوال معالجة كلمات قطع الغيار والواتساب] ...
-
-// -------------------------------------------------
-// ميزة البحث السريع في صفحة الخدمات (تمت الإضافة هنا)
-const searchInput = document.getElementById('quick-search');
-const serviceItems = document.querySelectorAll('.service-item'); 
-
-if (searchInput) {
-    searchInput.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase().trim();
-        
-        serviceItems.forEach(item => {
-            const itemText = item.textContent.toLowerCase();
-            if(itemText.includes(searchTerm)) {
-                item.style.display = ''; 
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
 }
 // ==================== 6. البحث السريع في الخدمات ====================
 function initQuickSearch() {
@@ -230,5 +209,4 @@ function initQuickSearch() {
     }
 }
 
-
-console.log('✅ دورلي v2.0 | script.js جاهز');
+console.log('✅ دورلي v2.0 | script.js جاهز ومحدث');
