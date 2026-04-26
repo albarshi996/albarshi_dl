@@ -42,16 +42,51 @@ function initMobileMenu() {
   const navLinks = document.querySelector('.nav-links') || document.getElementById('mainNav');
   
   if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', function() {
-      navLinks.classList.toggle('active');
-      const icon = this.querySelector('i');
-      if (icon) {
-        if (navLinks.classList.contains('active')) {
-          icon.classList.replace('fa-bars', 'fa-times');
-        } else {
-          icon.classList.replace('fa-times', 'fa-bars');
-        }
+    // إنشاء overlay
+    let overlay = document.getElementById('navOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'navOverlay';
+      overlay.className = 'nav-overlay';
+      document.body.appendChild(overlay);
+    }
+
+    function openMenu() {
+      navLinks.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      const icon = mobileMenuBtn.querySelector('i');
+      if (icon) icon.classList.replace('fa-bars', 'fa-times');
+    }
+
+    function closeMenu() {
+      navLinks.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      const icon = mobileMenuBtn.querySelector('i');
+      if (icon) icon.classList.replace('fa-times', 'fa-bars');
+    }
+
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.contains('active') ? closeMenu() : openMenu();
+    });
+
+    overlay.addEventListener('click', closeMenu);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+        closeMenu();
       }
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 991) closeMenu();
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 991 && navLinks.classList.contains('active')) closeMenu();
     });
   }
 }
@@ -87,8 +122,9 @@ function initAnimations() {
     });
   };
 
-  window.addEventListener('scroll', revealOnScroll);
+  window.addEventListener('scroll', revealOnScroll, { passive: true });
   revealOnScroll();
+  setTimeout(revealOnScroll, 200);
 }
 
 // ==================== 5. الأسئلة الشائعة (FAQ) ====================
