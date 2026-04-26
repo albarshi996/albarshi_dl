@@ -785,4 +785,31 @@ header.scrolled {
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
     }
+}/* --- تحسينات الموبايل (توضع في آخر ملف style.css) --- */
+@media (max-width: 768px) {
+    /* تجعل بطاقات الخدمات تظهر واحدة تحت الأخرى بدلاً من جانب بعضها */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: 1fr !important; 
+        gap: 1.5rem;
+        padding: 0 15px;
+    }
+
+    /* ضبط عرض البطاقة ليكون كامل الشاشة */
+    .category-card {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+
+    /* تحسين شكل شريط البحث على الموبايل */
+    .search-wrapper {
+        margin-top: -1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* تصغير حجم العناوين قليلاً لتناسب الشاشة */
+    .page-hero h1 {
+        font-size: 2rem;
+    }
 }
+
