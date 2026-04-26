@@ -4,46 +4,53 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="دورلي - خدماتنا" description="تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه من أي مدينة في ليبيا.">
   <style>
-    .search-container { max-width: 600px; margin: -2rem auto 3rem; position: relative; z-index: 10; }
-    .quick-search-input { width: 100%; padding: 1.2rem 3.5rem 1.2rem 1.5rem; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 50px; color: white; font-size: 1.1rem; backdrop-filter: blur(10px); text-align: center; }
-    .search-icon-inside { position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-    .stat-tag { background: rgba(79, 70, 229, 0.1); border: 1px solid var(--primary); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.9rem; color: var(--accent-light); margin: 0 5px; display: inline-block; }
-    .card-order-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; transition: 0.3s; }
-    .card-order-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+    /* شريط البحث السريع */
+    .search-wrapper { max-width: 600px; margin: -2rem auto 3rem; position: relative; z-index: 10; padding: 0 1rem; }
+    .search-input { width: 100%; padding: 1.2rem 3.5rem 1.2rem 1.5rem; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 50px; color: white; font-size: 1.1rem; backdrop-filter: blur(10px); outline: none; }
+    .search-input:focus { border-color: var(--primary); }
+    .search-icon { position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    
+    /* عداد الخدمات */
+    .stat-badge { background: rgba(79, 70, 229, 0.1); border: 1px solid var(--primary); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.9rem; color: var(--accent-light); margin: 0 5px; display: inline-block; }
+    
+    /* زر اطلب هذه الخدمة */
+    .card-action-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; font-size: 0.9rem; transition: 0.3s; }
+    .card-action-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+    
     .hidden-card { display: none !important; }
   </style>
 
   <section class="page-hero">
     <div class="hero-content reveal">
       <h1>خدماتنا المتنوعة</h1>
-      <p>تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه.</p>
+      <p>تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه، وإذا لم تجد طلبك، يمكنك دائماً استخدام "البحث المخصص".</p>
     </div>
   </section>
 
   <div class="container">
-    <div class="search-container reveal">
-      <i class="fas fa-search search-icon-inside"></i>
-      <input type="text" id="serviceSearch" class="quick-search-input" placeholder="ابحث عن خدمة (مثلاً: زيت، إطارات، أدوية)...">
+    <div class="search-wrapper reveal">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="serviceSearch" class="search-input" placeholder="ابحث عن خدمة (مثلاً: زيت، إطارات، أوراق)...">
     </div>
 
     <div style="text-align: center; margin-bottom: 3rem;" class="reveal">
-      <span class="stat-tag"><i class="fas fa-th-large"></i> 8 فئات رئيسية</span>
-      <span class="stat-tag"><i class="fas fa-check-circle"></i> +30 خدمة متوفرة</span>
+      <span class="stat-badge"><i class="fas fa-th-large"></i> 8 فئات رئيسية</span>
+      <span class="stat-badge"><i class="fas fa-check-circle"></i> +30 خدمة متوفرة</span>
     </div>
   </div>
 
   <section class="services-categories">
     <div class="container reveal">
-      <div class="categories-grid" id="categoriesGrid">
+      <div class="categories-grid">
         
-        <div class="category-card" data-keywords="سيارات محركات إطارات بطاريات زيت فلاتر">
+        <div class="category-card" data-keywords="محركات إطارات بطاريات زيت سيارات">
           <div class="category-header car-parts"><i class="fas fa-car"></i><h3>قطع غيار السيارات</h3></div>
           <div class="category-services">
             <span class="service-link"><i class="fas fa-angle-left"></i> قطع غيار محركات</span>
             <span class="service-link"><i class="fas fa-angle-left"></i> إكسسوارات وزينة</span>
             <span class="service-link"><i class="fas fa-angle-left"></i> إطارات وبطاريات</span>
           </div>
-          <a href="/request?cat=قطع غيار سيارات" class="card-order-btn">اطلب قطع غيار الآن</a>
+          <a href="/request?cat=قطع غيار سيارات" class="card-action-btn">اطلب قطع غيار الآن</a>
         </div>
 
         <div class="category-card" data-keywords="شاحنات نقل ثقيل زيوت معدات">
@@ -51,62 +58,69 @@ import Layout from '../layouts/Layout.astro';
           <div class="category-services">
             <span class="service-link"><i class="fas fa-angle-left"></i> قطع غيار النقل الثقيل</span>
             <span class="service-link"><i class="fas fa-angle-left"></i> زيوت ومستهلكات</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> معدات ثقيلة</span>
           </div>
-          <a href="/request?cat=قطع غيار شاحنات" class="card-order-btn">اطلب للشاحنة الآن</a>
+          <a href="/request?cat=قطع غيار شاحنات" class="card-action-btn">اطلب للشاحنة الآن</a>
         </div>
 
-        <div class="category-card" data-keywords="أكل طعام حلويات تمر زيت زيتون عسل">
+        <div class="category-card" data-keywords="أكل طعام حلويات تمر زيت زيتون">
           <div class="category-header food-items"><i class="fas fa-hamburger"></i><h3>مواد غذائية وحلويات</h3></div>
           <div class="category-services">
             <span class="service-link"><i class="fas fa-angle-left"></i> حلويات المناسبات</span>
             <span class="service-link"><i class="fas fa-angle-left"></i> منتجات المدن التراثية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> جملة المواد الغذائية</span>
           </div>
-          <a href="/request?cat=مواد غذائية وحلويات" class="card-order-btn">اطلب أكل الآن</a>
+          <a href="/request?cat=مواد غذائية وحلويات" class="card-action-btn">اطلب مواد غذائية الآن</a>
         </div>
 
         <div class="category-card" data-keywords="أوراق مستندات بريد معاملات جوازات">
-          <div class="category-header documents-delivery"><i class="fas fa-file-alt"></i><h3>مستندات وأوراق</h3></div>
+          <div class="category-header documents"><i class="fas fa-file-alt"></i><h3>أوراق ومستندات</h3></div>
           <div class="category-services">
-            <span class="service-link"><i class="fas fa-angle-left"></i> نقل مستندات رسمية</span>
-            <span class="service-link"><i class="fas fa-angle-left"></i> خدمات بريدية سريعة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> استلام وتوصيل أوراق</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> تخليص إجراءات بسيطة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> بريد سريع بين المدن</span>
           </div>
-          <a href="/request?cat=توصيل مستندات وأوراق" class="card-order-btn">اطلب التوصيل الآن</a>
+          <a href="/request?cat=أوراق ومستندات" class="card-action-btn">اطلب توصيل أوراق الآن</a>
         </div>
 
-        <div class="category-card" data-keywords="دواء صيدلية معدات طبية فيتامينات">
-          <div class="category-header medical-supplies"><i class="fas fa-pills"></i><h3>أدوية ومعدات طبية</h3></div>
+        <div class="category-card" data-keywords="ملابس عروس زينة ديكور أفراح">
+          <div class="category-header wedding-items"><i class="fas fa-ring"></i><h3>مستلزمات الأفراح</h3></div>
           <div class="category-services">
-            <span class="service-link"><i class="fas fa-angle-left"></i> توفير أدوية نادرة</span>
-            <span class="service-link"><i class="fas fa-angle-left"></i> مستلزمات طبية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> ملابس وتجهيزات العروس</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد زينة وديكور</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> توزيعات المناسبات</span>
           </div>
-          <a href="/request?cat=أخرى" class="card-order-btn">اطلب الدواء الآن</a>
+          <a href="/request?cat=مستلزمات أفراح" class="card-action-btn">اطلب تجهيزات أفراح</a>
         </div>
 
-        <div class="category-card" data-keywords="ملابس أحذية شنط هدايا موضة">
-          <div class="category-header clothing-fashion"><i class="fas fa-tshirt"></i><h3>ملابس وأحذية</h3></div>
+        <div class="category-card" data-keywords="تجميل بشرة تنظيف صابون شامبو">
+          <div class="category-header beauty-cleaning"><i class="fas fa-spray-can"></i><h3>التجميل والنظافة</h3></div>
           <div class="category-services">
-            <span class="service-link"><i class="fas fa-angle-left"></i> ملابس رجالي ونسائي</span>
-            <span class="service-link"><i class="fas fa-angle-left"></i> أحذية وحقائب</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مستحضرات التجميل</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> منتجات العناية بالبشرة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد تنظيف بالجملة</span>
           </div>
-          <a href="/request?cat=أخرى" class="card-order-btn">اطلب الملابس الآن</a>
+          <a href="/request?cat=ملابس وأزياء" class="card-action-btn">اطلب منتجات تجميل</a>
         </div>
 
-        <div class="category-card" data-keywords="بناء صحية كهرباء طلاء دهانات">
-          <div class="category-header construction-tools"><i class="fas fa-tools"></i><h3>مواد بناء وصحية</h3></div>
+        <div class="category-card" data-keywords="بناء صحية كهرباء دهانات تشطيب">
+          <div class="category-header construction"><i class="fas fa-hard-hat"></i><h3>مواد البناء والصيانة</h3></div>
           <div class="category-services">
-            <span class="service-link"><i class="fas fa-angle-left"></i> أدوات كهربائية</span>
-            <span class="service-link"><i class="fas fa-angle-left"></i> مواد صحية وطلاء</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد تشطيب وديكور</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أدوات صحية وكهربائية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> معدات صيانة خفيفة</span>
           </div>
-          <a href="/request?cat=أخرى" class="card-order-btn">اطلب مواد بناء الآن</a>
+          <a href="/request?cat=أخرى" class="card-action-btn">اطلب مواد بناء</a>
         </div>
 
-        <div class="category-card" data-keywords="طلب خاص أي شيء غير موجود">
-          <div class="category-header other-services"><i class="fas fa-ellipsis-h"></i><h3>طلبات خاصة أخرى</h3></div>
+        <div class="category-card" data-keywords="نادر شراء إلكتروني استشارة">
+          <div class="category-header custom-service"><i class="fas fa-magic"></i><h3>خدمات مخصصة</h3></div>
           <div class="category-services">
-            <span class="service-link"><i class="fas fa-angle-left"></i> أي منتج غير مدرج</span>
-            <span class="service-link"><i class="fas fa-angle-left"></i> خدمات مخصصة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> بحث عن منتج نادر</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> شراء من متاجر إلكترونية</span>
+            <a href="https://wa.me/218946507954" target="_blank" class="service-link"><i class="fas fa-angle-left"></i> استشارة وتواصل مباشر</a>
           </div>
-          <a href="/request?cat=أخرى" class="card-order-btn">اطلب طلب خاص الآن</a>
+          <a href="/request?cat=أخرى" class="card-action-btn">اطلب خدمة خاصة</a>
         </div>
 
       </div>
