@@ -20,43 +20,25 @@ import Footer from '../components/Footer.astro';
   <link rel="apple-touch-icon" sizes="128x128" href="/favicon-128x128.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
-  
   <meta property="og:type" content="website">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:image" content="https://dawerli.org.ly/og-image.png">
   <meta property="og:url" content="https://dawerli.org.ly">
-
   <title>{title}</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/style.css">
-
-  <!-- إصلاح: إظهار العناصر فوراً قبل تحميل JS -->
   <style>
-    .reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+    .reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; transition: none !important; }
   </style>
 </head>
 <body>
   <Header />
-  
   <main>
     <slot />
   </main>
-
   <Footer />
-
-  <!-- تحميل script.js ثم تفعيل الـ reveal بشكل صحيح -->
-  <script is:inline>
-    // إخفاء العناصر مبدئياً فقط إذا كان JS يعمل
-    document.querySelectorAll('.reveal').forEach(el => {
-      el.style.opacity = '0';
-      el.style.visibility = 'hidden';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease, visibility 0.7s ease';
-    });
-  </script>
   <script src="/script.js" is:inline></script>
 </body>
 </html>
