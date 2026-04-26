@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initScrollReveal();
   initFAQ();
   initQuickOrder();
+  initQuickSearch(); /* <--- ضيف السطر هذا هنا بس */
 });
 
 // ==================== 1. القائمة المتنقلة للموبايل (محسّنة) ====================
@@ -207,6 +208,26 @@ if (searchInput) {
             }
         });
     });
+}
+// ==================== 6. البحث السريع في الخدمات ====================
+function initQuickSearch() {
+    const searchInput = document.getElementById('quick-search');
+    const serviceItems = document.querySelectorAll('.service-item'); 
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            
+            serviceItems.forEach(item => {
+                const itemText = item.textContent.toLowerCase();
+                if(itemText.includes(searchTerm)) {
+                    item.style.display = ''; 
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
 }
 
 
