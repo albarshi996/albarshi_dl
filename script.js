@@ -1,128 +1,108 @@
-// script.js - ملف الجافاسكريبت المحسّن لموقع دورلي v2.0
+// script.js - ملف الجافاسكريبت المحسن لموقع دورلي
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
+  initDarkMode();
   initMobileMenu();
   initScrollEffects();
-  initScrollReveal();
+  initAnimations();
   initFAQ();
   initQuickOrder();
-  initQuickSearch(); /* <--- ضيف السطر هذا هنا بس */
 });
 
-// ==================== 1. القائمة المتنقلة للموبايل (محسّنة) ====================
+// ==================== 1. الوضع الليلي (Dark Mode) ====================
+function initDarkMode() {
+  const toggleBtn = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  if (toggleBtn) {
+    const icon = toggleBtn.querySelector('i');
+
+    if (localStorage.getItem('theme') === 'dark') {
+      body.classList.add('dark-mode');
+      if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+      } else {
+        localStorage.setItem('theme', 'light');
+        if(icon) icon.classList.replace('fa-sun', 'fa-moon');
+      }
+    });
+  }
+}
+
+// ==================== 2. القائمة المتنقلة للموبايل ====================
 function initMobileMenu() {
   const mobileMenuBtn = document.querySelector('.mobile-menu-btn') || document.getElementById('mobileMenuBtn');
-  const nav = document.querySelector('nav') || document.getElementById('mainNav');
-  if (!mobileMenuBtn || !nav) return;
-
-  // إنشاء طبقة التعتيم
-  let overlay = document.getElementById('navOverlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'navOverlay';
-    overlay.className = 'nav-overlay';
-    document.body.appendChild(overlay);
-  }
-
-  function openMenu() {
-    nav.classList.add('active');
-    overlay.classList.add('active');
-    mobileMenuBtn.classList.add('is-active');
-    document.body.style.overflow = 'hidden';
-    const icon = mobileMenuBtn.querySelector('i');
-    if (icon) icon.classList.replace('fa-bars', 'fa-times');
-  }
-
-  function closeMenu() {
-    nav.classList.remove('active');
-    overlay.classList.remove('active');
-    mobileMenuBtn.classList.remove('is-active');
-    document.body.style.overflow = '';
-    const icon = mobileMenuBtn.querySelector('i');
-    if (icon) icon.classList.replace('fa-times', 'fa-bars');
-  }
-
-  mobileMenuBtn.addEventListener('click', () => {
-    nav.classList.contains('active') ? closeMenu() : openMenu();
-  });
-
-  // إغلاق عند الضغط على الـ overlay
-  overlay.addEventListener('click', closeMenu);
-
-  // إغلاق بمفتاح Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && nav.classList.contains('active')) {
-      closeMenu();
-      mobileMenuBtn.focus();
-    }
-  });
-
-  // إغلاق عند النقر على رابط في القائمة
-  nav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      if (window.innerWidth <= 991) closeMenu();
+  const navLinks = document.querySelector('.nav-links') || document.getElementById('mainNav');
+  
+  if (mobileMenuBtn && navLinks) {
+    mobileMenuBtn.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      const icon = this.querySelector('i');
+      if (icon) {
+        if (navLinks.classList.contains('active')) {
+          icon.classList.replace('fa-bars', 'fa-times');
+        } else {
+          icon.classList.replace('fa-times', 'fa-bars');
+        }
+      }
     });
-  });
-
-  // إغلاق عند تكبير الشاشة
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 991 && nav.classList.contains('active')) closeMenu();
-  });
-}
-
-// ==================== 2. تأثيرات التمرير على الهيدر ====================
-function initScrollEffects() {
-  const header = document.querySelector('header');
-  if (!header) return;
-
-  function handleScroll() {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
   }
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
 }
 
-// ==================== 3. Scroll Reveal المتقدم ====================
-function initScrollReveal() {
-  const reveals = document.querySelectorAll('.reveal');
-  if (reveals.length === 0) return;
-
-  // إذا كان المتصفح يدعم IntersectionObserver
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-          observer.unobserve(entry.target);
+// ==================== 3. تأثيرات التمرير (Scroll Effects) ====================
+function initScrollEffects() {
+  const header = document.querySelector('header') || document.querySelector('nav');
+  
+  if(header) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
         }
       });
-    }, {
-      root: null,
-      rootMargin: '0px 0px -60px 0px',
-      threshold: 0.1,
-    });
-
-    reveals.forEach(el => observer.observe(el));
-  } else {
-    // fallback للمتصفحات القديمة
-    reveals.forEach(el => el.classList.add('active'));
   }
 }
 
-// ==================== 4. الأسئلة الشائعة (FAQ) ====================
+// ==================== 4. حركات الظهور (Animations) ====================
+function initAnimations() {
+  const reveals = document.querySelectorAll('.reveal');
+  
+  const revealOnScroll = () => {
+    const windowHeight = window.innerHeight;
+    const elementVisible = 100;
+
+    reveals.forEach(reveal => {
+      const elementTop = reveal.getBoundingClientRect().top;
+      if (elementTop < windowHeight - elementVisible) {
+        reveal.classList.add('active');
+      }
+    });
+  };
+
+  window.addEventListener('scroll', revealOnScroll);
+  revealOnScroll();
+}
+
+// ==================== 5. الأسئلة الشائعة (FAQ) ====================
 function initFAQ() {
   const faqItems = document.querySelectorAll('.faq-item');
+  
   faqItems.forEach(item => {
     const question = item.querySelector('.faq-question');
     if (question) {
       question.addEventListener('click', () => {
-        faqItems.forEach(other => {
-          if (other !== item) other.classList.remove('active');
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('active');
+          }
         });
         item.classList.toggle('active');
       });
@@ -130,83 +110,71 @@ function initFAQ() {
   });
 }
 
-// ==================== 5. نموذج الطلب ====================
+// ==================== 6. نموذج الطلب السريع (Quick Order & Request Form) ====================
 function initQuickOrder() {
   const form = document.getElementById('orderForm') || document.getElementById('quickOrderForm');
-  if (!form) return;
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); 
+      
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalBtnText = submitBtn.innerHTML;
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
+      const nameInput = document.getElementById("name") || this.querySelector('[name="name"]');
+      const phoneInput = document.getElementById("phone") || this.querySelector('[name="phone"]');
+      const cityInput = document.getElementById("city") || this.querySelector('[name="city"]');
+      const categoryInput = document.getElementById("category") || this.querySelector('[name="category"]');
+      const productInput = document.getElementById("product") || this.querySelector('[name="product"]');
+      
+      if (!nameInput || !phoneInput || !productInput) return;
 
-    const submitBtn = this.querySelector('.submit-btn');
-    const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const city = cityInput ? cityInput.value.trim() : "غير محدد";
+      const category = categoryInput ? categoryInput.value : "طلب عام";
+      const product = productInput.value.trim();
 
-    const name     = (document.getElementById('name')     || this.querySelector('[name="name"]'))?.value.trim();
-    const phone    = (document.getElementById('phone')    || this.querySelector('[name="phone"]'))?.value.trim();
-    const city     = (document.getElementById('city')     || this.querySelector('[name="city"]'))?.value || 'غير محدد';
-    const category = (document.getElementById('category') || this.querySelector('[name="category"]'))?.value || 'طلب عام';
-    const product  = (document.getElementById('product')  || this.querySelector('[name="product"]'))?.value.trim();
-    const quantity = document.getElementById('quantity')?.value || '1';
-    const urgency  = document.getElementById('urgency')?.value  || 'عادي';
+      if(!name || !phone || !product) {
+          alert("الرجاء تعبئة جميع الحقول المطلوبة.");
+          return;
+      }
 
-    if (!name || !phone || !product) {
-      alert('الرجاء تعبئة جميع الحقول المطلوبة.');
-      return;
-    }
+      // التحقق من رقم الهاتف لجميع الشبكات الليبية
+      const phoneRegex = /^(091|092|094|095)[0-9]{7}$/;
+      if (!phoneRegex.test(phone)) {
+          alert("الرجاء إدخال رقم هاتف ليبي صحيح (يبدأ بـ 091, 092, 094, أو 095 ويتكون من 10 أرقام).");
+          return;
+      }
 
-    const phoneRegex = /^(091|092|094|095)[0-9]{7}$/;
-    if (!phoneRegex.test(phone)) {
-      alert('الرجاء إدخال رقم هاتف ليبي صحيح (يبدأ بـ 091، 092، 094، أو 095).');
-      return;
-    }
-
-    if (submitBtn) {
+      // تغيير حالة الزر لمنع التكرار
       submitBtn.innerHTML = 'جاري التحويل للواتساب... <i class="fas fa-spinner fa-spin"></i>';
       submitBtn.disabled = true;
-    }
 
-    const emo = urgency === 'عاجل' ? '🔴' : urgency === 'متوسط' ? '🟡' : '🟢';
-    const msg = `*طلب جديد - دورلي* 📦\n━━━━━━━━━━━━━━━\n👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n📍 *مدينة التسليم:* ${city}\n🏷️ *نوع الطلب:* ${category}\n🔢 *الكمية:* ${quantity}\n${emo} *الاستعجال:* ${urgency}\n━━━━━━━━━━━━━━━\n📝 *التفاصيل:*\n${product}`;
-
-    const url = `https://wa.me/218946507954?text=${encodeURIComponent(msg)}`;
-
-    // شاشة النجاح إذا كانت موجودة
-    const successOverlay = document.getElementById('successOverlay');
-    const whatsappLink   = document.getElementById('whatsappLink');
-    if (successOverlay && whatsappLink) {
-      whatsappLink.href = url;
-      successOverlay.classList.add('show');
-      setTimeout(() => window.open(url, '_blank'), 1500);
-    } else {
+      // تجهيز رسالة الواتساب بناءً على الفئة
+      let message = "";
+      if (category === "قطع غيار سيارات") {
+          message = `*طلب قطع غيار جديد - دورلي*\n\n` +
+                    `👤 الاسم: ${name}\n` +
+                    `📍 مدينة التسليم: ${city}\n` +
+                    `📦 القطعة المطلوبة: ${product}\n` +
+                    `🔧 الحالة: (جديد / مستعمل)\n` +
+                    `📸 *ملاحظة: يرجى إرفاق صورة للقطعة أو كتيب السيارة في هذه المحادثة.*`;
+      } else {
+          message = `*طلب جديد (${category}) - دورلي*\n\n` +
+                    `👤 الاسم: ${name}\n` +
+                    `📍 المدينة: ${city}\n` +
+                    `📝 التفاصيل: ${product}`;
+      }
+        
+      const whatsappUrl = `https://wa.me/218946507954?text=${encodeURIComponent(message)}`;
+      
+      // فتح الواتساب وإعادة الزر لحالته الأصلية بعد ثانية
       setTimeout(() => {
-        window.open(url, '_blank');
-        if (submitBtn) {
-          submitBtn.innerHTML = originalBtnText;
-          submitBtn.disabled = false;
-        }
+        window.open(whatsappUrl, "_blank");
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
       }, 1000);
-    }
-  });
+    });
+  }
 }
-// ==================== 6. البحث السريع في الخدمات ====================
-function initQuickSearch() {
-    const searchInput = document.getElementById('quick-search');
-    const serviceItems = document.querySelectorAll('.service-item'); 
-
-    if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            
-            serviceItems.forEach(item => {
-                const itemText = item.textContent.toLowerCase();
-                if(itemText.includes(searchTerm)) {
-                    item.style.display = ''; 
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-    }
-}
-
-console.log('✅ دورلي v2.0 | script.js جاهز ومحدث');
