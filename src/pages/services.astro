@@ -3,128 +3,127 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="دورلي - خدماتنا" description="تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه من أي مدينة في ليبيا.">
+  <style>
+    .search-container { max-width: 600px; margin: -2rem auto 3rem; position: relative; z-index: 10; }
+    .quick-search-input { width: 100%; padding: 1.2rem 3.5rem 1.2rem 1.5rem; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 50px; color: white; font-size: 1.1rem; backdrop-filter: blur(10px); text-align: center; }
+    .search-icon-inside { position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    .stat-tag { background: rgba(79, 70, 229, 0.1); border: 1px solid var(--primary); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.9rem; color: var(--accent-light); margin: 0 5px; display: inline-block; }
+    .card-order-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; transition: 0.3s; }
+    .card-order-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+    .hidden-card { display: none !important; }
+  </style>
+
   <section class="page-hero">
     <div class="hero-content reveal">
       <h1>خدماتنا المتنوعة</h1>
-      <p>تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه، وإذا لم تجد طلبك، يمكنك دائماً استخدام "البحث المخصص".</p>
+      <p>تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه.</p>
     </div>
   </section>
+
+  <div class="container">
+    <div class="search-container reveal">
+      <i class="fas fa-search search-icon-inside"></i>
+      <input type="text" id="serviceSearch" class="quick-search-input" placeholder="ابحث عن خدمة (مثلاً: زيت، إطارات، أدوية)...">
+    </div>
+
+    <div style="text-align: center; margin-bottom: 3rem;" class="reveal">
+      <span class="stat-tag"><i class="fas fa-th-large"></i> 8 فئات رئيسية</span>
+      <span class="stat-tag"><i class="fas fa-check-circle"></i> +30 خدمة متوفرة</span>
+    </div>
+  </div>
 
   <section class="services-categories">
     <div class="container reveal">
-      <div class="categories-grid">
+      <div class="categories-grid" id="categoriesGrid">
         
-        <div class="category-card">
-          <div class="category-header car-parts">
-            <i class="fas fa-car"></i>
-            <h3>قطع غيار السيارات</h3>
-          </div>
+        <div class="category-card" data-keywords="سيارات محركات إطارات بطاريات زيت فلاتر">
+          <div class="category-header car-parts"><i class="fas fa-car"></i><h3>قطع غيار السيارات</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> قطع غيار محركات</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> إكسسوارات وزينة</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> إطارات وبطاريات</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> قطع غيار محركات</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> إكسسوارات وزينة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> إطارات وبطاريات</span>
           </div>
+          <a href="/request?cat=قطع غيار سيارات" class="card-order-btn">اطلب قطع غيار الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header truck-parts">
-            <i class="fas fa-truck-moving"></i>
-            <h3>قطع غيار الشاحنات</h3>
-          </div>
+        <div class="category-card" data-keywords="شاحنات نقل ثقيل زيوت معدات">
+          <div class="category-header truck-parts"><i class="fas fa-truck-moving"></i><h3>قطع غيار الشاحنات</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> قطع غيار النقل الثقيل</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> زيوت ومستهلكات</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> معدات ثقيلة</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> قطع غيار النقل الثقيل</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> زيوت ومستهلكات</span>
           </div>
+          <a href="/request?cat=قطع غيار شاحنات" class="card-order-btn">اطلب للشاحنة الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header food-items">
-            <i class="fas fa-hamburger"></i>
-            <h3>مواد غذائية وحلويات</h3>
-          </div>
+        <div class="category-card" data-keywords="أكل طعام حلويات تمر زيت زيتون عسل">
+          <div class="category-header food-items"><i class="fas fa-hamburger"></i><h3>مواد غذائية وحلويات</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> حلويات المناسبات</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> منتجات المدن التراثية</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> جملة المواد الغذائية</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> حلويات المناسبات</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> منتجات المدن التراثية</span>
           </div>
+          <a href="/request?cat=مواد غذائية وحلويات" class="card-order-btn">اطلب أكل الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header documents">
-            <i class="fas fa-file-alt"></i>
-            <h3>أوراق ومستندات</h3>
-          </div>
+        <div class="category-card" data-keywords="أوراق مستندات بريد معاملات جوازات">
+          <div class="category-header documents-delivery"><i class="fas fa-file-alt"></i><h3>مستندات وأوراق</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> استلام وتوصيل أوراق</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> تخليص إجراءات بسيطة</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> بريد سريع بين المدن</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> نقل مستندات رسمية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> خدمات بريدية سريعة</span>
           </div>
+          <a href="/request?cat=توصيل مستندات وأوراق" class="card-order-btn">اطلب التوصيل الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header wedding-items">
-            <i class="fas fa-ring"></i>
-            <h3>مستلزمات الأفراح</h3>
-          </div>
+        <div class="category-card" data-keywords="دواء صيدلية معدات طبية فيتامينات">
+          <div class="category-header medical-supplies"><i class="fas fa-pills"></i><h3>أدوية ومعدات طبية</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> ملابس وتجهيزات العروس</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> مواد زينة وديكور</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> توزيعات المناسبات</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> توفير أدوية نادرة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مستلزمات طبية</span>
           </div>
+          <a href="/request?cat=أخرى" class="card-order-btn">اطلب الدواء الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header beauty-cleaning">
-            <i class="fas fa-spray-can"></i>
-            <h3>التجميل والنظافة</h3>
-          </div>
+        <div class="category-card" data-keywords="ملابس أحذية شنط هدايا موضة">
+          <div class="category-header clothing-fashion"><i class="fas fa-tshirt"></i><h3>ملابس وأحذية</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> مستحضرات التجميل</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> منتجات العناية بالبشرة</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> مواد تنظيف بالجملة</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> ملابس رجالي ونسائي</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أحذية وحقائب</span>
           </div>
+          <a href="/request?cat=أخرى" class="card-order-btn">اطلب الملابس الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header construction">
-            <i class="fas fa-hard-hat"></i>
-            <h3>مواد البناء والصيانة</h3>
-          </div>
+        <div class="category-card" data-keywords="بناء صحية كهرباء طلاء دهانات">
+          <div class="category-header construction-tools"><i class="fas fa-tools"></i><h3>مواد بناء وصحية</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> مواد تشطيب وديكور</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> أدوات صحية وكهربائية</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> معدات صيانة خفيفة</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أدوات كهربائية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد صحية وطلاء</span>
           </div>
+          <a href="/request?cat=أخرى" class="card-order-btn">اطلب مواد بناء الآن</a>
         </div>
 
-        <div class="category-card">
-          <div class="category-header custom-service">
-            <i class="fas fa-magic"></i>
-            <h3>خدمات مخصصة</h3>
-          </div>
+        <div class="category-card" data-keywords="طلب خاص أي شيء غير موجود">
+          <div class="category-header other-services"><i class="fas fa-ellipsis-h"></i><h3>طلبات خاصة أخرى</h3></div>
           <div class="category-services">
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> بحث عن منتج نادر</a>
-            <a href="/request" class="service-link"><i class="fas fa-angle-left"></i> شراء من متاجر إلكترونية</a>
-            <a href="https://wa.me/218946507954" target="_blank" class="service-link"><i class="fas fa-angle-left"></i> استشارة وتواصل مباشر</a>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أي منتج غير مدرج</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> خدمات مخصصة</span>
           </div>
+          <a href="/request?cat=أخرى" class="card-order-btn">اطلب طلب خاص الآن</a>
         </div>
 
       </div>
     </div>
   </section>
 
-  <section class="quick-search-section">
-    <div class="container reveal">
-      <div class="section-header">
-        <h2>لم تجد ما تبحث عنه؟</h2>
-        <p>لا تقلق، فقط اضغط على الزر أدناه وسنبحث عنه من أجلك</p>
-      </div>
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="/request" class="hero-btn" style="font-size: 1.2rem; padding: 1.5rem 3rem;">
-          اطلب خدمة خاصة <i class="fas fa-arrow-left"></i>
-        </a>
-      </div>
-    </div>
-  </section>
+  <script is:inline>
+    const searchInput = document.getElementById('serviceSearch');
+    const cards = document.querySelectorAll('.category-card');
+    if(searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        cards.forEach(card => {
+          const content = card.innerText.toLowerCase() + card.getAttribute('data-keywords');
+          card.classList.toggle('hidden-card', !content.includes(term));
+        });
+      });
+    }
+  </script>
 </Layout>
