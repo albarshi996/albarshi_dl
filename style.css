@@ -846,4 +846,34 @@ header.scrolled {
     }
 }
 
+/* ==================== إصلاح الراحة البصرية للواجهة (الهاتف) ==================== */
+@media (max-width: 768px) {
+    /* إعطاء مساحة تنفس للعناوين والنصوص */
+    .hero h1, .page-hero h1 {
+        font-size: 2.1rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .hero p, .page-hero p {
+        font-size: 1.05rem;
+        margin-bottom: 3rem; /* زيادة المسافة بين النص والأزرار */
+        padding: 0 10px;
+        line-height: 1.8;
+    }
+
+    /* ترتيب الأزرار لتكون أكثر أناقة واحترافية */
+    .hero-buttons {
+        display: flex;
+        flex-direction: column; /* ترتيب عمودي إجباري */
+        gap: 1.2rem;
+        width: 100%;
+        padding: 0 15px; /* إبعادها عن حواف الشاشة قليلاً */
+    }
+
+    .hero-btn {
+        width: 100%; /* أزرار بعرض الشاشة */
+        justify-content: center; /* توسيط النص والأيقونة داخل الزر */
+        padding: 1.2rem;
+    }
+}
 
