@@ -16,23 +16,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Prepare Public Files (Zero Risk Strategy)
-        run: |
-          mkdir -p public
-          cp *.css *.js *.png *.ico *.xml *.txt CNAME public/ 2>/dev/null || true
-          
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          
+
       - name: Install dependencies
         run: npm install
-        
+
+      - name: Copy public assets
+        run: |
+          mkdir -p public
+          cp *.css *.js *.ico *.xml *.txt CNAME public/ 2>/dev/null || true
+          cp *.png public/ 2>/dev/null || true
+
       - name: Build with Astro
         run: npm run build
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
