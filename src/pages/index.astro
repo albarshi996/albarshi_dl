@@ -3,6 +3,194 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="دورلي - الرئيسية">
+
+<style>
+  /* ===== شريط الخدمات السريع ===== */
+  .services-strip {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .services-strip::-webkit-scrollbar { display: none; }
+  .services-strip-inner {
+    display: flex;
+    gap: 0.8rem;
+    width: max-content;
+    margin: 0 auto;
+    padding: 0 0.5rem;
+  }
+  .service-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: var(--transition);
+  }
+  .service-chip:hover {
+    border-color: var(--primary);
+    color: var(--accent-light);
+    background: rgba(79,70,229,0.1);
+    transform: translateY(-2px);
+  }
+  .service-chip i { color: var(--accent); }
+
+  /* ===== كيف يعمل (مبسط) ===== */
+  .how-section {
+    padding: 4rem 1.5rem;
+    background: rgba(255,255,255,0.01);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .how-section .sec-title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .how-section .sec-sub {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+  }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .how-step {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition);
+  }
+  .how-step:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+  }
+  .how-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.8rem;
+  }
+  .how-step h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .how-step p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .how-more {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+  .how-more a {
+    color: var(--accent-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .how-more a:hover { text-decoration: underline; }
+
+  /* ===== بانر الباقات ===== */
+  .pricing-banner {
+    margin: 3rem 1.5rem;
+    background: linear-gradient(135deg,
+      rgba(79,70,229,0.15),
+      rgba(6,182,212,0.1));
+    border: 1px solid rgba(79,70,229,0.35);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    backdrop-filter: blur(8px);
+  }
+  .banner-text h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .banner-text p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .banner-pills {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+  }
+  .pill {
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+  }
+  .pill.hot {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border-color: transparent;
+  }
+  .banner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    padding: 0.85rem 1.8rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .banner-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+  }
+
+  @media (max-width: 768px) {
+    .how-steps { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+    .pricing-banner { flex-direction: column; text-align: center; }
+    .banner-pills { justify-content: center; }
+    .banner-btn { width: 100%; justify-content: center; }
+  }
+</style>
+
+  <!-- Hero -->
   <section class="hero">
     <div class="hero-content reveal">
       <h1>حلقة الوصل بينك وبين ما تحتاج</h1>
@@ -14,13 +202,52 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- شريط الخدمات السريع -->
+  <div class="services-strip">
+    <div class="services-strip-inner">
+      <a href="/services" class="service-chip"><i class="fas fa-car"></i> قطع غيار سيارات</a>
+      <a href="/services" class="service-chip"><i class="fas fa-truck"></i> قطع غيار شاحنات</a>
+      <a href="/services" class="service-chip"><i class="fas fa-hamburger"></i> مواد غذائية</a>
+      <a href="/services" class="service-chip"><i class="fas fa-file-alt"></i> أوراق ومستندات</a>
+      <a href="/services" class="service-chip"><i class="fas fa-ring"></i> مستلزمات أفراح</a>
+      <a href="/services" class="service-chip"><i class="fas fa-hard-hat"></i> مواد بناء</a>
+      <a href="/services" class="service-chip"><i class="fas fa-magic"></i> خدمات مخصصة</a>
+    </div>
+  </div>
+
+  <!-- كيف يعمل -->
+  <section class="how-section">
+    <div class="sec-title">كيف يعمل دورلي؟</div>
+    <div class="sec-sub">3 خطوات بسيطة وطلبك في طريقه إليك</div>
+    <div class="how-steps reveal">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <h3>أرسل طلبك</h3>
+        <p>اكتب ما تحتاجه بالتفصيل عبر النموذج أو واتساب</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <h3>نبحث ونشتري</h3>
+        <p>فريقنا يبحث ويشتري بأفضل سعر وجودة مضمونة</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <h3>نوصل لبابك</h3>
+        <p>توصيل سريع وآمن لأي مدينة في ليبيا</p>
+      </div>
+    </div>
+    <div class="how-more">
+      <a href="/how-it-works">عرض التفاصيل الكاملة ←</a>
+    </div>
+  </section>
+
+  <!-- نموذج الطلب السريع -->
   <section class="quick-order-section">
     <div class="container reveal">
       <div class="section-header">
         <h2>الطلب السريع</h2>
         <p>أرسل طلبك مباشرة وسنتواصل معك فوراً لتأكيد التفاصيل</p>
       </div>
-      
       <form id="quickOrderForm" class="quick-order-form">
         <div class="form-row">
           <div class="form-group">
@@ -34,7 +261,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="form-row">
           <div class="form-group full-width">
-            <label for="product"><i class="fas fa-box"></i> ماذا تحتاج؟ (تفاصيل الطلب)</label>
+            <label for="product"><i class="fas fa-box"></i> ماذا تحتاج؟</label>
             <textarea id="product" name="product" placeholder="اكتب تفاصيل المنتج أو الخدمة التي تبحث عنها..." required></textarea>
           </div>
         </div>
@@ -47,6 +274,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- لماذا دورلي -->
   <section class="features-section">
     <div class="container reveal">
       <div class="section-header">
@@ -73,6 +301,23 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- بانر الباقات -->
+  <div class="pricing-banner reveal">
+    <div class="banner-text">
+      <h3>🎯 اختر الباقة المناسبة لك</h3>
+      <p>من التوصيل العادي إلى الخدمة الفورية VIP</p>
+      <div class="banner-pills">
+        <div class="pill">📦 عادي — من 20 د.ل</div>
+        <div class="pill hot">🚀 سريع — من 40 د.ل</div>
+        <div class="pill">👑 VIP — من 70 د.ل</div>
+      </div>
+    </div>
+    <a href="/pricing" class="banner-btn">
+      <i class="fas fa-tags"></i> عرض الباقات
+    </a>
+  </div>
+
+  <!-- الإحصائيات -->
   <section class="stats-section">
     <div class="container reveal">
       <div class="stats-grid">
@@ -94,4 +339,6 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+</Layout>
 </Layout>
