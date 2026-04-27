@@ -1,8 +1,8 @@
 ---
 // src/layouts/Layout.astro
 interface Props {
-	title: string;
-	description?: string;
+  title: string;
+  description?: string;
 }
 
 const { title, description = "منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا." } = Astro.props;
@@ -14,45 +14,66 @@ import Footer from '../components/Footer.astro';
 <html lang="ar" dir="rtl" style="background-color: #050505;">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="128x128" href="/favicon-128x128.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- SEO -->
+  <title>{title}</title>
   <meta name="description" content={description}>
-  
+  <meta name="keywords" content="دورلي, طلب قطع غيار, ليبيا, بنغازي, جالو, أوجلة, توصيل طلبات">
+  <meta name="geo.region" content="LY">
+  <meta name="geo.placename" content="Benghazi, Jalu, Awjila">
+
+  <!-- OG -->
   <meta property="og:type" content="website">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:image" content="https://dawerli.org.ly/og-image.png">
   <meta property="og:url" content="https://dawerli.org.ly">
-  
-  <meta name="keywords" content="دورلي, طلب قطع غيار, ليبيا, بنغازي, جالو, أوجلة, إجخرة, توصيل طلبات">
-  <meta name="geo.region" content="LY">
-  <meta name="geo.placename" content="Benghazi, Jalu, Awjila, Ijkhara">
-  
-  <title>{title}</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="128x128" href="/favicon-128x128.png">
+
+  <!-- ✅ تحسين 1: preconnect قبل تحميل الخطوط -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <!-- ✅ تحسين 2: تحميل الخط بـ 4 أوزان فقط بدل 7 -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- ✅ تحسين 3: Font Awesome بـ display=swap -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+  <!-- CSS الرئيسي -->
   <link rel="stylesheet" href="/style.css">
 
-  <meta name="theme-color" content="#050505">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- ✅ تحسين 4: منع الوميض الأبيض -->
+  <style>
+    html, body { background-color: #050505; }
+    .reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+  </style>
 </head>
 <body style="background-color: #050505;">
   <Header />
-  
+
   <main>
     <slot />
   </main>
 
   <Footer />
 
-  <a href="https://wa.me/218946507954" class="floating-whatsapp" target="_blank" aria-label="تواصل معنا على واتساب">
-      <i class="fab fa-whatsapp"></i>
+  <!-- زر واتساب العائم -->
+  <a href="https://wa.me/218946507954" class="floating-whatsapp" target="_blank" rel="noopener" aria-label="تواصل معنا على واتساب">
+    <i class="fab fa-whatsapp"></i>
   </a>
 
-  <script is:inline src="/script.js"></script>
+  <!-- ✅ تحسين 5: defer لتحميل الـ JS بعد الصفحة -->
+  <script defer src="/script.js"></script>
 </body>
 </html>
