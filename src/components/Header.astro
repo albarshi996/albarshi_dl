@@ -8,13 +8,15 @@ const currentPath = pathname.slice(1);
     <i class="fas fa-link pulse"></i> دورلي
   </a>
   
-  <button id="theme-toggle" class="theme-toggle" data-i18n-title="themeToggleTitle">
-    <i class="fas fa-moon"></i>
-  </button>
+  <div class="header-actions">
+    <button id="theme-toggle" class="theme-toggle" data-i18n-title="themeToggleTitle">
+      <i class="fas fa-moon"></i>
+    </button>
 
-  <button id="langToggleBtn" class="lang-toggle">
-    <span class="lang-label">ع</span>
-  </button>
+    <button id="langToggleBtn" class="lang-toggle">
+      <span class="lang-label">ع</span>
+    </button>
+  </div>
 
   <nav id="mainNav">
     <a href="/" class={currentPath === "" ? "active" : ""}>
