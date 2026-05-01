@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="دورلي - خدماتنا" description="تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه من أي مدينة في ليبيا.">
+  <script is:inline>document.documentElement.dataset.page = 'services';</script>
+  <style>
+    /* شريط البحث السريع */
+    .search-wrapper { max-width: 600px; margin: -2rem auto 3rem; position: relative; z-index: 10; padding: 0 1rem; }
+    .search-input { width: 100%; padding: 1.2rem 3.5rem 1.2rem 1.5rem; background: var(--glass-bg); border: 2px solid var(--glass-border); border-radius: 50px; color: white; font-size: 1.1rem; backdrop-filter: blur(10px); outline: none; }
+    .search-input:focus { border-color: var(--primary); }
+    .search-icon { position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    
+    /* عداد الخدمات */
+    .stat-badge { background: rgba(79, 70, 229, 0.1); border: 1px solid var(--primary); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.9rem; color: var(--accent-light); margin: 0 5px; display: inline-block; }
+    
+    /* زر اطلب هذه الخدمة */
+    .card-action-btn { display: block; width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; font-size: 0.9rem; transition: 0.3s; }
+    .card-action-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3); }
+    
+    .hidden-card { display: none !important; }
+  </style>
+
+  <section class="page-hero">
+    <div class="hero-content reveal">
+      <h1><span data-i18n="servicesHeroTitle">خدماتنا المتنوعة</span></h1>
+      <p><span data-i18n="servicesHeroDesc">تصفح الفئات المختلفة لخدماتنا. نحن نغطي تقريباً كل ما قد تحتاجه، وإذا لم تجد طلبك، يمكنك دائماً استخدام "البحث المخصص".</span></p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="search-wrapper reveal">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="serviceSearch" class="search-input" placeholder="" data-i18n-placeholder="searchPlaceholder" placeholder="ابحث عن خدمة (مثلاً: زيت، إطارات، أوراق)...">
+    </div>
+
+    <div style="text-align: center; margin-bottom: 3rem;" class="reveal">
+      <span class="stat-badge"><i class="fas fa-th-large"></i> <span data-i18n="statBadgeCats">8 فئات رئيسية</span></span>
+      <span class="stat-badge"><i class="fas fa-check-circle"></i> <span data-i18n="statBadgeServices">+30 خدمة متوفرة</span></span>
+    </div>
+  </div>
+
+  <section class="services-categories">
+    <div class="container reveal">
+      <div class="categories-grid">
+        
+        <div class="category-card" data-keywords="محركات إطارات بطاريات زيت سيارات">
+          <div class="category-header car-parts"><i class="fas fa-car"></i><h3><span data-i18n="catCarParts">قطع غيار السيارات</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> <span data-i18n="catCar_service1">قطع غيار محركات</span></span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> <span data-i18n="catCar_service2">إكسسوارات وزينة</span></span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> <span data-i18n="catCar_service3">إطارات وبطاريات</span></span>
+          </div>
+          <a href="/request?cat=قطع غيار سيارات" class="card-action-btn"><span data-i18n="catCar_btn">اطلب قطع غيار الآن</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="شاحنات نقل ثقيل زيوت معدات">
+          <div class="category-header truck-parts"><i class="fas fa-truck-moving"></i><h3><span data-i18n="catTruckParts">قطع غيار الشاحنات</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> قطع غيار النقل الثقيل</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> زيوت ومستهلكات</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> معدات ثقيلة</span>
+          </div>
+          <a href="/request?cat=قطع غيار شاحنات" class="card-action-btn"><span data-i18n="catTruck_btn">اطلب للشاحنة الآن</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="أكل طعام حلويات تمر زيت زيتون">
+          <div class="category-header food-items"><i class="fas fa-hamburger"></i><h3><span data-i18n="catFood">مواد غذائية وحلويات</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> حلويات المناسبات</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> منتجات المدن التراثية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> جملة المواد الغذائية</span>
+          </div>
+          <a href="/request?cat=مواد غذائية وحلويات" class="card-action-btn"><span data-i18n="catFood_btn">اطلب مواد غذائية الآن</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="أوراق مستندات بريد معاملات جوازات">
+          <div class="category-header documents"><i class="fas fa-file-alt"></i><h3><span data-i18n="catDocs">أوراق ومستندات</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> استلام وتوصيل أوراق</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> تخليص إجراءات بسيطة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> بريد سريع بين المدن</span>
+          </div>
+          <a href="/request?cat=أوراق ومستندات" class="card-action-btn"><span data-i18n="catDocs_btn">اطلب توصيل أوراق الآن</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="ملابس عروس زينة ديكور أفراح">
+          <div class="category-header wedding-items"><i class="fas fa-ring"></i><h3><span data-i18n="catWedding">مستلزمات الأفراح</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> ملابس وتجهيزات العروس</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد زينة وديكور</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> توزيعات المناسبات</span>
+          </div>
+          <a href="/request?cat=مستلزمات أفراح" class="card-action-btn"><span data-i18n="catWedding_btn">اطلب تجهيزات أفراح</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="تجميل بشرة تنظيف صابون شامبو">
+          <div class="category-header beauty-cleaning"><i class="fas fa-spray-can"></i><h3><span data-i18n="catBeauty">التجميل والنظافة</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> مستحضرات التجميل</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> منتجات العناية بالبشرة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد تنظيف بالجملة</span>
+          </div>
+          <a href="/request?cat=تجميل ونظافة" class="card-action-btn"><span data-i18n="catBeauty_btn">اطلب منتجات تجميل</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="بناء صحية كهرباء دهانات تشطيب">
+          <div class="category-header construction"><i class="fas fa-hard-hat"></i><h3><span data-i18n="catConstruction">مواد البناء والصيانة</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> مواد تشطيب وديكور</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أدوات صحية وكهربائية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> معدات صيانة خفيفة</span>
+          </div>
+          <a href="/request?cat=مواد بناء وصيانة" class="card-action-btn"><span data-i18n="catConstruction_btn">اطلب مواد بناء</span></a>
+        </div>
+
+        <div class="category-card" data-keywords="نادر شراء إلكتروني استشارة">
+          <div class="category-header custom-service"><i class="fas fa-magic"></i><h3><span data-i18n="catCustom">خدمات مخصصة</span></h3></div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> بحث عن منتج نادر</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> شراء من متاجر إلكترونية</span>
+            <a data-wa class="service-link"><i class="fas fa-angle-left"></i> استشارة وتواصل مباشر</a>
+          </div>
+          <a href="/request?cat=أخرى" class="card-action-btn"><span data-i18n="catCustom_btn">اطلب خدمة خاصة</span></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    const searchInput = document.getElementById('serviceSearch');
+    const cards = document.querySelectorAll('.category-card');
+    if(searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        cards.forEach(card => {
+          const content = card.innerText.toLowerCase() + card.getAttribute('data-keywords');
+          card.classList.toggle('hidden-card', !content.includes(term));
+        });
+      });
+    }
+  </script>
+</Layout>

@@ -1,0 +1,50 @@
+---
+// src/components/Footer.astro
+const email = "Albarshi.96@gmail.com";
+const fbLink = "https://www.facebook.com/share16JEUw1tZk";
+---
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3><span data-i18n="footerAboutTitle">عن دورلي</span></h3>
+      <p><span data-i18n="footerAboutDesc">منصتك الأولى للوساطة التجارية في ليبيا. نهدف لتسهيل حياتك وتوفير وقتك وجهدك في البحث والشراء.</span></p>
+      <div class="social-links">
+        <a data-wa data-i18n-title="whatsappTitle"><i class="fab fa-whatsapp"></i></a>
+        <a href={fbLink} target="_blank" data-i18n-title="facebookTitle"><i class="fab fa-facebook-f"></i></a>
+        <a href={`mailto:${email}`} data-i18n-title="emailTitle"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+    
+    <div class="footer-section">
+      <h3><span data-i18n="footerQuickLinksTitle">روابط سريعة</span></h3>
+      <ul class="footer-links">
+        <li><a href="/"><i class="fas fa-angle-left"></i> <span data-i18n="footerNavHome">الرئيسية</span></a></li>
+        <li><a href="/how-it-works"><i class="fas fa-angle-left"></i> <span data-i18n="footerNavHow">كيف يعمل</span></a></li>
+        <li><a href="/features"><i class="fas fa-angle-left"></i> <span data-i18n="footerNavFeatures">الميزات</span></a></li>
+        <li><a href="/services"><i class="fas fa-angle-left"></i> <span data-i18n="footerNavServices">خدماتنا</span></a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h3><span data-i18n="footerContactTitle">تواصل معنا</span></h3>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <a data-tel><span data-i18n="termsWhatsAppNumber">0946507954</span></a>
+        </div>
+        <div class="contact-item">
+          <i class="fab fa-whatsapp"></i>
+          <a data-wa><span data-i18n="termsWhatsAppNumber">0946507954</span></a>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <a href={`mailto:${email}`}>{email}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">
+    <p><span data-i18n="footerCopyright">جميع الحقوق محفوظة &copy; {new Date().getFullYear()} لدى منصة دورلي</span></p>
+  </div>
+</footer>

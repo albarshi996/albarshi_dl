@@ -1,0 +1,589 @@
+---
+import Layout from '../layouts/Layout.astro';
+// phone centralized in lang files; runtime i18n fills wa.me/tel links
+---
+
+<Layout title="دورلي - الباقات والأسعار" description="تعرف على باقات خدمة دورلي المتنوعة. نقدم خدمة توصيل سريعة وآمنة بأسعار تنافسية في جميع أنحاء ليبيا.">
+  <script is:inline>document.documentElement.dataset.page = 'pricing';</script>
+
+  <style>
+    /* ===== Hero ===== */
+    .pricing-hero {
+      background: var(--bg-main);
+      position: relative;
+      overflow: hidden;
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+    }
+    .pricing-hero::before {
+      content: '';
+      position: absolute;
+      top: -10%; left: -10%;
+      width: 500px; height: 500px;
+      background: var(--primary);
+      filter: blur(150px);
+      opacity: 0.2;
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite alternate;
+    }
+    .pricing-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -10%; right: -10%;
+      width: 400px; height: 400px;
+      background: var(--accent);
+      filter: blur(150px);
+      opacity: 0.15;
+      border-radius: 50%;
+    }
+    .pricing-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      background: linear-gradient(to right, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+    .pricing-hero p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== badge ===== */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(79,70,229,0.15);
+      border: 1px solid rgba(79,70,229,0.4);
+      color: var(--accent-light);
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== الباقات ===== */
+    .pricing-section {
+      padding: 4rem 1.5rem 5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(79,70,229,0.15);
+    }
+
+    /* بطاقة VIP مميزة */
+    .pricing-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg,
+        rgba(79,70,229,0.1),
+        rgba(6,182,212,0.08));
+      box-shadow: 0 0 30px rgba(6,182,212,0.1);
+    }
+
+    .pricing-card.featured:hover {
+      box-shadow: 0 20px 50px rgba(6,182,212,0.2);
+      border-color: var(--accent-light);
+    }
+
+    /* شارة الأكثر طلباً */
+    .popular-badge {
+      position: absolute;
+      top: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* السعر */
+    .price-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .price-value {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--accent-light);
+    }
+
+    .price-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* المميزات */
+    .features-list {
+      list-style: none;
+      text-align: right;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .features-list li i {
+      color: #10b981;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .features-list li.unavailable {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+
+    .features-list li.unavailable i {
+      color: #ef4444;
+    }
+
+    /* زر الطلب */
+    .pricing-btn {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      border-radius: 50px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+    }
+
+    .pricing-btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+    }
+
+    .pricing-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(6,182,212,0.4);
+    }
+
+    .pricing-btn.outline {
+      background: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+    }
+
+    .pricing-btn.outline:hover {
+      border-color: var(--primary);
+      color: var(--white);
+      background: rgba(79,70,229,0.1);
+    }
+
+    /* ===== مقارنة الخدمات ===== */
+    .compare-section {
+      padding: 3rem 1.5rem 5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .compare-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 2rem;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+
+    .compare-table th {
+      background: rgba(79,70,229,0.15);
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .compare-table th:first-child { text-align: right; }
+
+    .compare-table td {
+      padding: 0.9rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      text-align: center;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .compare-table td:first-child { text-align: right; color: var(--text-main); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .check { color: #10b981; font-size: 1.1rem; }
+    .cross { color: #ef4444; font-size: 1.1rem; }
+
+    /* ===== ضمان + FAQ ===== */
+    .guarantee-section {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .guarantee-card {
+      background: linear-gradient(135deg,
+        rgba(16,185,129,0.1),
+        rgba(6,182,212,0.08));
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: var(--border-radius-lg);
+      padding: 2.5rem 2rem;
+    }
+
+    .guarantee-card i {
+      font-size: 3rem;
+      color: #10b981;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .guarantee-card h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+
+    .guarantee-card p {
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ===== CTA ===== */
+    .pricing-cta {
+      padding: 4rem 1.5rem;
+      text-align: center;
+      background: rgba(79,70,229,0.05);
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .pricing-cta h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-cta p {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .cta-btn.whatsapp {
+      background: #25d366;
+      color: white;
+    }
+
+    .cta-btn.whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+    }
+
+    .cta-btn.secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+    }
+
+    .cta-btn.secondary:hover {
+      border-color: var(--primary);
+      color: var(--white);
+    }
+
+    @media (max-width: 768px) {
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .compare-table { font-size: 0.8rem; }
+      .compare-table th, .compare-table td { padding: 0.7rem 0.8rem; }
+    }
+  </style>
+
+  <!-- Hero -->
+  <section class="pricing-hero">
+    <div class="hero-badge">
+      <i class="fas fa-tags"></i> <span data-i18n="pricingHeroBadge">الباقات والأسعار</span>
+    </div>
+    <h1><span data-i18n="pricingHeroTitle">اختر الباقة المناسبة لك</span></h1>
+    <p><span data-i18n="pricingHeroDesc">نقدم خدمات مرنة تناسب جميع الاحتياجات — من الطلبات البسيطة إلى الطلبات العاجلة والمميزة</span></p>
+  </section>
+
+  <!-- الباقات الثلاث -->
+  <section class="pricing-section">
+    <div class="pricing-grid">
+
+      <!-- باقة عادي -->
+      <div class="pricing-card reveal">
+        <div class="card-icon">📦</div>
+        <div class="card-title"><span data-i18n="planStandardTitle">عادي</span></div>
+        <div class="card-subtitle"><span data-i18n="planStandardSubtitle">مثالي للطلبات غير العاجلة</span></div>
+
+        <div class="price-box">
+          <div class="price-label"><span data-i18n="priceLabel">رسوم الخدمة</span></div>
+          <div class="price-value"><span data-i18n="priceValueStandard">تبدأ من 20 د.ل</span></div>
+          <div class="price-note"><span data-i18n="priceNote">+ تكلفة المنتج والشحن الفعلي</span></div>
+        </div>
+
+        <ul class="features-list">
+          <li><i class="fas fa-check"></i> التوصيل خلال 3-5 أيام</li>
+          <li><i class="fas fa-check"></i> تتبع الطلب عبر واتساب</li>
+          <li><i class="fas fa-check"></i> ضمان سلامة البضاعة</li>
+          <li><i class="fas fa-check"></i> دعم عبر الواتساب</li>
+          <li class="unavailable"><i class="fas fa-times"></i> أولوية في المعالجة</li>
+          <li class="unavailable"><i class="fas fa-times"></i> متابعة شخصية</li>
+        </ul>
+
+        <a data-wa data-wa-key="wa_pricing_standard" class="pricing-btn outline">
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+        </a>
+      </div>
+
+      <!-- باقة سريع (الأكثر طلباً) -->
+      <div class="pricing-card featured reveal">
+        <div class="popular-badge"><span data-i18n="popularBadge">⭐ الأكثر طلباً</span></div>
+        <div class="card-icon">🚀</div>
+        <div class="card-title"><span data-i18n="planFastTitle">سريع</span></div>
+        <div class="card-subtitle"><span data-i18n="planFastSubtitle">للطلبات التي تحتاج سرعة</span></div>
+
+        <div class="price-box">
+          <div class="price-label">رسوم الخدمة</div>
+          <div class="price-value">تبدأ من 40 د.ل</div>
+          <div class="price-note">+ تكلفة المنتج والشحن الفعلي</div>
+        </div>
+
+        <ul class="features-list">
+          <li><i class="fas fa-check"></i> التوصيل خلال 24-48 ساعة</li>
+          <li><i class="fas fa-check"></i> تتبع الطلب عبر واتساب</li>
+          <li><i class="fas fa-check"></i> ضمان سلامة البضاعة</li>
+          <li><i class="fas fa-check"></i> دعم عبر الواتساب</li>
+          <li><i class="fas fa-check"></i> أولوية في المعالجة</li>
+          <li class="unavailable"><i class="fas fa-times"></i> متابعة شخصية</li>
+        </ul>
+
+        <a data-wa data-wa-key="wa_pricing_fast" class="pricing-btn primary">
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+        </a>
+      </div>
+
+      <!-- باقة VIP -->
+      <div class="pricing-card reveal">
+        <div class="card-icon">👑</div>
+        <div class="card-title"><span data-i18n="planVipTitle">VIP</span></div>
+        <div class="card-subtitle"><span data-i18n="planVipSubtitle">خدمة مميزة بلا حدود</span></div>
+
+        <div class="price-box">
+          <div class="price-label">رسوم الخدمة</div>
+          <div class="price-value">تبدأ من 70 د.ل</div>
+          <div class="price-note">+ تكلفة المنتج والشحن الفعلي</div>
+        </div>
+
+        <ul class="features-list">
+          <li><i class="fas fa-check"></i> توصيل فوري (نفس اليوم)</li>
+          <li><i class="fas fa-check"></i> تتبع الطلب عبر واتساب</li>
+          <li><i class="fas fa-check"></i> ضمان سلامة البضاعة</li>
+          <li><i class="fas fa-check"></i> دعم على مدار الساعة</li>
+          <li><i class="fas fa-check"></i> أولوية قصوى في المعالجة</li>
+          <li><i class="fas fa-check"></i> متابعة شخصية مخصصة</li>
+        </ul>
+
+        <a data-wa data-wa-key="wa_pricing_vip" class="pricing-btn outline">
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- جدول المقارنة -->
+  <section class="compare-section reveal">
+    <h2>مقارنة الباقات</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>الميزة</th>
+          <th>📦 عادي</th>
+          <th>🚀 سريع</th>
+          <th>👑 VIP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>وقت التوصيل</td>
+          <td>3-5 أيام</td>
+          <td>24-48 ساعة</td>
+          <td>نفس اليوم</td>
+        </tr>
+        <tr>
+          <td>تتبع عبر واتساب</td>
+          <td><i class="fas fa-check check"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+        </tr>
+        <tr>
+          <td>ضمان البضاعة</td>
+          <td><i class="fas fa-check check"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+        </tr>
+        <tr>
+          <td>أولوية المعالجة</td>
+          <td><i class="fas fa-times cross"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+        </tr>
+        <tr>
+          <td>متابعة شخصية</td>
+          <td><i class="fas fa-times cross"></i></td>
+          <td><i class="fas fa-times cross"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+        </tr>
+        <tr>
+          <td>دعم 24/7</td>
+          <td><i class="fas fa-times cross"></i></td>
+          <td><i class="fas fa-times cross"></i></td>
+          <td><i class="fas fa-check check"></i></td>
+        </tr>
+        <tr>
+          <td>رسوم الخدمة</td>
+          <td>من 20 د.ل</td>
+          <td>من 40 د.ل</td>
+          <td>من 70 د.ل</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- الضمان -->
+  <section class="guarantee-section reveal">
+    <div class="guarantee-card">
+      <i class="fas fa-shield-alt"></i>
+      <h3>ضمان الرضا التام</h3>
+      <p>نضمن لك وصول طلبك بأمان أو نعيد لك رسوم الخدمة كاملة. راحتك وثقتك هي أولويتنا الأولى.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="pricing-cta">
+    <h2>مش متأكد أي باقة تناسبك؟</h2>
+    <p>تواصل معنا مباشرة وسنساعدك تختار الأنسب لطلبك</p>
+    <div class="cta-buttons">
+      <a data-wa data-wa-key="wa_pricing_help" class="cta-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> تحدث معنا الآن
+      </a>
+      <a href="/request" class="cta-btn secondary">
+        <i class="fas fa-paper-plane"></i> اطلب مباشرة
+      </a>
+    </div>
+  </section>
+
+</Layout>

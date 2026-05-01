@@ -1,0 +1,93 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="دورلي - تواصل معنا" description="تواصل مع دورلي - نحن هنا لمساعدتك في أي استفسار أو طلب في أي وقت.">
+  <script is:inline>document.documentElement.dataset.page = 'contact';</script>
+  <section class="page-hero">
+    <div class="hero-content reveal">
+      <h1><span data-i18n="contactHeroTitle">نبقى على تواصل دائم</span></h1>
+      <p><span data-i18n="contactHeroDesc">فريق خدمة العملاء لدينا مستعد دائماً للرد على استفساراتك ومساعدتك في تلبية طلباتك بأسرع وقت ممكن.</span></p>
+    </div>
+  </section>
+
+  <section class="contact-main">
+    <div class="container reveal">
+      <div class="contact-grid">
+        
+        <div class="contact-info">
+          <h2><span data-i18n="contactHowTitle">كيف يمكننا مساعدتك؟</span></h2>
+          <p><span data-i18n="contactHowDesc">اختر الوسيلة الأنسب لك للتواصل معنا، نحن نرد على جميع الرسائل والمكالمات في أقرب وقت.</span></p>
+          
+          <div class="contact-details">
+            <div class="contact-item-detailed">
+              <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+              <div class="contact-text">
+                <h4><span data-i18n="contactPhoneTitle">اتصال هاتفي</span></h4>
+                <p><span data-i18n="contactPhoneDesc">متاح خلال ساعات العمل</span></p>
+                <a data-tel><span data-i18n="termsWhatsAppNumber">0946507954</span></a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #25D366, #128C7E);"><i class="fab fa-whatsapp"></i></div>
+              <div class="contact-text">
+                <h4><span data-i18n="contactWhatsappTitle">واتساب</span></h4>
+                <p><span data-i18n="contactWhatsappDesc">متاح على مدار الساعة للطلبات</span></p>
+                <a data-wa><span data-i18n="termsWhatsAppNumber">0946507954</span></a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #1877F2, #0d5aeb);"><i class="fab fa-facebook-f"></i></div>
+              <div class="contact-text">
+                <h4><span data-i18n="contactFacebookTitle">فيسبوك</span></h4>
+                <p><span data-i18n="contactFacebookDesc">تابع جديدنا وتواصل معنا عبر الصفحة</span></p>
+                <a href="https://www.facebook.com/share16JEUw1tZk" target="_blank">صفحة دورلي</a>
+              </div>
+            </div>
+
+            <div class="contact-item-detailed">
+              <div class="contact-icon" style="background: linear-gradient(135deg, #64748b, #475569);"><i class="fas fa-envelope"></i></div>
+              <div class="contact-text">
+                <h4><span data-i18n="contactEmailTitle">البريد الإلكتروني</span></h4>
+                <p><span data-i18n="contactEmailDesc">للاستفسارات والطلبات الرسمية</span></p>
+                <a href="mailto:Albarshi.96@gmail.com">Albarshi.96@gmail.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-extra">
+          <div class="business-hours">
+            <h3><i class="fas fa-clock"></i> <span data-i18n="hoursTitle">ساعات العمل</span></h3>
+            <div class="hours-list">
+              <div class="hour-item">
+                <span data-i18n="hoursWeek">السبت - الخميس</span>
+                <span data-i18n="hoursWeekTime">09:00 صباحاً - 10:00 مساءً</span>
+              </div>
+              <div class="hour-item">
+                <span data-i18n="hoursFri">الجمعة</span>
+                <span data-i18n="hoursFriTime">04:00 مساءً - 10:00 مساءً</span>
+              </div>
+              <div class="hour-item" style="color: var(--secondary); font-weight: 900; justify-content: center; margin-top: 1.5rem; background: var(--light-gray); padding: 1rem; border-radius: 8px;">
+                <i class="fab fa-whatsapp" style="margin-left: 5px;"></i> <span data-i18n="wa24">نستقبل طلبات الواتساب 24/7</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem;">
+            <div class="emergency-card" style="padding: 2.5rem 2rem; flex-direction: column; text-align: center; border-radius: var(--border-radius-lg);">
+              <div class="emergency-icon" style="font-size: 3.5rem; margin-bottom: 1rem;"><i class="fas fa-headset"></i></div>
+              <div class="emergency-content">
+                <h3 style="font-size: 1.6rem; margin-bottom: 0.5rem;"><span data-i18n="supportTitle">دعم فني مستمر</span></h3>
+                <p style="font-size: 1rem; opacity: 0.9;"><span data-i18n="supportDesc">نحن هنا لضمان حصولك على أفضل تجربة. لا تتردد في مراسلتنا لأي استفسار، اقتراح، أو حتى شكوى.</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</Layout>

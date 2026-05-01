@@ -1,0 +1,49 @@
+---
+// src/components/Header.astro
+const pathname = new URL(Astro.request.url).pathname;
+const currentPath = pathname.slice(1);
+---
+
+<header>
+  <a href="/" class="logo" data-i18n-aria="logoAria">
+    <i class="fas fa-link pulse"></i> دورلي
+  </a>
+  
+  <button id="theme-toggle" class="theme-toggle" data-i18n-title="themeToggleTitle">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <!-- زر تبديل اللغة (تمت إضافته كمسودة لواجهة i18n) -->
+  <button id="langToggleBtn" class="lang-toggle" data-i18n-title="langToggleTitle">
+    <span class="lang-label">ع</span>
+  </button>
+
+  <nav id="mainNav">
+    <a href="/" class={currentPath === "" ? "active" : ""}>
+      <i class="fas fa-home"></i> <span data-i18n="home">الرئيسية</span>
+    </a>
+    <a href="/how-it-works" class={currentPath === "how-it-works" ? "active" : ""}>
+      <i class="fas fa-question"></i> <span data-i18n="howItWorks">كيف يعمل</span>
+    </a>
+    <a href="/features" class={currentPath === "features" ? "active" : ""}>
+      <i class="fas fa-gem"></i> <span data-i18n="features">الميزات</span>
+    </a>
+    <a href="/services" class={currentPath === "services" ? "active" : ""}>
+      <i class="fas fa-cogs"></i> <span data-i18n="services">خدماتنا</span>
+    </a>
+    <a href="/contact" class={currentPath === "contact" ? "active" : ""}>
+      <i class="fas fa-envelope"></i> <span data-i18n="contact">تواصل معنا</span>
+    </a>
+    <a href="/pricing" class={currentPath === "pricing" ? "active" : ""}>
+      <i class="fas fa-tags"></i> <span data-i18n="pricing">الباقات</span>
+    </a>
+    <a href="/request" class="services-btn">
+      <i class="fas fa-paper-plane"></i> <span data-i18n="request">اطلب الآن</span>
+    </a>
+  </nav>
+
+  <button id="mobileMenuBtn" class="mobile-menu-btn" data-i18n-title="mobileMenuTitle">
+    <i class="fas fa-bars"></i>
+  </button>
+</header>
+

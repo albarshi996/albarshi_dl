@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="سياسة الخصوصية - دورلي" description="سياسة الخصوصية لمنصة دورلي - كيف نتعامل مع بياناتك. لا نخزن بيانات ولا نطلب كلمات مرور.">
+  <script is:inline>document.documentElement.dataset.page = 'privacy';</script>
+
+  <style>
+    .privacy-container { max-width:800px; margin:2rem auto; padding:2rem; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:18px; line-height:1.9; }
+    .privacy-container h1 { color:var(--accent-light); margin-bottom:0.5rem; }
+    .privacy-container .updated { color:var(--text-muted); font-size:0.9rem; margin-bottom:2rem; }
+    .privacy-container h2 { color:var(--white); margin:2rem 0 1rem; font-size:1.4rem; padding-bottom:0.5rem; border-bottom:1px solid var(--glass-border); }
+    .privacy-container p { color:var(--text-main); margin-bottom:1rem; }
+    .privacy-container ul { padding-right:1.5rem; margin-bottom:1rem; color:var(--text-main); }
+    .privacy-container li { margin-bottom:0.5rem; }
+    .highlight { background:rgba(37,211,102,0.12); border-right:3px solid #25D366; padding:1rem 1.2rem; border-radius:8px; margin:1rem 0; }
+    .highlight strong { color:#25D366; }
+  </style>
+
+  <div class="privacy-container">
+    <h1><i class="fas fa-shield-alt"></i> <span data-i18n="privacyTitle">سياسة الخصوصية</span></h1>
+    <p class="updated" data-i18n="privacyUpdated">آخر تحديث: 28 أبريل 2026</p>
+
+    <div class="highlight">
+      <strong><span data-i18n="privacySummaryTitle">ملخص سريع:</span></strong> <span data-i18n="privacySummary">دورلي لا تطلب أي تسجيل دخول، ولا تخزن أي كلمات مرور، ولا تجمع بيانات بنكية. كل ما تكتبه في نموذج الطلب يُرسل مباشرة إلى محادثة واتساب مع فريقنا، ولا يمر عبر أي خادم وسيط.</span>
+    </div>
+
+    <h2><span data-i18n="privacyQ1">1. ما البيانات التي نجمعها؟</span></h2>
+    <p><span data-i18n="privacyQ1Desc">نموذج الطلب على موقعنا يطلب منك المعلومات التالية فقط:</span></p>
+    <ul>
+      <li><strong><span data-i18n="privacyDataName">اسمك:</span></strong> <span data-i18n="privacyDataNameDesc">لمناداتك بشكل لائق في الرسالة.</span></li>
+      <li><strong><span data-i18n="privacyDataPhone">رقم واتساب:</span></strong> <span data-i18n="privacyDataPhoneDesc">للتواصل معك بخصوص الطلب.</span></li>
+      <li><strong><span data-i18n="privacyDataCity">مدينة التسليم:</span></strong> <span data-i18n="privacyDataCityDesc">لتحديد إمكانية ووقت التوصيل.</span></li>
+      <li><strong><span data-i18n="privacyDataDetails">تفاصيل الطلب:</span></strong> <span data-i18n="privacyDataDetailsDesc">لفهم ما تحتاجه.</span></li>
+    </ul>
+
+    <h2>2. كيف نستخدم هذه البيانات؟</h2>
+    <p>هذه البيانات تُستخدم لغرض واحد فقط: <strong>تنفيذ طلبك وتوصيله إليك</strong>. لا نشاركها مع أي طرف ثالث، ولا نستخدمها للتسويق، ولا نبيعها.</p>
+
+    <h2>3. أين تُخزن هذه البيانات؟</h2>
+    <p>عندما تضغط زر "فتح محادثة واتساب وإرسال الطلب"، يفتح موقعنا تطبيق واتساب على جهازك مع رسالة جاهزة تحتوي على بياناتك. <strong>لا نخزن نسخة من هذه البيانات على خوادمنا</strong> — كل البيانات تنتقل مباشرة من جهازك إلى واتساب.</p>
+
+    <h2>4. هل تستخدمون كوكيز (Cookies)؟</h2>
+    <p>لا. موقع دورلي لا يستخدم ملفات تعريف الارتباط للتتبع. الموقع لا يحتوي على نظام تسجيل دخول أو حسابات مستخدمين.</p>
+
+    <h2>5. حقوقك</h2>
+    <ul>
+      <li>يمكنك التواصل معنا في أي وقت لطلب حذف محادثتك من واتساب.</li>
+      <li>لست ملزماً بإعطائنا أي معلومات لا تريد مشاركتها.</li>
+      <li>يمكنك مراجعة الطلب قبل إرساله في نافذة واتساب.</li>
+    </ul>
+
+    <h2>6. الأمان</h2>
+    <p>الموقع يستخدم بروتوكول HTTPS مشفّر، ولا يحتوي على أي صفحات تسجيل دخول. أي طلب يُدعى أنه "صفحة تسجيل دخول لدورلي" هو احتيال، فنحن لا نطلب كلمات مرور أبداً.</p>
+
+    <h2>7. التواصل</h2>
+    <p>لأي استفسار حول الخصوصية، تواصل معنا عبر واتساب: <a data-wa style="color:#25D366;">+218 94 650 7954</a></p>
+  </div>
+
+</Layout>

@@ -1,0 +1,106 @@
+---
+// src/layouts/Layout.astro
+interface Props {
+        title: string;
+        description?: string;
+}
+
+const { title, description = "منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا." } = Astro.props;
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" style="background-color: #050505;">
+<head>
+  <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="128x128" href="/favicon-128x128.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content="https://dawerli.org.ly/og-image.png">
+  <meta property="og:url" content="https://dawerli.org.ly">
+  <meta property="og:locale" content="ar_LY">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content="https://dawerli.org.ly/og-image.png">
+  
+  <meta name="keywords" content="دورلي, طلب قطع غيار, ليبيا, بنغازي, جالو, أوجلة, إجخرة, توصيل طلبات">
+  <meta name="geo.region" content="LY">
+  <meta name="geo.placename" content="Benghazi, Jalu, Awjila, Ijkhara">
+  
+  <title>{title}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- بيانات منظمة للأعمال المحلية - يساعد جوجل على فهم الموقع -->
+  <script type="application/ld+json" data-i18n-jsonld set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "منصة دورلي",
+    "alternateName": "Dawerli",
+    "description": "منصة وساطة تجارية ليبية - نبحث ونشتري ونوصل لك أي منتج أو قطعة غيار من أي مدينة في ليبيا",
+    "url": "https://dawerli.org.ly",
+    "image": "https://dawerli.org.ly/og-image.png",
+    "logo": "https://dawerli.org.ly/favicon-512x512.png",
+    "telephone": "+__INT_PHONE__",
+    "priceRange": "د.ل",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "LY",
+      "addressRegion": "بنغازي"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "بنغازي" },
+      { "@type": "City", "name": "جالو" },
+      { "@type": "City", "name": "أوجلة" },
+      { "@type": "City", "name": "إجخرة" }
+    ],
+    "sameAs": [
+      "https://www.facebook.com/share16JEUw1tZk",
+      "__WA_ME__"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+__INT_PHONE__",
+      "contactType": "customer service",
+      "availableLanguage": ["Arabic"]
+    }
+  })} />
+</head>
+<body style="background-color: #050505;">
+  <Header />
+  
+  <main>
+    <slot />
+  </main>
+
+  <Footer />
+
+  <a data-wa class="floating-whatsapp" aria-label="تواصل معنا على واتساب">
+      <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <script is:inline src="/script.js"></script>
+  <script type="module" src="/js/i18n.js"></script>
+</body>
+</html>

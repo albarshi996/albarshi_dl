@@ -1,0 +1,404 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="دورلي - كيف يعمل" description="أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد من أي مكان في ليبيا بكل أمان وسرعة.">
+  <script is:inline>document.documentElement.dataset.page = 'how';</script>
+
+<style>
+  /* ===== خطوات محسّنة ===== */
+  .steps-section {
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .steps-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* الخط الرأسي الرابط بين الخطوات */
+  .steps-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    right: 29px;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      var(--primary),
+      var(--accent),
+      var(--primary));
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-item:last-child {
+    margin-bottom: 0;
+  }
+
+  /* رقم الخطوة */
+  .step-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(79,70,229,0.4);
+    transition: var(--transition);
+  }
+
+  .step-item:hover .step-badge {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(6,182,212,0.5);
+  }
+
+  /* محتوى الخطوة */
+  .step-body {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 1.8rem 2rem;
+    flex: 1;
+    transition: var(--transition);
+    backdrop-filter: blur(8px);
+  }
+
+  .step-item:hover .step-body {
+    border-color: var(--primary);
+    box-shadow: 0 8px 25px rgba(79,70,229,0.1);
+    transform: translateX(-4px);
+  }
+
+  .step-body h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .step-body h3 i {
+    color: var(--accent-light);
+    font-size: 1.1rem;
+  }
+
+  .step-body p {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* ===== قسم الوقت المتوقع ===== */
+  .timeline-section {
+    padding: 3rem 1.5rem;
+    background: rgba(79,70,229,0.04);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .timeline-section h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 2rem;
+  }
+
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .timeline-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 1.8rem 1.2rem;
+    text-align: center;
+    transition: var(--transition);
+  }
+
+  .timeline-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  .timeline-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .timeline-duration {
+    font-size: 1.3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.4rem;
+  }
+
+  .timeline-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* ===== ضمانات ===== */
+  .guarantees-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .guarantees-section h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 2rem;
+  }
+
+  .guarantees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .guarantee-item {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 1.8rem 1.5rem;
+    text-align: center;
+    transition: var(--transition);
+  }
+
+  .guarantee-item:hover {
+    border-color: #10b981;
+    transform: translateY(-4px);
+  }
+
+  .guarantee-item i {
+    font-size: 2rem;
+    color: #10b981;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .guarantee-item h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .guarantee-item p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  /* ===== CTA ===== */
+  .how-cta {
+    padding: 4rem 1.5rem;
+    text-align: center;
+    background: rgba(79,70,229,0.05);
+    border-top: 1px solid var(--glass-border);
+  }
+
+  .how-cta h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+  }
+
+  .how-cta p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .cta-btns {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .cta-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+  }
+
+  .cta-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+  }
+
+  .cta-btn.whatsapp {
+    background: #25d366;
+    color: white;
+  }
+
+  .cta-btn.whatsapp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+  }
+
+  @media (max-width: 768px) {
+    .steps-wrapper::before { right: 24px; }
+    .step-badge { width: 50px; height: 50px; font-size: 1.2rem; }
+    .step-body { padding: 1.3rem; }
+    .timeline-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="hero-content reveal">
+      <h1><span data-i18n="howHeroTitle">كيف يعمل دورلي؟</span></h1>
+      <p><span data-i18n="howHeroDesc">أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد من أي مكان في ليبيا بكل أمان وسرعة.</span></p>
+    </div>
+  </section>
+
+  <!-- الخطوات -->
+  <section class="steps-section">
+    <div class="steps-wrapper">
+
+      <div class="step-item reveal">
+        <div class="step-badge">1</div>
+        <div class="step-body">
+          <h3><i class="fas fa-comment-dots"></i> <span data-i18n="hiwStep1Title">أخبرنا بما تحتاج</span></h3>
+          <p><span data-i18n="hiwStep1Desc">قم بتعبئة نموذج الطلب في الموقع، أو تواصل معنا مباشرة عبر الواتساب. اشرح لنا تفاصيل المنتج أو الخدمة التي تبحث عنها، وفي أي مدينة تتواجد.</span></p>
+        </div>
+      </div>
+
+      <div class="step-item reveal">
+        <div class="step-badge">2</div>
+        <div class="step-body">
+          <h3><i class="fas fa-search"></i> <span data-i18n="hiwStep2Title">البحث والتسعير</span></h3>
+          <p><span data-i18n="hiwStep2Desc">سيقوم فريقنا فوراً بالبحث عن طلبك، والتأكد من جودته ومطابقته للمواصفات، ثم نتواصل معك لإخبارك بالتكلفة الإجمالية (سعر المنتج + رسوم التوصيل).</span></p>
+        </div>
+      </div>
+
+      <div class="step-item reveal">
+        <div class="step-badge">3</div>
+        <div class="step-body">
+          <h3><i class="fas fa-shopping-bag"></i> <span data-i18n="hiwStep3Title">تأكيد الطلب والشراء</span></h3>
+          <p><span data-i18n="hiwStep3Desc">بعد موافقتك على السعر واعتمادك للطلب، نقوم بعملية الشراء نيابة عنك من المصدر وتغليف المنتج بشكل آمن ومناسب للنقل لتجهيزه للشحن.</span></p>
+        </div>
+      </div>
+
+      <div class="step-item reveal">
+        <div class="step-badge">4</div>
+        <div class="step-body">
+          <h3><i class="fas fa-handshake"></i> <span data-i18n="hiwStep4Title">الاستلام والدفع</span></h3>
+          <p><span data-i18n="hiwStep4Desc">يصلك مندوبنا بالمنتج حتى باب بيتك في مدينتك. تقوم بالتأكد من طلبك ثم الدفع عند الاستلام بكل راحة وثقة.</span></p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- الوقت المتوقع -->
+  <section class="timeline-section">
+    <h2><span data-i18n="hiwTimelineTitle">⏱️ الوقت المتوقع لكل خطوة</span></h2>
+    <div class="timeline-grid reveal">
+      <div class="timeline-card">
+        <div class="timeline-icon">💬</div>
+        <div class="timeline-duration"><span data-i18n="hiwDur1">فوري</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel1">استلام طلبك</span></div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-icon">🔍</div>
+        <div class="timeline-duration"><span data-i18n="hiwDur2">2-4 ساعات</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel2">البحث والتسعير</span></div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-icon">📦</div>
+        <div class="timeline-duration"><span data-i18n="hiwDur3">24 ساعة</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel3">الشراء والتجهيز</span></div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-icon">🚚</div>
+        <div class="timeline-duration"><span data-i18n="hiwDur4">1-5 أيام</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel4">التوصيل لبابك</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الضمانات -->
+  <section class="guarantees-section">
+    <h2><span data-i18n="hiwGuaranteesTitle">🛡️ ضماناتنا لك</span></h2>
+    <div class="guarantees-grid reveal">
+      <div class="guarantee-item">
+        <i class="fas fa-shield-alt"></i>
+        <h4><span data-i18n="hiwGuarantee1Title">ضمان الجودة</span></h4>
+        <p><span data-i18n="hiwGuarantee1Desc">نتحقق من كل منتج قبل الشراء لضمان مطابقته لطلبك</span></p>
+      </div>
+      <div class="guarantee-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <h4><span data-i18n="hiwGuarantee2Title">الدفع عند الاستلام</span></h4>
+        <p><span data-i18n="hiwGuarantee2Desc">لا دفع مسبق — تدفع فقط بعد استلام طلبك بيدك</span></p>
+      </div>
+      <div class="guarantee-item">
+        <i class="fas fa-undo"></i>
+        <h4><span data-i18n="hiwGuarantee3Title">ضمان الاسترداد</span></h4>
+        <p><span data-i18n="hiwGuarantee3Desc">إذا لم يطابق المنتج الوصف نعيد لك رسوم الخدمة كاملة</span></p>
+      </div>
+      <div class="guarantee-item">
+        <i class="fas fa-headset"></i>
+        <h4><span data-i18n="hiwGuarantee4Title">دعم مستمر</span></h4>
+        <p><span data-i18n="hiwGuarantee4Desc">فريقنا متاح طوال رحلة طلبك من البداية للنهاية</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="how-cta">
+    <h2><span data-i18n="hiwCtaTitle">جاهز تجرب؟ 🚀</span></h2>
+    <p><span data-i18n="hiwCtaDesc">أرسل طلبك الآن وسنتواصل معك خلال دقائق</span></p>
+    <div class="cta-btns">
+      <a href="/request" class="cta-btn primary">
+        <i class="fas fa-paper-plane"></i> <span data-i18n="hiwCtaOrderBtn">اطلب الآن</span>
+      </a>
+      <a data-wa class="cta-btn whatsapp">
+        <i class="fab fa-whatsapp"></i> <span data-i18n="hiwCtaWhatsappBtn">تواصل مباشرة</span>
+      </a>
+    </div>
+  </section>
+
+</Layout>
