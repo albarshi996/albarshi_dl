@@ -1,39 +1,48 @@
-(function() {
-    const LANG_KEY = 'dawerli_lang';
+(function(){
+  const LANG_KEY = 'dawerli_lang';
 
-    function toggle() {
-        // 1. جلب اللغة الحالية وعكسها
-        const current = localStorage.getItem(LANG_KEY) === 'en' ? 'en' : 'ar';
+  async function loadLangModule(lang){
+    try {
+      // المسار الكامل للمجلد في Astro لضمان التحميل
+      const m = await import(`/lang/${lang}.js?v=${Date.now()}`);
+      return m.default || m;
+    } catch (e) {
+      console.error('Error loading lang:', e);
+      return null;
+    }
+  }
+
+  async function applyLang(lang){
+    const data = await loadLangModule(lang);
+    if(!data) return;
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
+    localStorage.setItem(LANG_KEY, lang);
+
+    // تحديث كل العناصر التي تحمل data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if(key && data.strings[key]) el.textContent = data.strings[key];
+    });
+
+    // تحديث تسمية الزر نفسه
+    const label = document.querySelector('.lang-label');
+    if(label) label.textContent = lang === 'ar' ? 'ع' : 'EN';
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const savedLang = localStorage.getItem(LANG_KEY) || 'ar';
+    await applyLang(savedLang);
+
+    const btn = document.getElementById('langToggleBtn');
+    if(btn) {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const current = localStorage.getItem(LANG_KEY) || 'ar';
         const next = current === 'ar' ? 'en' : 'ar';
-        
-        // 2. حفظ اللغة الجديدة
-        localStorage.setItem(LANG_KEY, next);
-        
-        // 3. إعادة تحميل الصفحة (هذه المرة ستعمل لأننا سنغير الرابط قليلاً لكسر الكاش)
-        const url = new URL(window.location.href);
-        url.searchParams.set('l', next); // إضافة رمز بسيط للرابط لإجبار السيرفر على التحديث
-        window.location.href = url.toString();
+        await applyLang(next);
+      });
     }
-
-    // انتظر تحميل الصفحة ثم اربط الزر
-    function init() {
-        const btn = document.getElementById('langToggleBtn');
-        if (btn) {
-            btn.onclick = (e) => {
-                e.preventDefault();
-                toggle();
-            };
-        }
-        
-        // تطبيق اتجاه الصفحة بناءً على اللغة المحفوظة فوراً
-        const saved = localStorage.getItem(LANG_KEY) || 'ar';
-        document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
-        document.documentElement.lang = saved;
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+  });
 })();
