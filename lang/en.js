@@ -283,7 +283,7 @@ export default {
     footerNavFeatures: 'Features',
     footerNavServices: 'Services',
     footerContactTitle: 'Contact us',
-    footerCopyright: `All rights reserved © ${new Date().getFullYear()} Dawerli`,
+    footerCopyright: 'All rights reserved - Mohammed Ibrahim Al-Barshi',
 
     paymentSandboxNotice: 'This is a sandbox environment — no real charge will occur',
     langLabelShort: 'EN',
