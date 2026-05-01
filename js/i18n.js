@@ -2,6 +2,9 @@
   'use strict';
 
   var LANG_KEY = 'dawerli_lang';
+  var WA_PHONE = '218946507954';
+  var WA_BASE  = 'https://wa.me/' + WA_PHONE;
+  var TEL_HREF = 'tel:+' + WA_PHONE;
 
   function getLangData(lang) {
     if (window.dawerliDict && window.dawerliDict[lang]) {
@@ -9,6 +12,23 @@
     }
     console.warn('[dawerli i18n] window.dawerliDict غير موجود.');
     return null;
+  }
+
+  function initWhatsAppLinks(strings) {
+    document.querySelectorAll('[data-wa]').forEach(function (el) {
+      var key = el.getAttribute('data-wa-key');
+      if (key && strings && strings[key]) {
+        el.href = WA_BASE + '?text=' + encodeURIComponent(strings[key]);
+      } else {
+        el.href = WA_BASE;
+      }
+      el.target  = '_blank';
+      el.rel     = 'noopener noreferrer';
+    });
+
+    document.querySelectorAll('[data-tel]').forEach(function (el) {
+      el.href = TEL_HREF;
+    });
   }
 
   function applyLang(lang) {
@@ -50,6 +70,8 @@
       label.textContent = strings.langLabelShort || (lang === 'ar' ? 'ع' : 'EN');
     }
 
+    initWhatsAppLinks(strings);
+
     try {
       document.dispatchEvent(new CustomEvent('dawerli:langChanged', {
         detail: { lang: lang, strings: strings, dir: dir }
@@ -60,6 +82,26 @@
   function getSavedLang() {
     try { return localStorage.getItem(LANG_KEY) || 'ar'; } catch (e) { return 'ar'; }
   }
+
+  function getCurrentStrings() {
+    var lang = getSavedLang();
+    var data = getLangData(lang);
+    return (data && data.strings) ? data.strings : {};
+  }
+
+  function getString(key) {
+    var s = getCurrentStrings();
+    return (s && s[key] !== undefined) ? s[key] : '';
+  }
+
+  window.dawerli_i18n = {
+    getString: getString,
+    getWhatsAppBase: function () { return WA_BASE; },
+    getPhoneInfo: function () {
+      return { waBase: WA_BASE, tel: TEL_HREF, intl: '+' + WA_PHONE };
+    },
+    getLang: getSavedLang
+  };
 
   function init() {
     applyLang(getSavedLang());
