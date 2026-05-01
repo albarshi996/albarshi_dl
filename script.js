@@ -30,36 +30,16 @@ function initDarkMode() {
 }
 
 function initMobileMenu() {
-  const mobileMenuBtn = document.querySelector('.mobile-menu-btn') || document.getElementById('mobileMenuBtn');
-  const navLinks = document.querySelector('.nav-links') || document.getElementById('mainNav');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn') || document.querySelector('.mobile-menu-btn');
+  const navLinks = document.getElementById('mainNav');
   if (mobileMenuBtn && navLinks) {
-    let overlay = document.getElementById('navOverlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'navOverlay';
-      overlay.className = 'nav-overlay';
-      document.body.appendChild(overlay);
-    }
-    function openMenu() {
-      navLinks.classList.add('active');
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      const icon = mobileMenuBtn.querySelector('i');
-      if (icon) icon.classList.replace('fa-bars', 'fa-times');
-    }
-    function closeMenu() {
-      navLinks.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
-      const icon = mobileMenuBtn.querySelector('i');
-      if (icon) icon.classList.replace('fa-times', 'fa-bars');
-    }
     mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.contains('active') ? closeMenu() : openMenu();
-    });
-    overlay.addEventListener('click', closeMenu);
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => { if (window.innerWidth <= 991) closeMenu(); });
+      navLinks.classList.toggle('active');
+      const icon = mobileMenuBtn.querySelector('i');
+      if (icon) {
+        if (navLinks.classList.contains('active')) icon.classList.replace('fa-bars', 'fa-times');
+        else icon.classList.replace('fa-times', 'fa-bars');
+      }
     });
   }
 }
@@ -108,6 +88,7 @@ function initQuickOrder() {
       const phone = (document.getElementById("phone") || this.querySelector('[name="phone"]')).value.trim();
       const product = (document.getElementById("product") || this.querySelector('[name="product"]')).value.trim();
       if(!name || !phone || !product) return;
+      // رقم التواصل الخاص بمنصة دورلي
       const whatsappUrl = `https://wa.me/218946507954?text=${encodeURIComponent("*طلب جديد*\nالاسم: "+name+"\nالرقم: "+phone+"\nالطلب: "+product)}`;
       window.open(whatsappUrl, "_blank");
     });
