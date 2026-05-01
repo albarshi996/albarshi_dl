@@ -3,11 +3,11 @@
 
   async function loadLangModule(lang){
     try {
-      // المسار الكامل للمجلد في Astro لضمان التحميل
+      // تحميل ملفات اللغة من المسار الصحيح في المستودع
       const m = await import(`/lang/${lang}.js?v=${Date.now()}`);
       return m.default || m;
     } catch (e) {
-      console.error('Error loading lang:', e);
+      console.error('Error loading language file:', e);
       return null;
     }
   }
@@ -20,17 +20,18 @@
     document.documentElement.dir = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
     localStorage.setItem(LANG_KEY, lang);
 
-    // تحديث كل العناصر التي تحمل data-i18n
+    // ترجمة جميع العناصر التي تحتوي على data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if(key && data.strings[key]) el.textContent = data.strings[key];
     });
 
-    // تحديث تسمية الزر نفسه
+    // تحديث نص الزر (ع / EN)
     const label = document.querySelector('.lang-label');
     if(label) label.textContent = lang === 'ar' ? 'ع' : 'EN';
   }
 
+  // تشغيل النظام فور تحميل الصفحة
   document.addEventListener('DOMContentLoaded', async () => {
     const savedLang = localStorage.getItem(LANG_KEY) || 'ar';
     await applyLang(savedLang);
