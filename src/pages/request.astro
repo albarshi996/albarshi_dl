@@ -237,6 +237,7 @@ import Layout from '../layouts/Layout.astro';
 
     document.getElementById('orderForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      
       const name = document.getElementById('name').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const city = document.getElementById('city').value;
@@ -245,14 +246,20 @@ import Layout from '../layouts/Layout.astro';
       const quantity = document.getElementById('quantity').value;
       const urgency = document.getElementById('urgency').value;
 
-        if (!/^09[0-9]{8}$/.test(phone)) {
-          alert(window.dawerli_i18n.getString('alertInvalidPhone') || 'الرجاء إدخال رقم هاتف ليبي صحيح (10 أرقام يبدأ بـ 09)');
-          return;
-        }
+      // قراءة الترجمات من القاموس المدمج الجديد مباشرة
+      const lang = document.documentElement.lang || 'ar';
+      const get = (k) => (window.dawerliDict && window.dawerliDict[lang] && window.dawerliDict[lang].strings[k]) ? window.dawerliDict[lang].strings[k] : '';
+
+      if (!/^09[0-9]{8}$/.test(phone)) {
+        alert(get('alertInvalidPhone') || 'الرجاء إدخال رقم هاتف ليبي صحيح (10 أرقام يبدأ بـ 09)');
+        return;
+      }
 
       const orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
-      const get = (k) => (window.dawerli_i18n && window.dawerli_i18n.getString) ? window.dawerli_i18n.getString(k) || '' : '';
-      const header = (category === (get('catCarParts') || 'قطع غيار سيارات')) ? (get('whatsapp_car_header') || '*طلب قطع غيار جديد - دورلي*') : (get('whatsapp_other_header_prefix') || '*طلب جديد*');
+      
+      // التمييز بين طلب قطع الغيار والطلبات الأخرى
+      const isCarPart = category.includes('سيارات') || category === get('catCarParts');
+      const header = isCarPart ? (get('whatsapp_car_header') || '*طلب قطع غيار جديد - دورلي*') : (get('whatsapp_other_header_prefix') || '*طلب توصيل جديد - دورلي*');
 
       let message = `${header}\n\n`;
       message += `🔖 ${get('wa_order_number_label') || 'رقم الطلب'}: ${orderNum}\n`;
@@ -264,17 +271,16 @@ import Layout from '../layouts/Layout.astro';
       message += `⏱️ ${get('labelUrgency') || 'الاستعجال'}: ${urgency}\n`;
       message += `📝 ${get('labelDetails') || 'التفاصيل'}: ${product}`;
 
-      if(category === (get('catCarParts') || 'قطع غيار سيارات')){
-        const note = get('whatsapp_attach_note');
-        if(note) message += `\n\n${note}`;
+      if(isCarPart){
+        const note = get('whatsapp_attach_note') || '*ملاحظة: يرجى إرفاق صورة للقطعة في هذه المحادثة.*';
+        message += `\n\n${note}`;
       }
 
-      const base = (window.dawerli_i18n && window.dawerli_i18n.getWhatsAppBase) ? window.dawerli_i18n.getWhatsAppBase() : ((window.dawerli_i18n && window.dawerli_i18n.getPhoneInfo) ? window.dawerli_i18n.getPhoneInfo().waBase : null);
-      if(!base){
-        alert(get('alertNoContact') || 'رقم خدمة الواتساب غير مكوّن حالياً. الرجاء التواصل عبر الرابط الموجود في الصفحة.');
-        return;
-      }
-      const whatsappUrl = `${base}?text=${encodeURIComponent(message)}`;
+      // رقم واتساب منصة دورلي الثابت والمضمون
+      const waNumber = "218946507954";
+      const whatsappUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+      
+      // توجيه الزبون فوراً للواتساب
       window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     });
   </script>
