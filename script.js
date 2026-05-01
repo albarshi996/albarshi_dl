@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initAnimations();
   initFAQ();
   initQuickOrder();
+  initLangToggle(); // تمت إضافة استدعاء دالة اللغة هنا
 });
 
 // ==================== 1. الوضع الليلي (Dark Mode) ====================
@@ -253,6 +254,35 @@ function initQuickOrder() {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
       }, 1000);
+    });
+  }
+}
+
+// ==================== 8. تبديل اللغة (Language Toggle) ====================
+function initLangToggle() {
+  const langBtn = document.getElementById('langToggleBtn');
+  
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      // التحقق من اللغة الحالية
+      let currentLang = 'ar';
+      
+      // إذا كان ملف الترجمة يعمل وموجود، نجلب منه اللغة الحالية
+      if (window.dawerli_i18n && typeof window.dawerli_i18n.getCurrentLang === 'function') {
+        currentLang = window.dawerli_i18n.getCurrentLang();
+      } else {
+        // بديل: القراءة من localStorage كخيار احتياطي
+        currentLang = localStorage.getItem('dawerli_lang') || 'ar';
+      }
+
+      // تحديد اللغة الجديدة
+      const newLang = currentLang === 'ar' ? 'en' : 'ar';
+      
+      // حفظ اللغة الجديدة في LocalStorage ليتعرف عليها سكريبت i18n.js
+      localStorage.setItem('dawerli_lang', newLang);
+      
+      // تحديث الصفحة لكي تطبق التغييرات
+      window.location.reload();
     });
   }
 }
