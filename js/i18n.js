@@ -1,27 +1,20 @@
 (function(){
   const LANG_KEY = 'dawerli_lang';
 
-  // استيراد الملفات بمسارات ثابتة لكي يفهمها محرك Astro و Vite بدون أخطاء
+  // القراءة من الذاكرة المدمجة فوراً بدون الحاجة للاتصال بالسيرفر
   async function loadLangModule(lang){
-    try{
-      if(lang === 'ar'){
-        const m = await import('/lang/ar.js');
-        return m.default || m;
-      } else {
-        const m = await import('/lang/en.js');
-        return m.default || m;
-      }
-    } catch (e) {
-      console.error('Dawerli i18n Error: Cannot load language file', e);
-      return null;
+    if (window.dawerliDict && window.dawerliDict[lang]) {
+        return window.dawerliDict[lang];
     }
+    console.error('Dawerli i18n Error: Language dictionary not found in window');
+    return null;
   }
 
   let currentStrings = {};
 
   async function applyLang(lang){
     const data = await loadLangModule(lang);
-    if(!data) return; // منع توقف السكريبت في حال حدوث خطأ
+    if(!data) return;
     
     document.documentElement.lang = lang;
     document.documentElement.dir = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
@@ -37,25 +30,21 @@
       if(key && currentStrings[key]) el.textContent = currentStrings[key];
     });
 
-    // تحديث الحقول
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
       if(key && currentStrings[key]) el.placeholder = currentStrings[key];
     });
 
-    // تحديث العناوين التوضيحية
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
       const key = el.getAttribute('data-i18n-title');
       if(key && currentStrings[key]) el.title = currentStrings[key];
     });
 
-    // تحديث قارئ الشاشة
     document.querySelectorAll('[data-i18n-aria]').forEach(el => {
       const key = el.getAttribute('data-i18n-aria');
       if(key && currentStrings[key]) el.setAttribute('aria-label', currentStrings[key]);
     });
 
-    // تحديث حرف الزر (ع / EN)
     const langToggle = document.getElementById('langToggleBtn');
     if(langToggle){
       const label = langToggle.querySelector('.lang-label');
@@ -90,11 +79,9 @@
   }
 
   async function init() {
-    // 1. تطبيق اللغة فور فتح الصفحة
     const initialLang = localStorage.getItem(LANG_KEY) || 'ar';
     await applyLang(initialLang);
 
-    // 2. تفعيل الزر بشكل سليم
     const btn = document.getElementById('langToggleBtn');
     if(btn) {
        const newBtn = btn.cloneNode(true);
