@@ -1,12 +1,16 @@
 (function(){
   const LANG_KEY = 'dawerli_lang';
 
-  // دالة جلب ملف اللغة مع كسر الكاش
+  // استيراد الملفات بمسارات ثابتة لكي يفهمها محرك Astro و Vite بدون أخطاء
   async function loadLangModule(lang){
     try{
-      const cacheBuster = '?v=' + new Date().getTime();
-      const m = await import(`/lang/${lang}.js${cacheBuster}`);
-      return m.default || m;
+      if(lang === 'ar'){
+        const m = await import('/lang/ar.js');
+        return m.default || m;
+      } else {
+        const m = await import('/lang/en.js');
+        return m.default || m;
+      }
     } catch (e) {
       console.error('Dawerli i18n Error: Cannot load language file', e);
       return null;
@@ -15,45 +19,43 @@
 
   let currentStrings = {};
 
-  // الدالة الرئيسية لتطبيق الترجمة فوراً
   async function applyLang(lang){
     const data = await loadLangModule(lang);
-    if(!data) return;
+    if(!data) return; // منع توقف السكريبت في حال حدوث خطأ
     
     document.documentElement.lang = lang;
     document.documentElement.dir = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
     if(data.font) document.documentElement.style.fontFamily = data.font;
     
-    // حفظ اللغة في المتصفح بكل الأسماء لضمان التوافق
     localStorage.setItem(LANG_KEY, lang);
     localStorage.setItem('lang', lang);
     currentStrings = data.strings || {};
 
-    // 1. تحديث النصوص المباشرة
+    // تحديث النصوص
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if(key && currentStrings[key]) el.textContent = currentStrings[key];
     });
 
-    // 2. تحديث الحقول (Placeholders)
+    // تحديث الحقول
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
       if(key && currentStrings[key]) el.placeholder = currentStrings[key];
     });
 
-    // 3. تحديث العناوين التوضيحية
+    // تحديث العناوين التوضيحية
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
       const key = el.getAttribute('data-i18n-title');
       if(key && currentStrings[key]) el.title = currentStrings[key];
     });
 
-    // 4. تحديث قارئ الشاشة
+    // تحديث قارئ الشاشة
     document.querySelectorAll('[data-i18n-aria]').forEach(el => {
       const key = el.getAttribute('data-i18n-aria');
       if(key && currentStrings[key]) el.setAttribute('aria-label', currentStrings[key]);
     });
 
-    // 5. تحديث حرف الزر (ع / EN)
+    // تحديث حرف الزر (ع / EN)
     const langToggle = document.getElementById('langToggleBtn');
     if(langToggle){
       const label = langToggle.querySelector('.lang-label');
@@ -64,7 +66,6 @@
     updateContactLinks();
   }
 
-  // دالة معالجة روابط الواتساب والاتصال
   function updateContactLinks() {
     const phoneLocal = currentStrings.termsWhatsAppNumber || currentStrings.contactPhone || "0946507954";
     let intPhone = null;
@@ -88,19 +89,17 @@
     });
   }
 
-  // دالة التشغيل الآمنة
   async function init() {
-    // تشغيل الترجمة المحفوظة فور فتح الصفحة
+    // 1. تطبيق اللغة فور فتح الصفحة
     const initialLang = localStorage.getItem(LANG_KEY) || 'ar';
     await applyLang(initialLang);
 
-    // حيلة احترافية: نسخ الزر لمسح أمر (التحديث) القديم المرتبط به في script.js
-    const oldBtn = document.getElementById('langToggleBtn');
-    if(oldBtn) {
-       const newBtn = oldBtn.cloneNode(true);
-       oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+    // 2. تفعيل الزر بشكل سليم
+    const btn = document.getElementById('langToggleBtn');
+    if(btn) {
+       const newBtn = btn.cloneNode(true);
+       btn.parentNode.replaceChild(newBtn, btn);
        
-       // إضافة أمر التبديل السلس (بدون ريفريش)
        newBtn.addEventListener('click', async (e) => {
          e.preventDefault();
          const current = localStorage.getItem(LANG_KEY) || 'ar';
@@ -110,14 +109,12 @@
     }
   }
 
-  // التأكد من تشغيل السكريبت في كل الظروف (سر المشكلة السابقة)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  // التصدير للاستخدام في النماذج
   window.dawerli_i18n = {
     applyLang,
     getString: (key) => currentStrings[key] || null,
