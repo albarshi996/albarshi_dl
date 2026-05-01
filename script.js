@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initAnimations();
   initFAQ();
   initQuickOrder();
-  initLangToggle(); // استدعاء دالة اللغة
+  // تم إزالة استدعاء اللغة من هنا لمنع التداخل مع i18n.js
 });
 
 // ==================== 1. الوضع الليلي (Dark Mode) ====================
@@ -247,36 +247,6 @@ function initQuickOrder() {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
       }, 1000);
-    });
-  }
-}
-
-// ==================== 8. تبديل اللغة الشامل (Language Toggle) ====================
-function initLangToggle() {
-  const langBtn = document.getElementById('langToggleBtn');
-  
-  if (langBtn) {
-    langBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      // جلب اللغة من الذاكرة بكل الأسماء المحتملة
-      let currentLang = localStorage.getItem('lang') || 
-                        localStorage.getItem('language') || 
-                        localStorage.getItem('dawerli_lang') || 'ar';
-      
-      // التبديل
-      const newLang = currentLang === 'ar' ? 'en' : 'ar';
-      
-      // الحفظ بكل الأسماء لضمان عمل ملف i18n
-      localStorage.setItem('lang', newLang);
-      localStorage.setItem('language', newLang);
-      localStorage.setItem('dawerli_lang', newLang);
-      
-      // تغيير اتجاه المتصفح فوراً لضمان الإحساس بالاستجابة
-      document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
-      
-      // إعادة تحميل الصفحة لتطبيق الكلمات الجديدة
-      window.location.reload();
     });
   }
 }
