@@ -1,49 +1,109 @@
-(function(){
-  const LANG_KEY = 'dawerli_lang';
+(function () {
+  'use strict';
 
-  async function loadLangModule(lang){
-    try {
-      // تحميل ملفات اللغة من المسار الصحيح في المستودع
-      const m = await import(`/lang/${lang}.js?v=${Date.now()}`);
-      return m.default || m;
-    } catch (e) {
-      console.error('Error loading language file:', e);
-      return null;
+  var LANG_KEY = 'dawerli_lang';
+
+  /* ----------------------------------------------------------
+   * 1. الحصول على بيانات اللغة من window.dawerliDict
+   *    (محقون مباشرة من Astro - لا import() ديناميكي - لا مشاكل MIME)
+   * ---------------------------------------------------------- */
+  function getLangData(lang) {
+    if (window.dawerliDict && window.dawerliDict[lang]) {
+      return window.dawerliDict[lang];
     }
+    console.warn('[dawerli i18n] window.dawerliDict غير موجود. تأكد من Layout.astro.');
+    return null;
   }
 
-  async function applyLang(lang){
-    const data = await loadLangModule(lang);
-    if(!data) return;
+  /* ----------------------------------------------------------
+   * 2. تطبيق اللغة على الصفحة (بدون reload)
+   * ---------------------------------------------------------- */
+  function applyLang(lang) {
+    var data = getLangData(lang);
+    if (!data) return;
 
+    var strings = data.strings || {};
+    var dir     = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
+    var font    = data.font || '';
+
+    // اتجاه الصفحة والخط
     document.documentElement.lang = lang;
-    document.documentElement.dir = data.direction || (lang === 'ar' ? 'rtl' : 'ltr');
-    localStorage.setItem(LANG_KEY, lang);
+    document.documentElement.dir  = dir;
+    if (font) document.documentElement.style.setProperty('--site-font', font);
 
-    // ترجمة جميع العناصر التي تحتوي على data-i18n
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if(key && data.strings[key]) el.textContent = data.strings[key];
+    // حفظ الاختيار
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+
+    // ترجمة data-i18n (النص الداخلي)
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (key && strings[key] !== undefined) el.textContent = strings[key];
     });
 
-    // تحديث نص الزر (ع / EN)
-    const label = document.querySelector('.lang-label');
-    if(label) label.textContent = lang === 'ar' ? 'ع' : 'EN';
+    // ترجمة placeholder
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (key && strings[key] !== undefined) el.placeholder = strings[key];
+    });
+
+    // ترجمة title attribute
+    document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-title');
+      if (key && strings[key] !== undefined) el.title = strings[key];
+    });
+
+    // ترجمة aria-label
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-aria');
+      if (key && strings[key] !== undefined) el.setAttribute('aria-label', strings[key]);
+    });
+
+    // تحديث نص زر اللغة
+    var label = document.querySelector('.lang-label');
+    if (label) {
+      label.textContent = strings.langLabelShort || (lang === 'ar' ? 'ع' : 'EN');
+    }
+
+    // إرسال حدث مخصص لتنبيه أي كود آخر في الصفحة
+    try {
+      document.dispatchEvent(new CustomEvent('dawerli:langChanged', {
+        detail: { lang: lang, strings: strings, dir: dir }
+      }));
+    } catch (e) {}
   }
 
-  // تشغيل النظام فور تحميل الصفحة
-  document.addEventListener('DOMContentLoaded', async () => {
-    const savedLang = localStorage.getItem(LANG_KEY) || 'ar';
-    await applyLang(savedLang);
+  /* ----------------------------------------------------------
+   * 3. قراءة اللغة المحفوظة
+   * ---------------------------------------------------------- */
+  function getSavedLang() {
+    try { return localStorage.getItem(LANG_KEY) || 'ar'; } catch (e) { return 'ar'; }
+  }
 
-    const btn = document.getElementById('langToggleBtn');
-    if(btn) {
-      btn.addEventListener('click', async (e) => {
+  /* ----------------------------------------------------------
+   * 4. تهيئة النظام
+   * ---------------------------------------------------------- */
+  function init() {
+    applyLang(getSavedLang());
+
+    var btn = document.getElementById('langToggleBtn');
+    if (btn) {
+      // نسخ الزر لإزالة أي event listeners قديمة
+      var freshBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(freshBtn, btn);
+
+      freshBtn.addEventListener('click', function (e) {
         e.preventDefault();
-        const current = localStorage.getItem(LANG_KEY) || 'ar';
-        const next = current === 'ar' ? 'en' : 'ar';
-        await applyLang(next);
+        e.stopPropagation();
+        var current = getSavedLang();
+        applyLang(current === 'ar' ? 'en' : 'ar');
       });
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
 })();
