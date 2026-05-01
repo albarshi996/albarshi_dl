@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initAnimations();
   initFAQ();
   initQuickOrder();
-  initLangToggle(); // تمت إضافة استدعاء دالة اللغة هنا
+  initLangToggle(); // استدعاء دالة اللغة
 });
 
 // ==================== 1. الوضع الليلي (Dark Mode) ====================
@@ -43,7 +43,6 @@ function initMobileMenu() {
   const navLinks = document.querySelector('.nav-links') || document.getElementById('mainNav');
   
   if (mobileMenuBtn && navLinks) {
-    // إنشاء overlay
     let overlay = document.getElementById('navOverlay');
     if (!overlay) {
       overlay = document.createElement('div');
@@ -167,13 +166,11 @@ function showCustomToast(message, type = 'error') {
   toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
   toastContainer.appendChild(toast);
 
-  // حركة الظهور
   requestAnimationFrame(() => {
     toast.style.opacity = '1';
     toast.style.transform = 'translateY(0)';
   });
 
-  // الإخفاء التلقائي بعد 3.5 ثواني
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(-20px)';
@@ -211,18 +208,15 @@ function initQuickOrder() {
           return;
         }
 
-      // التحقق من رقم الهاتف لجميع الشبكات الليبية
       const phoneRegex = /^09[0-9]{8}$/;
         if (!phoneRegex.test(phone)) {
           showCustomToast(window.dawerli_i18n.getString('alertInvalidPhone') || "الرجاء إدخال رقم هاتف ليبي صحيح (10 أرقام يبدأ بـ 09).", 'error');
           return;
         }
 
-      // تغيير حالة الزر لمنع التكرار
       submitBtn.innerHTML = (window.dawerli_i18n.getString('convertingToWhatsapp') || 'جاري التحويل للواتساب...') + ' <i class="fas fa-spinner fa-spin"></i>';
       submitBtn.disabled = true;
 
-      // تجهيز رسالة الواتساب بناءً على الفئة
       let message = "";
         const get = (k) => window.dawerli_i18n.getString(k) || '';
         if (category === (get('catCarParts') || 'قطع غيار السيارات')) {
@@ -248,7 +242,6 @@ function initQuickOrder() {
       }
       const whatsappUrl = `${base}?text=${encodeURIComponent(message)}`;
       
-      // فتح الواتساب وإعادة الزر لحالته الأصلية بعد ثانية
       setTimeout(() => {
         window.open(whatsappUrl, "_blank");
         submitBtn.innerHTML = originalBtnText;
@@ -258,30 +251,31 @@ function initQuickOrder() {
   }
 }
 
-// ==================== 8. تبديل اللغة (Language Toggle) ====================
+// ==================== 8. تبديل اللغة الشامل (Language Toggle) ====================
 function initLangToggle() {
   const langBtn = document.getElementById('langToggleBtn');
   
   if (langBtn) {
-    langBtn.addEventListener('click', () => {
-      // التحقق من اللغة الحالية
-      let currentLang = 'ar';
+    langBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       
-      // إذا كان ملف الترجمة يعمل وموجود، نجلب منه اللغة الحالية
-      if (window.dawerli_i18n && typeof window.dawerli_i18n.getCurrentLang === 'function') {
-        currentLang = window.dawerli_i18n.getCurrentLang();
-      } else {
-        // بديل: القراءة من localStorage كخيار احتياطي
-        currentLang = localStorage.getItem('dawerli_lang') || 'ar';
-      }
-
-      // تحديد اللغة الجديدة
+      // جلب اللغة من الذاكرة بكل الأسماء المحتملة
+      let currentLang = localStorage.getItem('lang') || 
+                        localStorage.getItem('language') || 
+                        localStorage.getItem('dawerli_lang') || 'ar';
+      
+      // التبديل
       const newLang = currentLang === 'ar' ? 'en' : 'ar';
       
-      // حفظ اللغة الجديدة في LocalStorage ليتعرف عليها سكريبت i18n.js
+      // الحفظ بكل الأسماء لضمان عمل ملف i18n
+      localStorage.setItem('lang', newLang);
+      localStorage.setItem('language', newLang);
       localStorage.setItem('dawerli_lang', newLang);
       
-      // تحديث الصفحة لكي تطبق التغييرات
+      // تغيير اتجاه المتصفح فوراً لضمان الإحساس بالاستجابة
+      document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+      
+      // إعادة تحميل الصفحة لتطبيق الكلمات الجديدة
       window.location.reload();
     });
   }
