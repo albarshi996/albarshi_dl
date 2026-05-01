@@ -49,7 +49,7 @@ import Footer from '../components/Footer.astro';
   <meta name="theme-color" content="#050505">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- قاموس اللغات مدمج مباشرة - لا import لا fetch -->
+  <!-- قاموس اللغات مدمج مباشرة (النسخة الكاملة والمصلحة) -->
   <script is:inline>
     window.dawerliDict = {
       ar: {
@@ -368,7 +368,7 @@ import Footer from '../components/Footer.astro';
     };
   </script>
 
-  <!-- بيانات منظمة للأعمال المحلية -->
+  <!-- بيانات منظمة للأعمال المحلية (تم تنظيفها من الأخطاء) -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -390,11 +390,18 @@ import Footer from '../components/Footer.astro';
       { "@type": "City", "name": "أوجلة" },
       { "@type": "City", "name": "إجخرة" }
     ],
-    "sameAs": ["https://www.facebook.com/share16JEUw1tZk"],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "availableLanguage": ["Arabic"]
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://wa.me/218946507954",
+      "actionPlatform": ["https://schema.org/MobileWebPlatform", "https://schema.org/DesktopWebPlatform"]
+    },
+    "potentialAction": {
+      "@type": "CommunicateAction",
+      "recipient": {
+        "@type": "ContactPoint",
+        "telephone": "+218946507954",
+        "contactType": "customer service"
+      }
     }
   })} />
 </head>
@@ -407,7 +414,8 @@ import Footer from '../components/Footer.astro';
 
   <Footer />
 
-  <a data-wa class="floating-whatsapp" aria-label="تواصل معنا على واتساب">
+  <!-- تم تثبيت الرابط هنا لضمان عدم ظهور أي أخطاء لزر الواتساب العائم -->
+  <a href="https://wa.me/218946507954" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" aria-label="تواصل معنا على واتساب">
     <i class="fab fa-whatsapp"></i>
   </a>
 
