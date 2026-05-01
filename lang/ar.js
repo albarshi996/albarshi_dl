@@ -285,7 +285,7 @@ export default {
     footerNavFeatures: 'الميزات',
     footerNavServices: 'خدماتنا',
     footerContactTitle: 'تواصل معنا',
-    footerCopyright: `جميع الحقوق محفوظة © ${new Date().getFullYear()} لدى منصة دورلي`,
+    footerCopyright: 'جميع الحقوق محفوظة لدى محمد إبراهيم البرشي',
     langLabelShort: 'ع',
     langLabelFull: 'العربية',
     themeToggleTitle: 'تبديل المظهر',
