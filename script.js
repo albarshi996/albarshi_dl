@@ -79,18 +79,53 @@ function initFAQ() {
   });
 }
 
+// دالة الطلب السريع المعدلة (تم تثبيت الرقم مباشرة لضمان العمل)
 function initQuickOrder() {
   const form = document.getElementById('quickOrderForm');
   if (form) {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const name = (document.getElementById("name") || this.querySelector('[name="name"]')).value.trim();
-      const phone = (document.getElementById("phone") || this.querySelector('[name="phone"]')).value.trim();
-      const product = (document.getElementById("product") || this.querySelector('[name="product"]')).value.trim();
-      if(!name || !phone || !product) return;
-      // رقم التواصل الخاص بمنصة دورلي
-      const whatsappUrl = `https://wa.me/218946507954?text=${encodeURIComponent("*طلب جديد*\nالاسم: "+name+"\nالرقم: "+phone+"\nالطلب: "+product)}`;
-      window.open(whatsappUrl, "_blank");
+      
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : 'إرسال';
+      if(submitBtn) {
+        submitBtn.innerHTML = 'جاري التحويل للواتساب... <i class="fas fa-spinner fa-spin"></i>';
+        submitBtn.disabled = true;
+      }
+
+      const nameInput = document.getElementById("name") || this.querySelector('[name="name"]');
+      const phoneInput = document.getElementById("phone") || this.querySelector('[name="phone"]');
+      const cityInput = document.getElementById("city") || this.querySelector('[name="city"]');
+      const categoryInput = document.getElementById("category") || this.querySelector('[name="category"]');
+      const productInput = document.getElementById("product") || this.querySelector('[name="product"]');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const phone = phoneInput ? phoneInput.value.trim() : '';
+      const city = cityInput ? cityInput.value.trim() : 'غير محدد';
+      const category = categoryInput ? categoryInput.value : 'طلب عام';
+      const product = productInput ? productInput.value.trim() : '';
+
+      if(!name || !phone || !product) {
+         alert("الرجاء تعبئة جميع الحقول المطلوبة (الاسم، الرقم، وتفاصيل الطلب).");
+         if(submitBtn) { submitBtn.innerHTML = originalBtnText; submitBtn.disabled = false; }
+         return;
+      }
+
+      // رقم الواتساب المباشر لمنصة دورلي بالصيغة الدولية
+      const waNumber = "218946507954";
+      
+      let message = `*طلب جديد (${category}) - دورلي*\n\n`;
+      message += `👤 الاسم: ${name}\n`;
+      message += `📞 رقم الزبون: ${phone}\n`;
+      message += `📍 المدينة: ${city}\n`;
+      message += `📝 التفاصيل: ${product}`;
+
+      const whatsappUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+      
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank");
+        if(submitBtn) { submitBtn.innerHTML = originalBtnText; submitBtn.disabled = false; }
+      }, 800);
     });
   }
 }
