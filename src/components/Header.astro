@@ -1,5 +1,4 @@
 ---
-// src/components/Header.astro
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname.slice(1);
 ---
@@ -13,20 +12,8 @@ const currentPath = pathname.slice(1);
     <i class="fas fa-moon"></i>
   </button>
 
-  <!-- زر تبديل اللغة المطور لكسر الكاش وإجبار التحديث -->
-  <button id="langToggleBtn" class="lang-toggle" data-i18n-title="langToggleTitle" onclick="
-    (function() {
-      const current = localStorage.getItem('dawerli_lang') || 'ar';
-      const next = current === 'ar' ? 'en' : 'ar';
-      localStorage.setItem('dawerli_lang', next);
-      localStorage.setItem('lang', next);
-      // كسر الكاش لضمان رؤية التحديث فوراً
-      const url = new URL(window.location.href);
-      url.searchParams.set('update', Date.now());
-      window.location.href = url.toString();
-    })()
-  ">
-    <span class="lang-label" data-i18n="langLabelShort">ع</span>
+  <button id="langToggleBtn" class="lang-toggle">
+    <span class="lang-label">ع</span>
   </button>
 
   <nav id="mainNav">
@@ -53,7 +40,7 @@ const currentPath = pathname.slice(1);
     </a>
   </nav>
 
-  <button id="mobileMenuBtn" class="mobile-menu-btn" data-i18n-title="mobileMenuTitle">
+  <button id="mobileMenuBtn" class="mobile-menu-btn">
     <i class="fas fa-bars"></i>
   </button>
 </header>
