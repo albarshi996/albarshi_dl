@@ -144,6 +144,12 @@ const currentPath = pathname.slice(1);
   applyHeaderLang(getSavedLang());
 
   document.addEventListener('DOMContentLoaded', function() {
+    /* Re-run full translation now that ALL [data-i18n] elements exist in
+       the DOM. The earlier inline applyHeaderLang() call only reached
+       elements parsed before this script tag (= header elements only).
+       This call translates the entire page body on initial load.       */
+    try { applyHeaderLang(getSavedLang()); } catch(_) {}
+
     var btn = document.getElementById('langToggleBtn');
     if (btn) {
       var freshBtn = btn.cloneNode(true);
