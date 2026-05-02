@@ -1,0 +1,499 @@
+---
+// src/pages/track.astro
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="دورلي - تتبع طلبك"
+  description="تتبع حالة طلبك في دورلي عبر واتساب — أدخل رقم طلبك واستعلم مباشرة مع فريقنا."
+>
+  <!-- noindex لصون السيو ومنع تصنيف الصفحة كمحتوى مشبوه -->
+  <meta name="robots" content="noindex,nofollow" slot="head" />
+
+  <script is:inline>document.documentElement.dataset.page = 'track';</script>
+
+<style>
+  /* ===== بطل الصفحة ===== */
+  .track-hero {
+    padding: 5rem 1.5rem 3rem;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(79,70,229,0.12) 0%, transparent 70%);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .track-hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.25);
+    color: var(--accent-light);
+    border-radius: 50px;
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+  .track-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+  }
+  .track-hero p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ===== بطاقة التتبع ===== */
+  .track-section {
+    padding: 3rem 1.5rem 4rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .track-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem;
+    backdrop-filter: blur(8px);
+  }
+  .track-card label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .track-input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  .track-input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    color: var(--white);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.85rem 1.1rem;
+    outline: none;
+    transition: var(--transition);
+    direction: ltr;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .track-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .track-input:focus {
+    border-color: var(--accent);
+    background: rgba(6,182,212,0.05);
+    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+  }
+  .track-input.error {
+    border-color: #ef4444;
+    background: rgba(239,68,68,0.05);
+  }
+  .track-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.85rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .track-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+  }
+  .track-btn:active { transform: translateY(0); }
+  .track-btn i { font-size: 1.1rem; }
+
+  .track-error {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.6rem;
+    font-weight: 600;
+  }
+  .track-error.visible { display: flex; }
+
+  .track-format-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-top: 0.75rem;
+  }
+  .track-format-hint code {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.8rem;
+    color: var(--accent-light);
+    font-family: monospace;
+  }
+
+  /* فاصل */
+  .track-divider {
+    height: 1px;
+    background: var(--glass-border);
+    margin: 2rem 0;
+  }
+
+  /* ===== كيف يعمل التتبع ===== */
+  .track-steps-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.2rem;
+  }
+  .track-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .track-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .track-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .track-step-text h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.2rem;
+  }
+  .track-step-text p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ===== مراحل الطلب ===== */
+  .order-stages {
+    margin-top: 3rem;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .order-stages h2 {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 2rem;
+  }
+  .stages-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    position: relative;
+  }
+  .stages-grid::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    right: 12.5%;
+    left: 12.5%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    z-index: 0;
+  }
+  html[dir="ltr"] .stages-grid::before {
+    right: 12.5%;
+    left: 12.5%;
+  }
+  .stage-item {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .stage-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--glass-border);
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    transition: var(--transition);
+  }
+  .stage-item.active .stage-icon {
+    border-color: var(--accent);
+    background: rgba(6,182,212,0.1);
+    color: var(--accent-light);
+    box-shadow: 0 0 0 4px rgba(6,182,212,0.1);
+  }
+  .stage-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .stage-item.active .stage-label { color: var(--accent-light); }
+
+  /* ===== تنبيه الخصوصية ===== */
+  .track-notice {
+    max-width: 640px;
+    margin: 0 auto 3rem;
+    padding: 1rem 1.5rem;
+    background: rgba(79,70,229,0.06);
+    border: 1px solid rgba(79,70,229,0.2);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .track-notice i {
+    color: var(--primary-light);
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .track-input-row { flex-direction: column; }
+    .track-btn { justify-content: center; }
+    .stages-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+    .stages-grid::before { display: none; }
+    .track-card { padding: 1.5rem; }
+  }
+</style>
+
+  <!-- Hero -->
+  <section class="track-hero">
+    <div class="reveal">
+      <div class="badge">
+        <i class="fab fa-whatsapp"></i>
+        <span data-i18n="trackOrder">تتبع طلبك</span>
+      </div>
+      <h1><span data-i18n="trackHeroTitle">تتبع طلبك</span></h1>
+      <p><span data-i18n="trackHeroDesc">أدخل رقم طلبك وسنتواصل معك فوراً عبر واتساب للاستفسار عن حالة شحنتك.</span></p>
+    </div>
+  </section>
+
+  <!-- بطاقة التتبع -->
+  <div class="track-section">
+    <div class="track-card reveal">
+      <label for="trackInput">
+        <i class="fas fa-hashtag" style="color: var(--accent);"></i>
+        <span data-i18n="trackInputLabel"> رقم الطلب</span>
+      </label>
+
+      <div class="track-input-row">
+        <input
+          type="text"
+          id="trackInput"
+          class="track-input"
+          maxlength="16"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          inputmode="text"
+          data-i18n-placeholder="trackPlaceholder"
+          placeholder="DW-2026-1234"
+        />
+        <button type="button" id="trackBtn" class="track-btn">
+          <i class="fab fa-whatsapp"></i>
+          <span data-i18n="trackWhatsappBtn">تتبع عبر واتساب</span>
+        </button>
+      </div>
+
+      <p id="trackError" class="track-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="trackErrorMsg" data-i18n="trackInvalidId">رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX</span>
+      </p>
+      <p class="track-format-hint">
+        <span data-i18n="trackFormatHint">الصيغة الصحيحة:</span>
+        <code>DW-2026-XXXX</code>
+      </p>
+
+      <div class="track-divider"></div>
+
+      <div class="track-steps-title">
+        <i class="fas fa-info-circle"></i>
+        <span data-i18n="trackInfoTitle"> كيف تتتبع طلبك؟</span>
+      </div>
+      <div class="track-steps">
+        <div class="track-step">
+          <div class="track-step-num">1</div>
+          <div class="track-step-text">
+            <h4><span data-i18n="trackInfo1Title">أدخل رقم طلبك</span></h4>
+            <p><span data-i18n="trackInfo1Desc">الرقم يبدأ بـ DW ويليه سنة ورقم الطلب</span></p>
+          </div>
+        </div>
+        <div class="track-step">
+          <div class="track-step-num">2</div>
+          <div class="track-step-text">
+            <h4><span data-i18n="trackInfo2Title">تتحول لواتساب تلقائياً</span></h4>
+            <p><span data-i18n="trackInfo2Desc">ستُفتح محادثة جاهزة مع رسالة الاستعلام</span></p>
+          </div>
+        </div>
+        <div class="track-step">
+          <div class="track-step-num">3</div>
+          <div class="track-step-text">
+            <h4><span data-i18n="trackInfo3Title">رد الفريق خلال دقائق</span></h4>
+            <p><span data-i18n="trackInfo3Desc">سيرد فريقنا بآخر تحديث لحالة طلبك</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- تنبيه الخصوصية -->
+    <div class="track-notice">
+      <i class="fas fa-shield-alt"></i>
+      <span data-i18n="trackPrivacyNote">رقم طلبك يُرسل عبر واتساب فقط — لا تخزين لبياناتك، لا حسابات، لا كلمات مرور.</span>
+    </div>
+  </div>
+
+  <!-- مراحل الطلب -->
+  <section class="order-stages reveal">
+    <h2><span data-i18n="trackStagesTitle">مراحل معالجة الطلب</span></h2>
+    <div class="stages-grid">
+      <div class="stage-item active">
+        <div class="stage-icon"><i class="fas fa-inbox"></i></div>
+        <div class="stage-label"><span data-i18n="trackStage1">استلام الطلب</span></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-icon"><i class="fas fa-search"></i></div>
+        <div class="stage-label"><span data-i18n="trackStage2">البحث والتسعير</span></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-icon"><i class="fas fa-shopping-bag"></i></div>
+        <div class="stage-label"><span data-i18n="trackStage3">الشراء والتجهيز</span></div>
+      </div>
+      <div class="stage-item">
+        <div class="stage-icon"><i class="fas fa-truck"></i></div>
+        <div class="stage-label"><span data-i18n="trackStage4">التوصيل لبابك</span></div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+  (function () {
+    var WA_PHONE = '218946507954';
+    var ORDER_REGEX = /^DW-\d{4}-\d{1,6}$/i;
+
+    function getStr(key, fallback) {
+      try {
+        var lang = localStorage.getItem('dawerli_lang') || 'ar';
+        var d = window.dawerliDict;
+        if (d && d[lang] && d[lang].strings && d[lang].strings[key]) {
+          return d[lang].strings[key];
+        }
+      } catch (e) {}
+      return fallback || key;
+    }
+
+    function doTrack() {
+      var input = document.getElementById('trackInput');
+      var errorEl = document.getElementById('trackError');
+      var errorMsg = document.getElementById('trackErrorMsg');
+      var val = (input.value || '').trim().toUpperCase();
+
+      if (!val) {
+        input.classList.add('error');
+        errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX');
+        errorEl.classList.add('visible');
+        input.focus();
+        return;
+      }
+
+      if (!ORDER_REGEX.test(val)) {
+        input.classList.add('error');
+        errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX');
+        errorEl.classList.add('visible');
+        input.focus();
+        return;
+      }
+
+      input.classList.remove('error');
+      errorEl.classList.remove('visible');
+
+      var lang = localStorage.getItem('dawerli_lang') || 'ar';
+      var msg = lang === 'ar'
+        ? 'السلام عليكم، أريد الاستعلام عن حالة طلبي رقم: ' + val
+        : 'Hello, I would like to inquire about my order status. Order ID: ' + val;
+
+      window.open('https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var btn = document.getElementById('trackBtn');
+      var input = document.getElementById('trackInput');
+      var errorEl = document.getElementById('trackError');
+
+      if (btn) btn.addEventListener('click', doTrack);
+
+      if (input) {
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') doTrack();
+        });
+        input.addEventListener('input', function () {
+          input.classList.remove('error');
+          if (errorEl) errorEl.classList.remove('visible');
+          /* تلقائياً تحويل للأحرف الكبيرة وإزالة الفراغات */
+          var pos = input.selectionStart;
+          input.value = input.value.toUpperCase().replace(/\s/g, '');
+          try { input.setSelectionRange(pos, pos); } catch (e) {}
+        });
+      }
+
+      /* تحقق من وجود رقم طلب في URL (مثال: /track?id=DW-2026-1234) */
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var idParam = params.get('id') || params.get('order');
+        if (idParam && input) {
+          input.value = idParam.toUpperCase();
+        }
+      } catch (e) {}
+    });
+  })();
+  </script>
+
+</Layout>
