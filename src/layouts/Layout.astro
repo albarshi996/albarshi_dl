@@ -46,7 +46,7 @@ import Footer from '../components/Footer.astro';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/style.css">
 
-  <!-- v5.3+task7: B2B/B2C 5-card services, image upload UI, B2B/B2C how-it-works -->
+  <!-- v5.3+task9: 6-card services, female card, inclusive i18n heroDesc+hiwStep1 -->
   <meta name="theme-color" content="#050505">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -61,7 +61,7 @@ import Footer from '../components/Footer.astro';
           services: 'خدماتنا', contact: 'تواصل معنا', pricing: 'الباقات',
           request: 'اطلب الآن',
           heroTitle: 'حلقة الوصل بينك وبين ما تحتاج',
-          heroDesc: 'منصة دورلي توفر لك كل ما تحتاجه من أي مدينة في ليبيا، بأسرع وقت وأقل تكلفة. نحن نبحث، نشتري، ونوصل لك!',
+          heroDesc: 'من قطع غيار السيارات والمعدات، إلى الأدوية والفساتين ومستلزمات العناية — دورلي يجيبلك طلبك وين ما كنت. نبحث، نشتري، ونوصل لبابك!',
           heroOrderBtn: 'اطلب الآن', heroServicesBtn: 'تصفح الخدمات',
           howTitle: 'كيف يعمل دورلي؟', howSub: '3 خطوات بسيطة وطلبك في طريقه إليك',
           howStep1Title: 'أرسل طلبك', howStep1Desc: 'اكتب ما تحتاجه بالتفصيل عبر النموذج أو واتساب',
@@ -69,7 +69,7 @@ import Footer from '../components/Footer.astro';
           howStep3Title: 'نوصل لبابك', howStep3Desc: 'توصيل سريع وآمن لأي مدينة في ليبيا',
           howHeroTitle: 'كيف يعمل دورلي؟',
           howHeroDesc: 'أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد من أي مكان في ليبيا بكل أمان وسرعة.',
-          hiwStep1Title: 'أخبرنا بما تحتاج (وأرفق صورة)', hiwStep1Desc: 'سواء كنت تبحث عن قطعة لسيارتك، أو بضائع لمحلك التجاري — قم بتعبئة نموذج الطلب أو تواصل معنا عبر الواتساب. يمكنك إرفاق صورة القطعة المطلوبة (كقطعة مكسورة أو رقم الكتالوج) لضمان التطابق 100%.',
+          hiwStep1Title: 'أخبرنا بما تحتاج/تحتاجين (وأرفق/ي صورة)', hiwStep1Desc: 'سواء كنتِ تبحثين عن فستان معين، مستحضرات تجميل، أو دواء غير متوفر في مدينتك... أو كنت تبحث عن قطعة غيار لسيارتك أو بضائع لمحلك التجاري — فقط أرسل/ي طلبك/ي عبر النموذج أو الواتساب وأرفق/ي صورة إن أمكن، وسنتكفل بالباقي.',
           hiwStep2Title: 'البحث والتسعير', hiwStep2Desc: 'سيقوم فريقنا فوراً بالبحث عن طلبك والتأكد من جودته ثم نتواصل معك بالتكلفة.',
           hiwStep3Title: 'تأكيد الطلب والشراء', hiwStep3Desc: 'بعد موافقتك نقوم بعملية الشراء نيابة عنك وتغليف المنتج بشكل آمن.',
           hiwStep4Title: 'الاستلام والدفع', hiwStep4Desc: 'يصلك مندوبنا بالمنتج حتى باب بيتك. تأكد من طلبك ثم ادفع عند الاستلام.',
@@ -120,7 +120,7 @@ import Footer from '../components/Footer.astro';
           servicesHeroTitle: 'خدماتنا المتنوعة',
           servicesHeroDesc: 'تصفح الفئات المختلفة لخدماتنا.',
           searchPlaceholder: 'ابحث عن خدمة (مثلاً: زيت، إطارات، أوراق)...',
-          statBadgeCats: '5 فئات رئيسية', statBadgeServices: '+30 خدمة متوفرة',
+          statBadgeCats: '6 فئات رئيسية', statBadgeServices: '+30 خدمة متوفرة',
           catCarParts: '🚗 قطع غيار السيارات',
           catCar_service1: 'قطع غيار محركات', catCar_service2: 'إكسسوارات وزينة', catCar_service3: 'إطارات وبطاريات',
           catCar_btn: 'اطلب قطع غيار الآن', catTruckParts: '🚛 قطع غيار الشاحنات',
@@ -136,6 +136,9 @@ import Footer from '../components/Footer.astro';
           catRealEstate: 'عقارات ومقرات', catRealEstate_btn: 'اطلب بحث عقاري الآن',
           catWholesale: 'بضائع جملة وتجهيز محلات', catWholesale_btn: 'اطلب بضائع جملة الآن',
           catNadawrLak: 'ندورلك على أي شيء!', catNadawrLak_btn: 'ندور لك على ما تريد',
+          /* Task 9 — Female demographic card */
+          catBeautyHealth: 'تسوق، صحة، وتجميل',
+          catBeautyHealth_btn: 'اطلبي منتجاتك الآن',
           /* Image upload */
           labelImage: 'إرفاق صورة للطلب (اختياري)',
           uploadText: 'اسحب صورة هنا أو انقر للاختيار',
@@ -243,7 +246,7 @@ import Footer from '../components/Footer.astro';
           services: 'Services', contact: 'Contact', pricing: 'Pricing',
           request: 'Place order',
           heroTitle: 'The connector between you and what you need',
-          heroDesc: 'Dawerli finds, buys and delivers products from any city in Libya — fast and affordably.',
+          heroDesc: 'From car spare parts to medicines, dresses, and beauty products — Dawerli brings your order wherever you are. We search, buy, and deliver to your door!',
           heroOrderBtn: 'Place order', heroServicesBtn: 'Browse services',
           howTitle: 'How Dawerli works', howSub: '3 simple steps and your order is on its way',
           howStep1Title: 'Send your request', howStep1Desc: 'Describe what you need via the form or WhatsApp',
@@ -251,7 +254,7 @@ import Footer from '../components/Footer.astro';
           howStep3Title: 'We deliver to your door', howStep3Desc: 'Fast and secure delivery to any Libyan city',
           howHeroTitle: 'How Dawerli works',
           howHeroDesc: 'Four simple steps separate you from getting what you need from anywhere in Libya.',
-          hiwStep1Title: 'Tell us what you need (attach a photo)', hiwStep1Desc: 'Whether you need a car part or wholesale goods for your shop — fill the order form or contact us via WhatsApp. You can attach a photo of the item (a broken part or catalogue number) to ensure 100% match.',
+          hiwStep1Title: 'Tell us what you need (attach a photo)', hiwStep1Desc: 'Whether you are looking for a specific dress, beauty products, or a medicine not available in your city... or a car spare part or wholesale goods for your shop — just send your request via the form or WhatsApp and attach a photo if possible. We will take care of the rest.',
           hiwStep2Title: 'Search & Pricing', hiwStep2Desc: 'Our team searches, verifies quality, and contacts you with the total cost.',
           hiwStep3Title: 'Confirm & Purchase', hiwStep3Desc: 'After your approval we purchase on your behalf and prepare the item.',
           hiwStep4Title: 'Receive & Pay', hiwStep4Desc: 'Our delivery person brings the product to your door. Pay on delivery.',
@@ -301,7 +304,7 @@ import Footer from '../components/Footer.astro';
           wa_pricing_help: 'Hello, I need help choosing the right plan',
           servicesHeroTitle: 'Our services', servicesHeroDesc: 'Browse our service categories.',
           searchPlaceholder: 'Search a service (e.g. oil, tyres, documents)...',
-          statBadgeCats: '5 main categories', statBadgeServices: '+30 available services',
+          statBadgeCats: '6 main categories', statBadgeServices: '+30 available services',
           catCarParts: '🚗 Car spare parts',
           catCar_service1: 'Engine spare parts', catCar_service2: 'Accessories & trims', catCar_service3: 'Tyres & batteries',
           catCar_btn: 'Order car parts', catTruckParts: '🚛 Truck spare parts',
@@ -317,6 +320,9 @@ import Footer from '../components/Footer.astro';
           catRealEstate: 'Real Estate & Premises', catRealEstate_btn: 'Request property search',
           catWholesale: 'Wholesale & Shop Fitting', catWholesale_btn: 'Order wholesale now',
           catNadawrLak: 'We find anything for you!', catNadawrLak_btn: 'Let us find it for you',
+          /* Task 9 — Female demographic card */
+          catBeautyHealth: 'Shopping, Health & Beauty',
+          catBeautyHealth_btn: 'Order your products now',
           /* Image upload */
           labelImage: 'Attach an image (optional)',
           uploadText: 'Drag an image here or click to select',
