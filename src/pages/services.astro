@@ -29,6 +29,141 @@ import Layout from '../layouts/Layout.astro';
     /* Card 6 — female audience (rose) */
     .category-card:last-child { border-color:rgba(236,72,153,0.35); }
     .category-card:last-child:hover { border-color:#ec4899; box-shadow:0 8px 30px rgba(236,72,153,0.2); }
+
+    /* ── TASK 14-C: Pricing Transparency Section ─────────────── */
+    .pricing-transparency {
+      padding: 3.5rem 1.5rem 4rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(79,70,229,0.04) 100%);
+      border-top: 1px solid var(--glass-border);
+    }
+    .pt-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .pt-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .pt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.25);
+      color: var(--accent-light);
+      border-radius: 50px;
+      padding: 0.35rem 0.95rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.03em;
+    }
+    .pt-header h2 {
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .pt-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    /* formula row */
+    .pt-formula {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius-lg);
+    }
+    .pt-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-align: center;
+      min-width: 120px;
+    }
+    .pt-pill i { font-size: 1.4rem; margin-bottom: 0.15rem; }
+    .pt-pill.product  { background: rgba(79,70,229,0.12); color: #a5b4fc; border: 1px solid rgba(79,70,229,0.3); }
+    .pt-pill.shipping { background: rgba(245,158,11,0.1);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .pt-pill.fee      { background: rgba(6,182,212,0.1);   color: var(--accent-light); border: 1px solid rgba(6,182,212,0.25); }
+    .pt-pill.total    { background: linear-gradient(135deg,rgba(79,70,229,0.2),rgba(6,182,212,0.15)); color: var(--white); border: 1px solid var(--accent); }
+    .pt-pill small    { font-size: 0.7rem; font-weight: 500; opacity: 0.75; line-height: 1.3; }
+    .pt-operator {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-muted);
+      padding: 0 0.1rem;
+    }
+    /* clarity cards */
+    .pt-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .pt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 1.2rem 1.3rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .pt-card:hover { border-color: rgba(79,70,229,0.4); }
+    .pt-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .pt-card-icon.blue   { background: rgba(79,70,229,0.12); color: #a5b4fc; }
+    .pt-card-icon.amber  { background: rgba(245,158,11,0.12); color: #fbbf24; }
+    .pt-card-icon.cyan   { background: rgba(6,182,212,0.12);  color: var(--accent-light); }
+    .pt-card-icon.green  { background: rgba(34,197,94,0.12);  color: #4ade80; }
+    .pt-card h4 { font-size: 0.88rem; font-weight: 800; color: var(--white); margin-bottom: 0.25rem; }
+    .pt-card p  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; }
+    .pt-cta {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .pt-cta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      padding: 0.7rem 1.8rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .pt-cta a:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,0.3); }
+    @media (max-width: 600px) {
+      .pt-formula { gap: 0.4rem; padding: 1rem; }
+      .pt-pill { min-width: 90px; padding: 0.65rem 0.7rem; font-size: 0.78rem; }
+      .pt-operator { font-size: 1.1rem; }
+    }
   </style>
 
   <section class="page-hero">
@@ -169,6 +304,91 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
       </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       TASK 14-C: Pricing Transparency Section
+       Placed after categories grid in services.astro
+  ══════════════════════════════════════════════════════ -->
+  <section class="pricing-transparency reveal">
+    <div class="pt-inner">
+
+      <div class="pt-header">
+        <div class="pt-badge">
+          <i class="fas fa-info-circle"></i> شفافية الأسعار
+        </div>
+        <h2>كيف يتم احتساب السعر؟</h2>
+        <p>دورلي خدمة <strong style="color:var(--accent-light);">تدوير وبحث</strong> — نجد لك المنتج بأفضل سعر ثم نُعلمك قبل أي خطوة</p>
+      </div>
+
+      <!-- معادلة السعر -->
+      <div class="pt-formula">
+        <div class="pt-pill product">
+          <i class="fas fa-box-open"></i>
+          سعر المنتج
+          <small>بعد العثور عليه<br>وعرض أفضل سعر</small>
+        </div>
+        <span class="pt-operator">+</span>
+        <div class="pt-pill shipping">
+          <i class="fas fa-truck"></i>
+          تكلفة الشحن
+          <small>حسب مكاتب الشحن<br>بين المدن</small>
+        </div>
+        <span class="pt-operator">+</span>
+        <div class="pt-pill fee">
+          <i class="fas fa-tags"></i>
+          عمولة المنصة
+          <small>حسب باقتك<br>تبدأ من 20 د.ل</small>
+        </div>
+        <span class="pt-operator">=</span>
+        <div class="pt-pill total">
+          <i class="fas fa-receipt"></i>
+          السعر النهائي
+          <small>تُعرض عليك أولاً<br>قبل الشراء</small>
+        </div>
+      </div>
+
+      <!-- بطاقات التوضيح الأربع -->
+      <div class="pt-cards">
+        <div class="pt-card">
+          <div class="pt-card-icon blue"><i class="fas fa-search"></i></div>
+          <div>
+            <h4>نبحث — أنت توافق</h4>
+            <p>نعثر على المنتج أو الخدمة ونُرسل لك عرض السعر الكامل قبل أي شراء. لا مفاجآت.</p>
+          </div>
+        </div>
+        <div class="pt-card">
+          <div class="pt-card-icon amber"><i class="fas fa-shipping-fast"></i></div>
+          <div>
+            <h4>الشحن بالسعر الفعلي</h4>
+            <p>تكلفة الشحن تُحتسب وفق أسعار مكاتب الشحن المعتمدة — لا رسوم مخفية.</p>
+          </div>
+        </div>
+        <div class="pt-card">
+          <div class="pt-card-icon cyan"><i class="fas fa-layer-group"></i></div>
+          <div>
+            <h4>عمولة واضحة بحسب الباقة</h4>
+            <p>اختر باقة عادي (20 د.ل) أو سريع (40 د.ل) أو VIP (70 د.ل) — العمولة ثابتة ومُعلنة.</p>
+          </div>
+        </div>
+        <div class="pt-card">
+          <div class="pt-card-icon green"><i class="fas fa-handshake"></i></div>
+          <div>
+            <h4>لا دفع مقدماً للبحث</h4>
+            <p>خدمة البحث والتدوير مجانية — تدفع فقط بعد الموافقة على عرض السعر.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-cta">
+        <a href="/pricing/">
+          <i class="fas fa-tags"></i>
+          تفاصيل الباقات الكاملة
+        </a>
+      </div>
+
     </div>
   </section>
 
