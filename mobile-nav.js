@@ -32,6 +32,7 @@
   var _dirPending     = false;
   var _scrollY        = 0;         // saved scroll position for JS scroll lock
   var navAnchor       = null;      // original DOM position for desktop re-insertion
+  var _resizeTimer    = null;      // debounce timer for resize→placeNav
 
   /* ─── Helpers ─────────────────────────────────────────────────────── */
   function getDir() {
@@ -248,7 +249,13 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && isOpen) closeDrawer();
     });
-    window.addEventListener('resize', placeNav, { passive: true });
+    window.addEventListener('resize', function() {
+      /* Debounce: wait 200ms after the last resize event before
+         moving DOM nodes. Prevents repeated layout thrashing
+         while the user drags the browser window edge.           */
+      clearTimeout(_resizeTimer);
+      _resizeTimer = setTimeout(placeNav, 200);
+    }, { passive: true });
     document.addEventListener('dawerli:langChanged', function() {
       if (isOpen) closeDrawer();
     });
