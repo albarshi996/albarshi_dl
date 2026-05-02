@@ -9,11 +9,14 @@
 ### منصة التوصيل واللوجستيات الليبية
 **Libya's B2B/B2C Delivery & Procurement Platform**
 
+[![STATUS](https://img.shields.io/badge/🟢_STATUS-PRODUCTION_READY_%26_COMPLETED-22c55e?style=for-the-badge)](https://dawerli.org.ly)
+[![Code Freeze](https://img.shields.io/badge/Code_Freeze-2026--05--02-ef4444?style=for-the-badge)](#-project-status)
+
 [![Live Site](https://img.shields.io/badge/Live-dawerli.org.ly-4f46e5?style=for-the-badge&logo=astro)](https://dawerli.org.ly)
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub_Pages-222?style=for-the-badge&logo=github)](https://github.com/albarshi996/albarshi_dl/actions)
 [![Astro](https://img.shields.io/badge/Astro-4.5-FF5D01?style=for-the-badge&logo=astro)](https://astro.build)
 [![Firebase](https://img.shields.io/badge/Firebase-Spark-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com)
-[![Task](https://img.shields.io/badge/Current_Task-14c-06b6d4?style=for-the-badge)](#-tasks-history)
+[![Tasks](https://img.shields.io/badge/Tasks_Completed-14--ج-22c55e?style=for-the-badge)](#-tasks-history)
 
 </div>
 
@@ -36,6 +39,27 @@
 | واتساب | +218 946 507 954 |
 | فيسبوك | https://www.facebook.com/share/1G2eg1mgpZ/ |
 | حقوق النشر | Dawerli albarshi 2018 |
+
+---
+
+## 🟢 Project Status — Code Freeze
+
+> **تجميد الكود الرسمي · Code Freeze · 2 مايو 2026**
+
+المنصة بلغت حالة **الإنتاج الكاملة**. جميع مهام Task 1 → Task 14-ج منجزة ومُختبرة على الموقع الحي.
+لا تعديلات برمجية إضافية مُخطّطة. المستودع الآن في وضع **القراءة فقط**.
+
+| المؤشر | الحالة |
+|--------|--------|
+| الموقع الحي `dawerli.org.ly` | 🟢 يعمل |
+| تطبيق الموبايل (Expo WebView) | 🟢 يعمل |
+| نموذج الطلب + واتساب | 🟢 مكتمل |
+| محرك قطع الغيار الشرطي | 🟢 مكتمل |
+| خط زمني التتبع (5 مراحل) | 🟢 مكتمل |
+| شفافية التسعير (services + pricing) | 🟢 مكتمل |
+| الباقات (عادي / سريع / VIP) | 🟢 مكتمل |
+| SEO · Schema.org · robots.txt | 🟢 مكتمل |
+| الملاحة (Desktop + Mobile v5.4) | 🟢 مكتمل |
 
 ---
 
