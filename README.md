@@ -245,6 +245,7 @@ request.astro (3 payment cards)
 | **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `24e083926a82` |
 | **11.5** | **WebView Pivot** | تحويل التطبيق إلى WebView Smart Shell يعرض dawerli.org.ly | ✅ مكتملة | `task11.5-webview` |
 | **12** | **Native Toolbar** | شريط تحكم سفلي: رجوع / تقدم / تحديث / الرئيسية — SafeArea + KeyboardAvoiding | ✅ مكتملة | `task12-toolbar` |
+| **11.6** | **Desktop Nav Bug Fix** | إصلاح nav تظهر أسفل الـ footer على desktop — JS width guard + CSS fallback | ✅ مكتملة | `0557d92b4128` |
 
 ---
 
