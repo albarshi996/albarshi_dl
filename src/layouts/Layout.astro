@@ -3,6 +3,7 @@
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
 const { title, description = "منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا." , noindex = false } = Astro.props;
