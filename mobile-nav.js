@@ -1,20 +1,22 @@
 /**
- * mobile-nav.js — Dawerli Mobile Drawer Navigation v5.2
+ * mobile-nav.js — Dawerli Mobile Drawer Navigation v5.3
  *
- * FIXES v5.2 (on top of v5.1):
- *   — touchend on overlay: iOS Safari doesn't always fire click on divs.
- *     Adding touchend + e.preventDefault() closes drawer immediately and
- *     prevents the ghost 300ms-delayed click event.
- *   — touchend on close button: same iOS tap reliability fix.
- *   — Both touchend handlers guard with e.target check so a touchstart
- *     that began inside the nav and ended on the overlay still works.
+ * v5.3 ROOT CAUSE FIXES:
  *
- * v5.1 features retained:
- *   — _dirPending debounce (MutationObserver double-fire guard)
- *   — nav.no-transition freeze during direction change
- *   — double requestAnimationFrame restore
- *   — hijackMenuBtn (removes stale initMobileMenu listener)
- *   — swipe gesture (RTL + LTR aware)
+ *   ① Stacking Context Trap:
+ *     header { backdrop-filter: blur(16px) } creates a CSS Stacking Context.
+ *     nav inside header was trapped in that context (effective root z-index
+ *     = header's 1000). Overlay raised to 1003 in Task 5.2 → overlay above
+ *     nav → overlay's backdrop-filter blurred the nav → frozen/blurry UI.
+ *     FIX: document.body.appendChild(nav) — nav moves to root context.
+ *
+ *   ② touch-action:none Scroll Lock (Task 5 CSS):
+ *     Blocked tap→click conversion on iOS Safari for overlay/close btn.
+ *     Swipe (raw touchstart/touchend) still worked — consistent with report.
+ *     FIX: JS position:fixed scroll lock. No touch-action needed.
+ *
+ *   ③ iOS Tap Reliability (v5.2 retained):
+ *     touchend on overlay, close btn, menu btn with { passive: false }.
  */
 (function () {
   'use strict';
@@ -28,7 +30,9 @@
   var touchStartY     = 0;
   var SWIPE_THRESHOLD = 55;
   var _dirPending     = false;
+  var _scrollY        = 0;         // saved scroll position for JS scroll lock
 
+  /* ─── Helpers ─────────────────────────────────────────────────────── */
   function getDir() {
     return document.documentElement.dir === 'ltr' ? 'ltr' : 'rtl';
   }
@@ -41,13 +45,31 @@
     i.classList.add(   open ? 'fa-times' : 'fa-bars');
   }
 
-  /* ─── Open / Close ─────────────────────────────────────────────── */
+  /* ─── Scroll lock (JS position:fixed technique) ─────────────────────
+     Does NOT use touch-action:none — that blocks tap events on iOS.
+     Instead: freeze body in place by position:fixed + negative top.    */
+  function lockScroll() {
+    _scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top      = '-' + _scrollY + 'px';
+    document.body.style.width    = '100%';
+  }
+
+  function unlockScroll() {
+    document.body.style.position = '';
+    document.body.style.top      = '';
+    document.body.style.width    = '';
+    window.scrollTo(0, _scrollY);
+  }
+
+  /* ─── Open / Close ─────────────────────────────────────────────────── */
   function openDrawer() {
     if (isOpen || !nav || !overlay) return;
     isOpen = true;
     nav.classList.add('active');
     overlay.classList.add('active');
     document.body.classList.add('drawer-open');
+    lockScroll();
     setIcon(true);
     try { menuBtn && menuBtn.setAttribute('aria-expanded', 'true'); } catch(e) {}
     try { nav.setAttribute('aria-hidden', 'false'); } catch(e) {}
@@ -59,25 +81,25 @@
     nav.classList.remove('active');
     overlay.classList.remove('active');
     document.body.classList.remove('drawer-open');
+    unlockScroll();
     setIcon(false);
     try { menuBtn && menuBtn.setAttribute('aria-expanded', 'false'); } catch(e) {}
     try { nav.setAttribute('aria-hidden', 'true'); } catch(e) {}
   }
 
-  /* ─── Overlay ───────────────────────────────────────────────────── */
+  /* ─── Overlay ──────────────────────────────────────────────────────── */
   function buildOverlay() {
     overlay = document.createElement('div');
     overlay.className = 'nav-overlay';
     overlay.setAttribute('aria-hidden', 'true');
-    document.body.insertBefore(overlay, document.body.firstChild);
+    document.body.appendChild(overlay);
 
-    /* click: works on desktop and Android Chrome */
+    /* click: desktop + Android Chrome */
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) closeDrawer();
     });
 
-    /* touchend: iOS Safari reliability fix.
-       e.preventDefault() stops the 300ms ghost-click from also firing. */
+    /* touchend: iOS Safari — tap→click gap fix */
     overlay.addEventListener('touchend', function(e) {
       if (e.target === overlay) {
         e.preventDefault();
@@ -86,23 +108,21 @@
     }, { passive: false });
   }
 
-  /* ─── Close button ──────────────────────────────────────────────── */
+  /* ─── Close button ─────────────────────────────────────────────────── */
   function buildCloseBtn() {
     closeBtn = document.createElement('button');
-    closeBtn.id = 'drawerCloseBtn';
+    closeBtn.id        = 'drawerCloseBtn';
     closeBtn.className = 'drawer-close-btn';
     closeBtn.setAttribute('aria-label',
       getDir() === 'ltr' ? 'Close menu'
                          : 'إغلاق القائمة');
     closeBtn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
 
-    /* click: desktop + Android */
     closeBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       closeDrawer();
     });
 
-    /* touchend: iOS Safari — prevents ghost click + closes immediately */
     closeBtn.addEventListener('touchend', function(e) {
       e.stopPropagation();
       e.preventDefault();
@@ -112,7 +132,8 @@
     nav.insertBefore(closeBtn, nav.firstChild);
   }
 
-  /* ─── Hijack menu button ────────────────────────────────────────── */
+  /* ─── Hijack menu button ─────────────────────────────────────────────
+     Clones #mobileMenuBtn removing all listeners (incl. initMobileMenu). */
   function hijackMenuBtn() {
     var old = document.getElementById('mobileMenuBtn')
            || document.querySelector('.mobile-menu-btn');
@@ -121,7 +142,8 @@
     old.parentNode.replaceChild(fresh, old);
     fresh.setAttribute('aria-expanded', 'false');
     fresh.setAttribute('aria-controls', 'mainNav');
-    fresh.setAttribute('aria-label',    'فتح القائمة');
+    fresh.setAttribute('aria-label', 'فتح القائمة');
+
     fresh.addEventListener('click', function(e) {
       e.stopPropagation();
       isOpen ? closeDrawer() : openDrawer();
@@ -131,17 +153,18 @@
       e.preventDefault();
       isOpen ? closeDrawer() : openDrawer();
     }, { passive: false });
+
     return fresh;
   }
 
-  /* ─── Nav links ─────────────────────────────────────────────────── */
+  /* ─── Nav links ────────────────────────────────────────────────────── */
   function bindNavLinks() {
     nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', closeDrawer);
     });
   }
 
-  /* ─── Swipe gesture ─────────────────────────────────────────────── */
+  /* ─── Swipe gesture ────────────────────────────────────────────────── */
   function onTouchStart(e) {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
@@ -157,7 +180,9 @@
     if (dir === 'ltr' && dx >  SWIPE_THRESHOLD) { closeDrawer(); return; }
   }
 
-  /* ─── Direction change (MutationObserver) ───────────────────────── */
+  /* ─── Direction change (MutationObserver) ───────────────────────────
+     Debounces the double-mutation (lang + dir both change on lang switch).
+     Freezes nav transitions during the switch to prevent RTL→LTR fly-in. */
   function onDirChange() {
     if (_dirPending) return;
     _dirPending = true;
@@ -191,7 +216,7 @@
     });
   }
 
-  /* ─── Global events ─────────────────────────────────────────────── */
+  /* ─── Global events ────────────────────────────────────────────────── */
   function bindGlobal() {
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && isOpen) closeDrawer();
@@ -204,10 +229,20 @@
     });
   }
 
-  /* ─── Init ──────────────────────────────────────────────────────── */
+  /* ─── Init ──────────────────────────────────────────────────────────
+     CRITICAL: nav is moved to document.body FIRST.
+     header { backdrop-filter: blur(16px) } creates a CSS Stacking Context.
+     Any position:fixed child of header is trapped in that context — its
+     z-index cannot exceed the header's root-level z-index (1000).
+     Moving nav to body places it in the ROOT stacking context where
+     z-index: 1001 > overlay(999) and > header(1000). No blur. ✓         */
   function init() {
     nav = document.getElementById('mainNav');
     if (!nav) return;
+
+    /* Escape header's stacking context */
+    document.body.appendChild(nav);
+
     buildOverlay();
     menuBtn = hijackMenuBtn();
     buildCloseBtn();
@@ -224,4 +259,5 @@
   } else {
     init();
   }
+
 }());
