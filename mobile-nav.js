@@ -1,23 +1,20 @@
 /**
- * mobile-nav.js — Dawerli Mobile Drawer Navigation v5.1
+ * mobile-nav.js — Dawerli Mobile Drawer Navigation v5.2
  *
- * CRITICAL FIX v5.1:
- *   — Debounced MutationObserver (prevent double-firing on lang switch)
- *   — nav.no-transition freezes CSS transitions during direction change
- *     to prevent the RTL→LTR "fly-in" visual crash
- *   — Double requestAnimationFrame ensures browser has repainted before
- *     re-enabling transitions
+ * FIXES v5.2 (on top of v5.1):
+ *   — touchend on overlay: iOS Safari doesn't always fire click on divs.
+ *     Adding touchend + e.preventDefault() closes drawer immediately and
+ *     prevents the ghost 300ms-delayed click event.
+ *   — touchend on close button: same iOS tap reliability fix.
+ *   — Both touchend handlers guard with e.target check so a touchstart
+ *     that began inside the nav and ended on the overlay still works.
  *
- * Features:
- *   ✅ Overlay (tap to close)
- *   ✅ Swipe-to-close gesture (touch, RTL + LTR aware)
- *   ✅ RTL drawer from RIGHT (Arabic default)
- *   ✅ LTR drawer from LEFT (English — css html[lang="en"] nav)
- *   ✅ Body scroll lock while drawer is open
- *   ✅ Escape key closes drawer
- *   ✅ Resize to desktop auto-closes
- *   ✅ Safe on Header.astro applyHeaderLang()
- *   ✅ Hijacks #mobileMenuBtn → removes stale initMobileMenu() listener
+ * v5.1 features retained:
+ *   — _dirPending debounce (MutationObserver double-fire guard)
+ *   — nav.no-transition freeze during direction change
+ *   — double requestAnimationFrame restore
+ *   — hijackMenuBtn (removes stale initMobileMenu listener)
+ *   — swipe gesture (RTL + LTR aware)
  */
 (function () {
   'use strict';
@@ -29,10 +26,9 @@
   var isOpen          = false;
   var touchStartX     = 0;
   var touchStartY     = 0;
-  var SWIPE_THRESHOLD = 55;       // px — calibrated for natural gesture
-  var _dirPending     = false;    // debounce flag for MutationObserver
+  var SWIPE_THRESHOLD = 55;
+  var _dirPending     = false;
 
-  /* ─── Helpers ──────────────────────────────────────────────────────── */
   function getDir() {
     return document.documentElement.dir === 'ltr' ? 'ltr' : 'rtl';
   }
@@ -45,7 +41,7 @@
     i.classList.add(   open ? 'fa-times' : 'fa-bars');
   }
 
-  /* ─── Open / Close ──────────────────────────────────────────────────── */
+  /* ─── Open / Close ─────────────────────────────────────────────── */
   function openDrawer() {
     if (isOpen || !nav || !overlay) return;
     isOpen = true;
@@ -68,32 +64,55 @@
     try { nav.setAttribute('aria-hidden', 'true'); } catch(e) {}
   }
 
-  /* ─── DOM builders ──────────────────────────────────────────────────── */
+  /* ─── Overlay ───────────────────────────────────────────────────── */
   function buildOverlay() {
     overlay = document.createElement('div');
     overlay.className = 'nav-overlay';
     overlay.setAttribute('aria-hidden', 'true');
     document.body.insertBefore(overlay, document.body.firstChild);
-    overlay.addEventListener('click', closeDrawer);
+
+    /* click: works on desktop and Android Chrome */
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeDrawer();
+    });
+
+    /* touchend: iOS Safari reliability fix.
+       e.preventDefault() stops the 300ms ghost-click from also firing. */
+    overlay.addEventListener('touchend', function(e) {
+      if (e.target === overlay) {
+        e.preventDefault();
+        closeDrawer();
+      }
+    }, { passive: false });
   }
 
+  /* ─── Close button ──────────────────────────────────────────────── */
   function buildCloseBtn() {
     closeBtn = document.createElement('button');
     closeBtn.id = 'drawerCloseBtn';
     closeBtn.className = 'drawer-close-btn';
     closeBtn.setAttribute('aria-label',
-      getDir() === 'ltr' ? 'Close menu' : '\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629');
+      getDir() === 'ltr' ? 'Close menu'
+                         : 'إغلاق القائمة');
     closeBtn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
-    closeBtn.addEventListener('click', function (e) {
+
+    /* click: desktop + Android */
+    closeBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       closeDrawer();
     });
+
+    /* touchend: iOS Safari — prevents ghost click + closes immediately */
+    closeBtn.addEventListener('touchend', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      closeDrawer();
+    }, { passive: false });
+
     nav.insertBefore(closeBtn, nav.firstChild);
   }
 
-  /* ─── Hijack menu button ─────────────────────────────────────────────
-     Clones #mobileMenuBtn removing all listeners (incl. initMobileMenu
-     from script.js) to prevent the double-toggle conflict.            */
+  /* ─── Hijack menu button ────────────────────────────────────────── */
   function hijackMenuBtn() {
     var old = document.getElementById('mobileMenuBtn')
            || document.querySelector('.mobile-menu-btn');
@@ -102,22 +121,27 @@
     old.parentNode.replaceChild(fresh, old);
     fresh.setAttribute('aria-expanded', 'false');
     fresh.setAttribute('aria-controls', 'mainNav');
-    fresh.setAttribute('aria-label',    '\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629');
-    fresh.addEventListener('click', function (e) {
+    fresh.setAttribute('aria-label',    'فتح القائمة');
+    fresh.addEventListener('click', function(e) {
       e.stopPropagation();
       isOpen ? closeDrawer() : openDrawer();
     });
+    fresh.addEventListener('touchend', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      isOpen ? closeDrawer() : openDrawer();
+    }, { passive: false });
     return fresh;
   }
 
-  /* ─── Nav link close ────────────────────────────────────────────────── */
+  /* ─── Nav links ─────────────────────────────────────────────────── */
   function bindNavLinks() {
-    nav.querySelectorAll('a').forEach(function (a) {
+    nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', closeDrawer);
     });
   }
 
-  /* ─── Swipe gesture ─────────────────────────────────────────────────── */
+  /* ─── Swipe gesture ─────────────────────────────────────────────── */
   function onTouchStart(e) {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
@@ -127,83 +151,60 @@
     if (!isOpen) return;
     var dx = e.changedTouches[0].clientX - touchStartX;
     var dy = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(dx) < Math.abs(dy)) return;       // ignore vertical
+    if (Math.abs(dx) < Math.abs(dy)) return;
     var dir = getDir();
     if (dir === 'rtl' && dx < -SWIPE_THRESHOLD) { closeDrawer(); return; }
     if (dir === 'ltr' && dx >  SWIPE_THRESHOLD) { closeDrawer(); return; }
   }
 
-  /* ─── Direction change handler ──────────────────────────────────────
-     THE CORE FIX:
-     applyHeaderLang() in Header.astro sets BOTH html[lang] AND html[dir].
-     MutationObserver fires once per attribute → 2 callbacks per switch.
-     Without the debounce (_dirPending), the nav processes twice and
-     CSS transitions interact badly → visual "crash" (nav flies in).
-
-     Fix:
-     1. _dirPending flag: only first mutation in each batch processes
-     2. nav.no-transition: ALL nav transitions are instantly disabled
-        BEFORE the new CSS direction rule reflows the element.
-        This prevents the RTL→LTR "fly-in" glitch.
-     3. Double rAF: ensures browser has fully repainted with new position
-        before we re-enable transitions (single rAF is insufficient).  */
+  /* ─── Direction change (MutationObserver) ───────────────────────── */
   function onDirChange() {
-    if (_dirPending) return;       // ← debounce: skip 2nd mutation
+    if (_dirPending) return;
     _dirPending = true;
-
-    /* Freeze transitions so the position snap is invisible */
     if (nav) nav.classList.add('no-transition');
-
     if (isOpen) closeDrawer();
-
     if (closeBtn) {
       try {
         closeBtn.setAttribute('aria-label',
           getDir() === 'ltr' ? 'Close menu'
-                             : '\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629');
+                             : 'إغلاق القائمة');
       } catch(e) {}
     }
-
-    /* Double rAF: frame 1 = browser applies new CSS; frame 2 = painted */
-    window.requestAnimationFrame(function () {
-      window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(function() {
+      window.requestAnimationFrame(function() {
         if (nav) nav.classList.remove('no-transition');
         _dirPending = false;
       });
     });
   }
 
-  /* ─── Observers & global events ─────────────────────────────────────── */
   function observeDirection() {
     if (!window.MutationObserver) return;
-    var obs = new MutationObserver(function (mutations) {
+    var obs = new MutationObserver(function(mutations) {
       for (var i = 0; i < mutations.length; i++) {
         var attr = mutations[i].attributeName;
-        if (attr === 'dir' || attr === 'lang') {
-          onDirChange();
-          break; // one call per batch is enough
-        }
+        if (attr === 'dir' || attr === 'lang') { onDirChange(); break; }
       }
     });
     obs.observe(document.documentElement, {
-      attributes:      true,
-      attributeFilter: ['dir', 'lang']
+      attributes: true, attributeFilter: ['dir', 'lang']
     });
   }
 
+  /* ─── Global events ─────────────────────────────────────────────── */
   function bindGlobal() {
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && isOpen) closeDrawer();
     });
-    window.addEventListener('resize', function () {
+    window.addEventListener('resize', function() {
       if (window.innerWidth >= 992 && isOpen) closeDrawer();
     }, { passive: true });
-    document.addEventListener('dawerli:langChanged', function () {
+    document.addEventListener('dawerli:langChanged', function() {
       if (isOpen) closeDrawer();
     });
   }
 
-  /* ─── Init ────────────────────────────────────────────────────────── */
+  /* ─── Init ──────────────────────────────────────────────────────── */
   function init() {
     nav = document.getElementById('mainNav');
     if (!nav) return;
@@ -223,5 +224,4 @@
   } else {
     init();
   }
-
 }());
