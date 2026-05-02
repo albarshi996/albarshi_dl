@@ -1456,26 +1456,3 @@ body.drawer-open {
   pointer-events: auto !important;
   cursor: pointer !important;
 }
-
-
-/* ══════════════════════════════════════════════════════════════════════
-   TASK 11.6 — BUGFIX: Bottom nav bar bleeding below footer on desktop
-   ══════════════════════════════════════════════════════════════════════
-   ROOT CAUSE: mobile-nav.js v5.3 runs document.body.appendChild(nav) to
-   escape header's backdrop-filter stacking context. On mobile (≤991px)
-   the nav is position:fixed so it floats correctly off-screen. On desktop
-   (≥992px) nav has position:static → renders as a visible block element
-   at the end of <body>, appearing BELOW the footer as a nav strip.
-
-   CSS FIX: On desktop, any nav that is a direct child of <body> (placed
-   there by mobile-nav.js) is hidden. The mobile drawer is unaffected
-   because mobile rules (≤991px) override with position:fixed + right:-100%.
-   ══════════════════════════════════════════════════════════════════════ */
-@media (min-width: 992px) {
-  body > #mainNav {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-    position: static !important;
-  }
-}
