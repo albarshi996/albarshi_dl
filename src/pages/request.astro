@@ -70,6 +70,47 @@ import Layout from '../layouts/Layout.astro';
     .submit-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,0.4); }
     .form-note { text-align:center; margin-top:0.8rem; font-size:0.85rem; color:var(--text-muted); }
     .form-note a { color:var(--accent-light); text-decoration:underline; }
+
+    /* ── Image upload zone ──────────────────────────────────────────── */
+    .image-upload-zone {
+      display: block;
+      border: 2px dashed var(--glass-border);
+      border-radius: 14px;
+      padding: 1.6rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      background: var(--bg-card);
+      position: relative;
+      overflow: hidden;
+      min-height: 110px;
+    }
+    .image-upload-zone:hover, .image-upload-zone:focus-within {
+      border-color: var(--accent);
+      background: rgba(6,182,212,0.04);
+    }
+    .upload-icon-wrap i {
+      font-size: 2.2rem;
+      color: var(--accent-light);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .upload-main-text { display:block; font-weight:700; color:var(--text-main); font-size:0.95rem; margin-bottom:0.25rem; }
+    .upload-sub-text  { display:block; color:var(--text-muted); font-size:0.8rem; }
+    .upload-file-input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .img-preview-wrap { position:relative; display:inline-block; max-width:260px; }
+    .img-preview-wrap img { width:100%; max-height:180px; object-fit:cover; border-radius:10px; border:2px solid var(--accent); }
+    .remove-img-btn {
+      position:absolute; top:-10px; right:-10px;
+      width:28px; height:28px; border-radius:50%; border:none;
+      background:#ef4444; color:white; font-size:1.1rem; line-height:1;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index:2;
+    }
+    @media (max-width:480px) {
+      .image-upload-zone { padding:1.1rem 0.8rem; }
+      .upload-icon-wrap i { font-size:1.8rem; }
+    }
   </style>
 
   <div class="whatsapp-notice" role="region" aria-label="تنبيه: نموذج طلب توصيل، ليس صفحة تسجيل دخول">
@@ -184,6 +225,26 @@ import Layout from '../layouts/Layout.astro';
             <textarea id="product" name="order_details" placeholder="اكتب وصفاً دقيقاً للمنتج أو الخدمة (النوع، المواصفات، وأي تفاصيل هامة)..." required></textarea>
           </div>
 
+
+          <div class="form-group full-width">
+            <label><i class="fas fa-camera"></i> <span data-i18n="labelImage">إرفاق صورة للطلب (اختياري)</span></label>
+            <label class="image-upload-zone" id="imageUploadZone">
+              <div id="uploadContent">
+                <div class="upload-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
+                <span class="upload-main-text" data-i18n="uploadText">اسحب صورة هنا أو انقر للاختيار</span>
+                <span class="upload-sub-text" data-i18n="uploadSubText">مثالي لقطع الغيار — يساعد في التطابق 100%</span>
+              </div>
+              <div id="imgPreviewWrap" class="img-preview-wrap" style="display:none;">
+                <img id="imgPreview" src="" alt="معاينة الصورة">
+                <button type="button" id="removeImgBtn" class="remove-img-btn" aria-label="إزالة الصورة">×</button>
+              </div>
+              <!-- capture="environment" يفتح الكاميرا مباشرةً على الجوال -->
+              <input type="file" id="orderImage" name="order_image"
+                     accept="image/*" capture="environment"
+                     class="upload-file-input" aria-label="رفع صورة الطلب">
+            </label>
+          </div>
+
           <div class="form-submit">
             <button type="submit" class="submit-btn" aria-label="فتح محادثة واتساب لإرسال الطلب">
               <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i> <span data-i18n="submitSendWhatsapp">فتح محادثة واتساب وإرسال الطلب</span>
@@ -276,6 +337,13 @@ import Layout from '../layouts/Layout.astro';
         message += `\n\n${note}`;
       }
 
+      // إذا اختار المستخدم صورة — أضف تنبيهاً في رسالة الواتساب
+      const imgFile = document.getElementById('orderImage');
+      if (imgFile && imgFile.files && imgFile.files.length > 0) {
+        const imgNote = get('whatsapp_image_note') || '📷 ملاحظة: سأرفق صورة المنتج في هذه المحادثة.';
+        message += `\n${imgNote}`;
+      }
+
       // رقم واتساب منصة دورلي الثابت والمضمون
       const waNumber = "218946507954";
       const whatsappUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
@@ -283,5 +351,36 @@ import Layout from '../layouts/Layout.astro';
       // توجيه الزبون فوراً للواتساب
       window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     });
+
+    // ── Image upload preview ─────────────────────────────────────────
+    (function() {
+      var imgInput       = document.getElementById('orderImage');
+      var imgPreview     = document.getElementById('imgPreview');
+      var imgPreviewWrap = document.getElementById('imgPreviewWrap');
+      var uploadContent  = document.getElementById('uploadContent');
+      var removeImgBtn   = document.getElementById('removeImgBtn');
+      if (!imgInput) return;
+
+      imgInput.addEventListener('change', function() {
+        var file = this.files[0];
+        if (!file) return;
+        // Show live preview
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          imgPreview.src = ev.target.result;
+          uploadContent.style.display = 'none';
+          imgPreviewWrap.style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+      });
+
+      removeImgBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        imgInput.value = '';
+        imgPreviewWrap.style.display = 'none';
+        uploadContent.style.display  = '';
+      });
+    })();
   </script>
 </Layout>
