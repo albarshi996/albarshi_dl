@@ -5,3 +5,8 @@ node_modules/
 dist/
 
 .astro/
+
+# Environment Variables (SECURITY — never commit real secrets)
+.env
+.env.local
+.env.*.local
