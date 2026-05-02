@@ -31,6 +31,7 @@
   var SWIPE_THRESHOLD = 55;
   var _dirPending     = false;
   var _scrollY        = 0;         // saved scroll position for JS scroll lock
+  var navAnchor       = null;      // original DOM position for desktop re-insertion
 
   /* ─── Helpers ─────────────────────────────────────────────────────── */
   function getDir() {
@@ -84,7 +85,7 @@
     unlockScroll();
     setIcon(false);
     try { menuBtn && menuBtn.setAttribute('aria-expanded', 'false'); } catch(e) {}
-    try { nav.setAttribute('aria-hidden', 'true'); } catch(e) {}
+    /* aria-hidden managed by placeNav() */
   }
 
   /* ─── Overlay ──────────────────────────────────────────────────────── */
@@ -216,32 +217,57 @@
     });
   }
 
+  /* ─── Smart DOM Placement (TASK 11.7) ─────────────────────────────────
+     Desktop (≥992px): return nav to <header> — horizontal nav bar in flex.
+     Mobile (<992px): move nav to document.body root stacking context so
+     position:fixed z-index clears header's backdrop-filter context. */
+  function placeNav() {
+    if (!nav || !navAnchor) return;
+    if (window.innerWidth >= 992) {
+      /* Restore nav to its original position inside the header */
+      if (nav.parentNode !== navAnchor.parent) {
+        if (navAnchor.next && navAnchor.next.parentNode === navAnchor.parent) {
+          navAnchor.parent.insertBefore(nav, navAnchor.next);
+        } else {
+          navAnchor.parent.appendChild(nav);
+        }
+        try { nav.setAttribute('aria-hidden', 'false'); } catch(e) {}
+      }
+      if (isOpen) closeDrawer();
+    } else {
+      /* Move to body root for mobile drawer stacking context fix */
+      if (nav.parentNode !== document.body) {
+        document.body.appendChild(nav);
+        /* aria-hidden managed by placeNav() */
+      }
+    }
+  }
+
   /* ─── Global events ────────────────────────────────────────────────── */
   function bindGlobal() {
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && isOpen) closeDrawer();
     });
-    window.addEventListener('resize', function() {
-      if (window.innerWidth >= 992 && isOpen) closeDrawer();
-    }, { passive: true });
+    window.addEventListener('resize', placeNav, { passive: true });
     document.addEventListener('dawerli:langChanged', function() {
       if (isOpen) closeDrawer();
     });
   }
 
   /* ─── Init ──────────────────────────────────────────────────────────
-     CRITICAL: nav is moved to document.body FIRST.
+     TASK 11.7: Smart DOM Placement.
      header { backdrop-filter: blur(16px) } creates a CSS Stacking Context.
-     Any position:fixed child of header is trapped in that context — its
-     z-index cannot exceed the header's root-level z-index (1000).
-     Moving nav to body places it in the ROOT stacking context where
-     z-index: 1001 > overlay(999) and > header(1000). No blur. ✓         */
+     Mobile (<992px): nav MUST be in body root context (position:fixed z-index
+     clears header's 1000). Desktop (≥992px): nav stays in <header> flex. */
   function init() {
     nav = document.getElementById('mainNav');
     if (!nav) return;
 
-    /* Escape header's stacking context */
-    document.body.appendChild(nav);
+    /* Save original DOM position so placeNav() can restore on desktop */
+    navAnchor = { parent: nav.parentNode, next: nav.nextSibling };
+
+    /* Place nav in correct context for current viewport */
+    placeNav();
 
     buildOverlay();
     menuBtn = hijackMenuBtn();
@@ -251,7 +277,7 @@
     nav.addEventListener('touchend',   onTouchEnd,   { passive: true });
     observeDirection();
     bindGlobal();
-    try { nav.setAttribute('aria-hidden', 'true'); } catch(e) {}
+    /* aria-hidden managed by placeNav() */
   }
 
   if (document.readyState === 'loading') {
