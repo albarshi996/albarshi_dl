@@ -13,7 +13,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub_Pages-222?style=for-the-badge&logo=github)](https://github.com/albarshi996/albarshi_dl/actions)
 [![Astro](https://img.shields.io/badge/Astro-4.5-FF5D01?style=for-the-badge&logo=astro)](https://astro.build)
 [![Firebase](https://img.shields.io/badge/Firebase-Spark-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com)
-[![Task](https://img.shields.io/badge/Current_Task-10.2-06b6d4?style=for-the-badge)](#-tasks-history)
+[![Task](https://img.shields.io/badge/Current_Task-13-06b6d4?style=for-the-badge)](#-tasks-history)
 
 </div>
 
@@ -163,7 +163,7 @@ header            → z-index: 1000  ← backdrop-filter creates stacking contex
 mobile-nav        → z-index: 1001  ← must be appended to document.body
 result overlays   → z-index: 9999
 ```
-**الحل (v5.3):** `document.body.appendChild(nav)` في `mobile-nav.js` يضع الـ nav في الـ root stacking context.
+**الحل (v5.4 — Task 11.7):** `placeNav()` ذكي — nav في `<header>` على desktop (≥992px)، nav في `document.body` على mobile (<992px). `resize` listener بـ debounce 200ms.
 
 ### 🔒 Scroll Lock Pattern
 ```javascript
@@ -229,23 +229,20 @@ request.astro (3 payment cards)
 
 | # | المهمة | الوصف | الحالة | Commit |
 |---|--------|-------|--------|--------|
-| 1 | **Project Init** | إعداد Astro 4.5 + GitHub Pages + CNAME | ✅ مكتملة | — |
-| 2 | **Core Pages** | index, services, request, pricing, contact | ✅ مكتملة | — |
-| 3 | **i18n System** | `dawerliDict` AR/EN مدمج في Layout.astro | ✅ مكتملة | — |
-| 4 | **Firebase Integration** | Firebase 10.12 Spark — config + init | ✅ مكتملة | — |
-| 5 | **Mobile Navigation** | Mobile nav + hamburger + overlay | ✅ مكتملة | — |
-| 5.3 | **Stacking Context Fix** | `body.appendChild(nav)` + JS scroll lock + DOMContentLoaded i18n | ✅ مكتملة | `0d8dd219e0` |
-| 6 | **SEO & Schema.org** | robots.txt + JSON-LD + OG tags + Google Verification | ✅ مكتملة | — |
-| 7 | **B2B/B2C Services Restructure** | 5 بطاقات خدمات + image upload UI + `capture="environment"` | ✅ مكتملة | `e0b8b257c3` |
-| 8 | **Legal Pages** | privacy.astro + terms.astro + track.astro | ✅ مكتملة | — |
-| 9 | **Female Audience Integration** | بطاقة 6 (تجميل/صحة) + لغة شاملة م/أ + 4-chip strip | ✅ مكتملة | `defb7f847e` |
-| 10 | **Moamalat Sandbox — Page** | checkout.astro: noindex + sandbox banner + anti-fraud | ✅ مكتملة | `9d064d5189` |
-| 10.1 | **Moamalat Sandbox — Integration** | SHA-512 WebCrypto + `import.meta.env` + 3 payment cards | ✅ مكتملة | `7bb529aeb3` |
-| 10.2 | **README Overhaul** | توثيق شامل: project tree + tasks history + architecture notes | ✅ مكتملة | — |
-| **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `24e083926a82` |
-| **11.5** | **WebView Pivot** | تحويل التطبيق إلى WebView Smart Shell يعرض dawerli.org.ly | ✅ مكتملة | `task11.5-webview` |
-| **12** | **Native Toolbar** | شريط تحكم سفلي: رجوع / تقدم / تحديث / الرئيسية — SafeArea + KeyboardAvoiding | ✅ مكتملة | `task12-toolbar` |
-| **11.6** | **Desktop Nav Bug Fix** | إصلاح nav تظهر أسفل الـ footer على desktop — JS width guard + CSS fallback | ✅ مكتملة | `0557d92b4128` |
+| **1** | **Project Init** | إعداد Astro 4.5 + GitHub Pages + CNAME | ✅ مكتملة | — |
+| **2** | **Core Pages** | index, services, request, pricing, contact | ✅ مكتملة | — |
+| **3** | **i18n System** | `dawerliDict` AR/EN مدمج في Layout.astro | ✅ مكتملة | — |
+| **4** | **Firebase Integration** | Firebase 10.12 Spark — config + init | ✅ مكتملة | — |
+| **5** | **Mobile/Desktop Navigation** | Hamburger drawer + overlay + scroll lock + stacking context fix | ✅ مكتملة | `0d8dd219e0` |
+| **6** | **SEO & Schema** | robots.txt + JSON-LD + OG tags + Google Verification | ✅ مكتملة | — |
+| **7** | **B2B/B2C Services** | 6 بطاقات خدمات + image upload + `capture="environment"` | ✅ مكتملة | `e0b8b257c3` |
+| **8** | **Legal Pages** | privacy.astro + terms.astro + track.astro | ✅ مكتملة | — |
+| **9** | **Female Audience** | بطاقة التسوق والصحة + لغة شاملة م/أ + 4-chip strip | ✅ مكتملة | `defb7f847e` |
+| **10** | **Moamalat Sandbox** | checkout.astro + SHA-512 WebCrypto + 3 payment cards | ✅ مكتملة | `7bb529aeb3` |
+| **11** | **Mobile App (WebView)** | React Native (Expo) — WebView Smart Shell → dawerli.org.ly | ✅ مكتملة | `bcdce957220d` |
+| **12** | **Native Navigation** | شريط تحكم سفلي: رجوع / تقدم / تحديث / الرئيسية — SafeArea + KeyboardAvoiding | ✅ مكتملة | `62102a1df5e6` |
+| **13** | **Offline UX** | README overhaul + توثيق شامل للمشروع | ✅ مكتملة | — |
+| **11.6–11.8** | **Nav Smart Placement** | placeNav() ذكي: header على desktop، body على mobile + resize debounce 200ms | ✅ مكتملة | `4e4651b3abc8` |
 
 ---
 
@@ -286,11 +283,9 @@ npm run preview
 
 | المهمة | الوصف | الأولوية |
 |--------|-------|---------|
-| **Task 11/11.5** | React Native (Expo) — WebView Smart Shell لـ dawerli.org.ly | ✅ مكتملة |
-| **Task 12** | Mobile App: Navigation + Dark Theme + RTL/LTR | 🔴 عالية |
-| **Task 13** | Mobile App: Order form + Firebase shared backend | 🟡 متوسطة |
-| **Task 14** | Moamalat Production — Backend SecureHash endpoint | 🟡 متوسطة |
-| **Task 15** | Mobile App: Store submission (App Store / Google Play) | 🟢 منخفضة |
+| **Task 14 (أ)** | **نظام تتبع الطلبات المتقدم (Live Tracking):** تحويل صفحة التتبع إلى "لوحة تتبع زمنية" (Timeline) داخل التطبيق | 🟡 تحددها الإدارة |
+| **Task 14 (ب)** | **محرك قطع الغيار الذكي (Spare Parts Engine):** نموذج متخصص لقطع الغيار لتقليل الخطأ في الطلبات اللوجستية | 🟡 تحددها الإدارة |
+| **Task 14 (ج)** | **توضيح آلية التسعير:** إضافة توضيح بأن المنصة خدمة تدوير — سعر المنتج عند العثور عليه، الشحن وفق تسعيرة المكاتب، ربح المنصة في الباقات | 🟡 تحددها الإدارة |
 
 ---
 
