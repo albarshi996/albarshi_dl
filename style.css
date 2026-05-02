@@ -1339,3 +1339,54 @@ html[lang="en"] .hero-buttons {
     align-items: center;
   }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   TASK 5.2 — Z-Index Fix + Touch-Action Override
+   ROOT CAUSES:
+   A. Nav z-index (1001) < Header z-index (1002) → close btn hidden behind header
+   B. Overlay z-index (999) < Header z-index (1002) → overlay untappable at top
+   C. body.drawer-open { touch-action: none } blocks tap on iOS Safari
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* FIX A+B: Raise nav and overlay above the header (z-index: 1002)     */
+@media (max-width: 991px) {
+  /* Nav drawer must be above header so close button is tappable        */
+  #mainNav {
+    z-index: 1005 !important;
+  }
+
+  /* Close button: ensure tappable area and visibility                  */
+  .drawer-close-btn,
+  #drawerCloseBtn {
+    position: relative !important;
+    z-index: 6 !important;          /* within nav stacking context      */
+    touch-action: auto !important;
+    pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer !important;
+    min-width: 44px !important;     /* WCAG touch target                */
+    min-height: 44px !important;
+    display: flex !important;       /* override any residual display:none*/
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Overlay must also be above header (1002) so tapping top area closes */
+.nav-overlay {
+  z-index: 1003 !important;   /* above header 1002, below nav 1005     */
+  touch-action: auto !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* FIX C: Override body.drawer-open touch-action: none for interactive
+   elements. Using higher-specificity rule (2-class + element > 1-class)*/
+body.drawer-open .nav-overlay,
+body.drawer-open #drawerCloseBtn,
+body.drawer-open .drawer-close-btn,
+body.drawer-open #mainNav {
+  touch-action: auto !important;
+  pointer-events: auto !important;
+}
