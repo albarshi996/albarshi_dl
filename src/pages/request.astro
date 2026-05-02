@@ -111,6 +111,54 @@ import Layout from '../layouts/Layout.astro';
       .image-upload-zone { padding:1.1rem 0.8rem; }
       .upload-icon-wrap i { font-size:1.8rem; }
     }
+
+    /* ── Payment Method Cards (Task 10.1) ──────────────────────────── */
+    .payment-method-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 480px) {
+      .payment-method-cards { grid-template-columns: 1fr; }
+    }
+    .pm-card {
+      position: relative;
+      padding: 1.1rem 0.6rem 0.9rem;
+      background: var(--bg-card);
+      border: 2px solid var(--glass-border);
+      border-radius: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pm-card:hover { border-color: var(--accent); background: rgba(6,182,212,0.05); }
+    .pm-card:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .pm-card.pm-sel-cash    { border-color: #10b981; background: rgba(16,185,129,0.08); }
+    .pm-card.pm-sel-bank    { border-color: var(--primary); background: rgba(79,70,229,0.08); }
+    .pm-card.pm-sel-online  { border-color: #f59e0b; background: rgba(245,158,11,0.07); }
+    .pm-icon  { font-size: 1.7rem; margin-bottom: 0.3rem; line-height: 1; }
+    .pm-label { font-size: 0.88rem; font-weight: 800; color: var(--white); margin-bottom: 0.15rem; }
+    .pm-sub   { font-size: 0.7rem; color: var(--text-muted); }
+    .pm-card.pm-sel-cash   .pm-label { color: #10b981; }
+    .pm-card.pm-sel-bank   .pm-label { color: var(--accent-light); }
+    .pm-card.pm-sel-online .pm-label { color: #fbbf24; }
+    .pm-check {
+      position: absolute; top: 7px; left: 7px;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: white; opacity: 0; transition: opacity 0.2s;
+    }
+    .pm-card.pm-sel-cash   .pm-check { background: #10b981; opacity: 1; }
+    .pm-card.pm-sel-bank   .pm-check { background: var(--primary); opacity: 1; }
+    .pm-card.pm-sel-online .pm-check { background: #f59e0b; opacity: 1; }
+    .pm-online-badge {
+      display: inline-block; margin-top: 0.3rem;
+      background: rgba(245,158,11,0.15); color: #fbbf24;
+      padding: 0.1rem 0.45rem; border-radius: 6px; font-size: 0.64rem; font-weight: 700;
+    }
   </style>
 
   <div class="whatsapp-notice" role="region" aria-label="تنبيه: نموذج طلب توصيل، ليس صفحة تسجيل دخول">
@@ -245,6 +293,41 @@ import Layout from '../layouts/Layout.astro';
             </label>
           </div>
 
+          <!-- Payment Method Selection (Task 10.1) -->
+          <div class="form-group full-width" style="margin-top:0.8rem;">
+            <label><i class="fas fa-wallet"></i> <span data-i18n="labelPayment">طريقة الدفع</span></label>
+            <div class="payment-method-cards" id="paymentMethods" role="radiogroup" aria-label="اختر طريقة الدفع">
+
+              <div class="pm-card pm-sel-cash" data-method="cash"
+                   role="radio" aria-checked="true" tabindex="0">
+                <div class="pm-check"><i class="fas fa-check"></i></div>
+                <div class="pm-icon">💵</div>
+                <div class="pm-label" data-i18n="pmCash">نقدي</div>
+                <div class="pm-sub" data-i18n="pmCashSub">عند الاستلام</div>
+              </div>
+
+              <div class="pm-card" data-method="bank"
+                   role="radio" aria-checked="false" tabindex="0">
+                <div class="pm-check"><i class="fas fa-check"></i></div>
+                <div class="pm-icon">🏦</div>
+                <div class="pm-label" data-i18n="pmBank">تحويل مصرفي</div>
+                <div class="pm-sub" data-i18n="pmBankSub">قبل التوصيل</div>
+              </div>
+
+              <div class="pm-card" data-method="online"
+                   role="radio" aria-checked="false" tabindex="0"
+                   title="بيئة Sandbox — لن يتم خصم أي مبلغ">
+                <div class="pm-check"><i class="fas fa-check"></i></div>
+                <div class="pm-icon">💳</div>
+                <div class="pm-label" data-i18n="pmOnline">دفع إلكتروني</div>
+                <div class="pm-sub" data-i18n="pmOnlineSub">قريباً</div>
+                <span class="pm-online-badge">🧪 Sandbox</span>
+              </div>
+
+            </div>
+            <input type="hidden" id="paymentMethod" name="payment_method" value="cash">
+          </div>
+
           <div class="form-submit">
             <button type="submit" class="submit-btn" aria-label="فتح محادثة واتساب لإرسال الطلب">
               <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i> <span data-i18n="submitSendWhatsapp">فتح محادثة واتساب وإرسال الطلب</span>
@@ -261,6 +344,30 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <script is:inline>
+
+    /* ── Payment Method Cards (Task 10.1) ────────────────────────── */
+    (function() {
+      var cards  = document.querySelectorAll('.pm-card');
+      var hidden = document.getElementById('paymentMethod');
+      var classByMethod = { cash:'pm-sel-cash', bank:'pm-sel-bank', online:'pm-sel-online' };
+
+      function selectCard(method) {
+        cards.forEach(function(c) {
+          var m = c.dataset.method;
+          c.className = 'pm-card' + (m === method ? ' ' + classByMethod[m] : '');
+          c.setAttribute('aria-checked', String(m === method));
+        });
+        hidden.value = method;
+      }
+
+      cards.forEach(function(card) {
+        card.addEventListener('click', function() { selectCard(this.dataset.method); });
+        card.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(this.dataset.method); }
+        });
+      });
+    })();
+
     let qty = 1;
     document.getElementById('qtyPlus').onclick = () => { qty = Math.min(qty+1,99); document.getElementById('qtyDisplay').textContent = qty; document.getElementById('quantity').value = qty; };
     document.getElementById('qtyMinus').onclick = () => { qty = Math.max(qty-1,1); document.getElementById('qtyDisplay').textContent = qty; document.getElementById('quantity').value = qty; };
@@ -299,13 +406,34 @@ import Layout from '../layouts/Layout.astro';
     document.getElementById('orderForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const city = document.getElementById('city').value;
+      const name     = document.getElementById('name').value.trim();
+      const phone    = document.getElementById('phone').value.trim();
+      const city     = document.getElementById('city').value;
       const category = document.getElementById('category').value;
-      const product = document.getElementById('product').value.trim();
+      const product  = document.getElementById('product').value.trim();
       const quantity = document.getElementById('quantity').value;
-      const urgency = document.getElementById('urgency').value;
+      const urgency  = document.getElementById('urgency').value;
+      const payMeth  = document.getElementById('paymentMethod').value;
+
+      /* ── Online payment → redirect to Moamalat Sandbox checkout ── */
+      if (payMeth === 'online') {
+        if (!name || !phone || !city || !category || !product) {
+          alert('يرجى إكمال بيانات الطلب أولاً (الاسم، الهاتف، المدينة، النوع، التفاصيل) قبل الانتقال للدفع');
+          return;
+        }
+        const orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
+        const params = new URLSearchParams({
+          ref:  orderNum,
+          cat:  category,
+          city: city,
+          qty:  quantity,
+          desc: product.slice(0,80),
+          fee:  '20',
+          name: name
+        });
+        window.location.href = '/checkout?' + params.toString();
+        return;
+      }
 
       // قراءة الترجمات من القاموس المدمج الجديد مباشرة
       const lang = document.documentElement.lang || 'ar';
@@ -330,6 +458,7 @@ import Layout from '../layouts/Layout.astro';
       message += `📦 ${get('labelCategory') || 'النوع'}: ${category}\n`;
       message += `🔢 ${get('labelQuantity') || 'الكمية'}: ${quantity}\n`;
       message += `⏱️ ${get('labelUrgency') || 'الاستعجال'}: ${urgency}\n`;
+      message += `💳 ${get('labelPayment') || 'طريقة الدفع'}: ${payMeth === 'cash' ? '💵 نقدي عند الاستلام' : '🏦 تحويل مصرفي'}\n`;
       message += `📝 ${get('labelDetails') || 'التفاصيل'}: ${product}`;
 
       if(isCarPart){
