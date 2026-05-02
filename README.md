@@ -13,7 +13,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub_Pages-222?style=for-the-badge&logo=github)](https://github.com/albarshi996/albarshi_dl/actions)
 [![Astro](https://img.shields.io/badge/Astro-4.5-FF5D01?style=for-the-badge&logo=astro)](https://astro.build)
 [![Firebase](https://img.shields.io/badge/Firebase-Spark-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com)
-[![Task](https://img.shields.io/badge/Current_Task-14b-06b6d4?style=for-the-badge)](#-tasks-history)
+[![Task](https://img.shields.io/badge/Current_Task-14c-06b6d4?style=for-the-badge)](#-tasks-history)
 
 </div>
 
@@ -244,6 +244,7 @@ request.astro (3 payment cards)
 | **13** | **Offline UX** | README overhaul + توثيق شامل للمشروع | ✅ مكتملة | — |
 | **14-أ** | **Interactive Order Timeline** | خط زمني رأسي تفاعلي في track.astro — 5 مراحل، حالات بصرية، spine animation | ✅ مكتملة | `feat(task14a)` |
 | **14-ب** | **Spare Parts Engine** | نموذج قطع الغيار الشرطي — موديل السيارة + حالة جديدة/رابش + صورة + رسالة WA منسقة | ✅ مكتملة | `feat(task14b)` |
+| **14-ج** | **Pricing Transparency** | قسم شفافية التسعير في services.astro + 4 خطوات تفصيلية في pricing.astro — المعادلة + ضمان الشفافية | ✅ مكتملة | `feat(task14c)` |
 | **11.6–11.8** | **Nav Smart Placement** | placeNav() ذكي: header على desktop، body على mobile + resize debounce 200ms | ✅ مكتملة | `4e4651b3abc8` |
 
 ---
@@ -287,7 +288,7 @@ npm run preview
 |--------|-------|---------|
 | **Task 14 (أ)** | **نظام تتبع الطلبات المتقدم (Live Tracking):** خط زمني رأسي تفاعلي في track.astro مع 5 مراحل وحالات بصرية — جاهز للربط مع Firebase | ✅ مكتملة |
 | **Task 14 (ب)** | **محرك قطع الغيار الذكي (Spare Parts Engine):** نموذج متخصص لقطع الغيار لتقليل الخطأ في الطلبات اللوجستية | 🟡 تحددها الإدارة |
-| **Task 14 (ج)** | **توضيح آلية التسعير:** إضافة توضيح بأن المنصة خدمة تدوير — سعر المنتج عند العثور عليه، الشحن وفق تسعيرة المكاتب، ربح المنصة في الباقات | 🟡 تحددها الإدارة |
+| **Task 14 (ج)** | **توضيح آلية التسعير:** معادلة واضحة (منتج+شحن+عمولة) + 4 خطوات تفصيلية + ضمان شفافية — التسعير يعتمد على عروض أسعار حقيقية ومقارنات شحن | ✅ مكتملة |
 
 ---
 
