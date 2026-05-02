@@ -240,8 +240,13 @@
     nav = document.getElementById('mainNav');
     if (!nav) return;
 
-    /* Escape header's stacking context */
-    document.body.appendChild(nav);
+    /* Escape header's stacking context — only on mobile (<992px).
+       On desktop the nav stays in the header flex layout (no stacking issue).
+       TASK 11.6: fix — nav was always body-appended, causing it to render
+       as a static block below the footer on desktop screens.               */
+    if (window.innerWidth < 992) {
+      document.body.appendChild(nav);
+    }
 
     buildOverlay();
     menuBtn = hijackMenuBtn();
