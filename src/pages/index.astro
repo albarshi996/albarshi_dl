@@ -312,15 +312,25 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- شريط الخدمات السريع -->
+  <!-- CSS للـ chips المميزة (featured) — إضافة أعلى المستوى -->
+  <style>
+    .service-chip.featured {
+      background: rgba(79, 70, 229, 0.18);
+      border: 1px solid var(--primary);
+      color: var(--accent-light);
+      font-weight: 700;
+    }
+  </style>
+
   <div class="services-strip">
     <div class="services-strip-inner">
-      <a href="/services" class="service-chip"><i class="fas fa-car"></i> قطع غيار سيارات</a>
-      <a href="/services" class="service-chip"><i class="fas fa-truck"></i> قطع غيار شاحنات</a>
-      <a href="/services" class="service-chip"><i class="fas fa-hamburger"></i> مواد غذائية</a>
+      <!-- Top 3 highlighted B2B/B2C services -->
+      <a href="/services" class="service-chip featured"><i class="fas fa-car-crash"></i> رابش وقطع غيار</a>
+      <a href="/services" class="service-chip featured"><i class="fas fa-building"></i> عقارات وإيجارات</a>
+      <a href="/services" class="service-chip featured"><i class="fas fa-magic"></i> ندورلك على أي شيء</a>
+      <!-- Additional services -->
       <a href="/services" class="service-chip"><i class="fas fa-file-alt"></i> أوراق ومستندات</a>
-      <a href="/services" class="service-chip"><i class="fas fa-ring"></i> مستلزمات أفراح</a>
-      <a href="/services" class="service-chip"><i class="fas fa-hard-hat"></i> مواد بناء</a>
-      <a href="/services" class="service-chip"><i class="fas fa-magic"></i> خدمات مخصصة</a>
+      <a href="/services" class="service-chip"><i class="fas fa-store"></i> بضائع جملة</a>
     </div>
   </div>
 
