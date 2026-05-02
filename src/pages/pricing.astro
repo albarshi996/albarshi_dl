@@ -583,6 +583,13 @@ import Layout from '../layouts/Layout.astro';
       <a href="/request" class="cta-btn secondary">
         <i class="fas fa-paper-plane"></i> اطلب مباشرة
       </a>
+      <!-- TASK 10: Sandbox payment test link (remove in production) -->
+      <a href="/checkout?ref=TEST-SANDBOX&cat=توصيل+عادي&city=بنغازي&fee=20&desc=اختبار+بوابة+الدفع"
+         class="cta-btn"
+         style="background:linear-gradient(135deg,rgba(79,70,229,0.3),rgba(6,182,212,0.3));border:1px solid var(--primary);color:var(--accent-light);"
+         title="بيئة تجريبية — لن يتم خصم أي مبلغ">
+        <i class="fas fa-credit-card"></i> 🧪 جرب الدفع الإلكتروني (Sandbox)
+      </a>
     </div>
   </section>
 
