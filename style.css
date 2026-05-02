@@ -1390,3 +1390,69 @@ body.drawer-open #mainNav {
   touch-action: auto !important;
   pointer-events: auto !important;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   TASK 5.3 — Stacking Context Regression Corrective Overrides
+   ══════════════════════════════════════════════════════════════════════
+
+   ROOT CAUSE RECAP (from Task 5.2 regression):
+   • header { backdrop-filter: blur(16px) } → creates CSS Stacking Context
+   • nav was DOM child of header → trapped in header's stacking context
+   • header's effective root z-index = 1000
+   • Task 5.2 overlay z-index: 1003 > 1000 → overlay was ABOVE nav
+   • overlay's own backdrop-filter blurred everything behind it (= nav)
+   → Arabic drawer was blurred/frozen; X button/overlay tap missed nav
+
+   SOLUTION (implemented in mobile-nav.js v5.3):
+   • document.body.appendChild(nav) in init()
+   • nav is now in ROOT stacking context
+   • z-index:1001 > header(1000) > overlay(999) at root level
+   • No stacking context interference. No blur. ✓
+
+   CSS overrides below correct the wrong values from Task 5.2.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* OVERRIDE Task 5.2: Restore overlay z-index to original (below header).
+   nav is now moved to body by JS → nav at z-index:1001 > overlay:999.
+   Overlay covers page content but stays below header (header stays visible). */
+.nav-overlay {
+  z-index: 999 !important;
+}
+
+/* Nav: now in body (root stacking context) via JS. z-index 1001 > header(1000).
+   Nav starts below header in coordinates (top:var(--header-height)) so
+   no visual overlap. Close button is tappable — nothing above it. */
+#mainNav {
+  z-index: 1001 !important;
+}
+
+/* OVERRIDE Task 5.2: touch-action on body.drawer-open.
+   Scroll is now locked via JS position:fixed (openDrawer/closeDrawer).
+   touch-action:none caused iOS Safari to suppress tap events on children. */
+body.drawer-open {
+  touch-action: auto !important;
+}
+
+/* OVERRIDE Task 5.2: drawer-close-btn had display:flex!important globally.
+   Restore correct behavior: hidden on desktop, flex on mobile only. */
+@media (min-width: 992px) {
+  .drawer-close-btn,
+  #drawerCloseBtn {
+    display: none !important;
+  }
+}
+
+/* Ensure overlay and close btn are always interactive when shown */
+.nav-overlay.active {
+  pointer-events: auto !important;
+  touch-action: auto !important;
+  cursor: pointer !important;
+}
+
+.drawer-close-btn,
+#drawerCloseBtn {
+  touch-action: auto !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
