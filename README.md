@@ -119,11 +119,13 @@ albarshi_dl/                          ← مستودع الويب الرئيسي
 artifacts/dawerli-mobile/          ← 📱 React Native (Expo) App
     ├── app/
     │   ├── _layout.tsx            ← Root: SafeAreaProvider, ErrorBoundary, Stack
-    │   └── index.tsx              ← 🌐 WebView → https://dawerli.org.ly/
+    │   └── index.tsx              ← 🌐 WebView Smart Shell v1.1
     │                                  • javaScriptEnabled + domStorageEnabled
     │                                  • Deep link: wa.me → Linking.openURL()
-    │                                  • ActivityIndicator أثناء التحميل
-    │                                  • Custom User-Agent: DawerliApp/1.0
+    │                                  • ActivityIndicator + progress bar
+    │                                  • Bottom Toolbar: ← → ↺ ⌂ (SafeArea)
+    │                                  • KeyboardAvoidingView (toolbar ثابت)
+    │                                  • Custom User-Agent: DawerliApp/1.1
     ├── constants/
     │   ├── colors.ts              ← Dawerli dark theme (#050505 bg, #4f46e5 primary, #06b6d4 accent)
     │   └── i18n.ts               ← AR/EN strings + WhatsApp/Facebook/Email constants
@@ -242,6 +244,7 @@ request.astro (3 payment cards)
 | 10.2 | **README Overhaul** | توثيق شامل: project tree + tasks history + architecture notes | ✅ مكتملة | — |
 | **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `24e083926a82` |
 | **11.5** | **WebView Pivot** | تحويل التطبيق إلى WebView Smart Shell يعرض dawerli.org.ly | ✅ مكتملة | `task11.5-webview` |
+| **12** | **Native Toolbar** | شريط تحكم سفلي: رجوع / تقدم / تحديث / الرئيسية — SafeArea + KeyboardAvoiding | ✅ مكتملة | `task12-toolbar` |
 
 ---
 
