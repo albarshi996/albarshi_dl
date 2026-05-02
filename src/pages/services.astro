@@ -23,9 +23,12 @@ import Layout from '../layouts/Layout.astro';
       font-weight:700;
     }
     .service-link-photo i { color:var(--accent) !important; }
-    /* Card 5 hero glow */
-    .category-card:last-child { border-color:rgba(79,70,229,0.4); }
-    .category-card:last-child:hover { border-color:var(--primary); box-shadow:0 8px 30px rgba(79,70,229,0.2); }
+    /* Card 5 glow — kept but now second-to-last; card 6 gets rose glow */
+    .category-card:nth-child(5) { border-color:rgba(79,70,229,0.3); }
+    .category-card:nth-child(5):hover { border-color:var(--primary); box-shadow:0 8px 30px rgba(79,70,229,0.15); }
+    /* Card 6 — female audience (rose) */
+    .category-card:last-child { border-color:rgba(236,72,153,0.35); }
+    .category-card:last-child:hover { border-color:#ec4899; box-shadow:0 8px 30px rgba(236,72,153,0.2); }
   </style>
 
   <section class="page-hero">
@@ -43,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
              placeholder="ابحث عن خدمة (مثلاً: رابش، عقار، جملة)...">
     </div>
     <div style="text-align:center;margin-bottom:3rem;" class="reveal">
-      <span class="stat-badge"><i class="fas fa-th-large"></i> <span data-i18n="statBadgeCats">5 فئات رئيسية</span></span>
+      <span class="stat-badge"><i class="fas fa-th-large"></i> <span data-i18n="statBadgeCats">6 فئات رئيسية</span></span>
       <span class="stat-badge"><i class="fas fa-check-circle"></i> <span data-i18n="statBadgeServices">+30 خدمة متوفرة</span></span>
     </div>
   </div>
@@ -142,6 +145,26 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <a href="/request?cat=أخرى" class="card-action-btn">
             <span data-i18n="catNadawrLak_btn">ندور لك على ما تريد</span>
+          </a>
+        </div>
+
+
+        <!-- ⑥ تسوق، صحة، وتجميل — Female demographic -->
+        <div class="category-card"
+             data-keywords="تجميل مكياج بشرة عناية أزياء فساتين ملابس نساء دواء صيدلية صحة makeup beauty skincare clothes pharmacy medicine women health dress">
+          <div class="category-header"
+               style="background:linear-gradient(135deg,#ec4899,#be185d);box-shadow:0 4px 15px rgba(236,72,153,0.3);">
+            <i class="fas fa-shopping-bag"></i>
+            <h3><span data-i18n="catBeautyHealth">تسوق، صحة، وتجميل</span></h3>
+          </div>
+          <div class="category-services">
+            <span class="service-link"><i class="fas fa-angle-left"></i> مستحضرات تجميل وعناية بالبشرة</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أزياء، فساتين، ومستلزمات نسائية</span>
+            <span class="service-link"><i class="fas fa-angle-left"></i> أدوية ومستلزمات صيدلية غير متوفرة</span>
+          </div>
+          <a href="/request?cat=تسوق وتجميل" class="card-action-btn"
+             style="background:linear-gradient(135deg,#ec4899,#be185d);">
+            <span data-i18n="catBeautyHealth_btn">اطلبي منتجاتك الآن</span>
           </a>
         </div>
 
