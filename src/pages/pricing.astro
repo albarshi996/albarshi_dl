@@ -407,6 +407,109 @@ import Layout from '../layouts/Layout.astro';
       .compare-table { font-size: 0.8rem; }
       .compare-table th, .compare-table td { padding: 0.7rem 0.8rem; }
     }
+
+    /* ── TASK 14-C: How Pricing Works (detailed block) ───────── */
+    .how-pricing {
+      padding: 4rem 1.5rem;
+      background: rgba(79,70,229,0.03);
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .how-pricing .section-title {
+      text-align: center;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .how-pricing .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 3rem;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .pricing-steps {
+      max-width: 780px;
+      margin: 0 auto;
+      position: relative;
+    }
+    /* vertical connector */
+    .pricing-steps::before {
+      content: '';
+      position: absolute;
+      top: 30px; bottom: 30px;
+      right: 27px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--accent));
+      opacity: 0.2;
+      z-index: 0;
+    }
+    html[dir="ltr"] .pricing-steps::before { right: auto; left: 27px; }
+    .ps-item {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+    .ps-item:last-child { margin-bottom: 0; }
+    .ps-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(79,70,229,0.3);
+    }
+    .ps-body {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.3rem;
+    }
+    .ps-body h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ps-body h4 i { color: var(--accent-light); }
+    .ps-body p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+    /* notice banner */
+    .pricing-notice {
+      max-width: 780px;
+      margin: 2.5rem auto 0;
+      padding: 1.1rem 1.4rem;
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(6,182,212,0.05));
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .pricing-notice i { color: #4ade80; font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .pricing-notice strong { color: #4ade80; }
+    @media (max-width: 560px) {
+      .pricing-steps::before { right: 23px; }
+      .ps-num { width: 48px; height: 48px; font-size: 1.05rem; }
+    }
   </style>
 
   <!-- Hero -->
@@ -569,6 +672,71 @@ import Layout from '../layouts/Layout.astro';
       <i class="fas fa-shield-alt"></i>
       <h3>ضمان الرضا التام</h3>
       <p>نضمن لك وصول طلبك بأمان أو نعيد لك رسوم الخدمة كاملة. راحتك وثقتك هي أولويتنا الأولى.</p>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       TASK 14-C: How Pricing Works — detailed version
+       Placed in pricing.astro before CTA section
+  ══════════════════════════════════════════════════════ -->
+  <section class="how-pricing reveal">
+    <h2 class="section-title">
+      <i class="fas fa-calculator" style="color:var(--accent-light);margin-left:0.5rem;"></i>
+      كيف يتم احتساب السعر؟
+    </h2>
+    <p class="section-sub">
+      دورلي هي خدمة <strong style="color:var(--white);">تدوير وبحث</strong> — نعثر على ما تريد بأفضل سعر،
+      ونُخبرك بالتكلفة الكاملة قبل أي خطوة، دون مفاجآت.
+    </p>
+
+    <div class="pricing-steps">
+      <div class="ps-item">
+        <div class="ps-num"><i class="fas fa-search"></i></div>
+        <div class="ps-body">
+          <h4><i class="fas fa-circle-dot"></i> الخطوة الأولى: نبحث عن المنتج مجاناً</h4>
+          <p>بعد استلام طلبك، يبدأ فريق دورلي البحث عن المنتج أو الخدمة في جميع المدن الليبية.
+             <strong style="color:var(--white);">لا تدفع شيئاً لمجرد البحث.</strong></p>
+        </div>
+      </div>
+
+      <div class="ps-item">
+        <div class="ps-num"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="ps-body">
+          <h4><i class="fas fa-circle-dot"></i> الخطوة الثانية: نُرسل لك عرض السعر</h4>
+          <p>فور العثور على أفضل عرض، نُرسل لك التفاصيل عبر واتساب:
+             <strong style="color:var(--accent-light);">سعر المنتج + تكلفة الشحن + عمولة الباقة المختارة = السعر النهائي.</strong>
+             أنت تقرر — إذا وافقت نكمل، وإن لم توافق لا ضغط.</p>
+        </div>
+      </div>
+
+      <div class="ps-item">
+        <div class="ps-num"><i class="fas fa-truck"></i></div>
+        <div class="ps-body">
+          <h4><i class="fas fa-circle-dot"></i> الخطوة الثالثة: الشراء والشحن بعد موافقتك</h4>
+          <p>بعد موافقتك نشتري المنتج ونُسلّمه لمكتب الشحن المناسب.
+             تكلفة الشحن تُحتسب وفق أسعار المكاتب الفعلية بين المدن — لا هامش مخفي.</p>
+        </div>
+      </div>
+
+      <div class="ps-item">
+        <div class="ps-num"><i class="fas fa-hand-holding-heart"></i></div>
+        <div class="ps-body">
+          <h4><i class="fas fa-circle-dot"></i> الخطوة الرابعة: تستلم — ثم تدفع</h4>
+          <p>الدفع يتم نقداً عند الاستلام أو تحويلاً مسبقاً حسب الاتفاق.
+             عمولة المنصة ثابتة ومعلنة حسب باقتك: <strong style="color:var(--white);">عادي 20 د.ل | سريع 40 د.ل | VIP 70 د.ل.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notice banner -->
+    <div class="pricing-notice">
+      <i class="fas fa-shield-check"></i>
+      <span>
+        <strong>ضمان الشفافية:</strong> لن ترى أي رسوم غير مُعلنة مسبقاً.
+        السعر الذي نُرسله لك عبر واتساب هو السعر النهائي بدون زيادة —
+        دورلي تربح من عمولة الباقة فقط، وليس من هامش سعر المنتج.
+      </span>
     </div>
   </section>
 
