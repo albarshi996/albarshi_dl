@@ -1279,3 +1279,63 @@ nav.no-transition * {
     padding: 0;
   }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   TASK 5.1b — Header Layout Direction-Lock
+   ROOT CAUSE: flexbox flow reverses on dir change → buttons swap positions
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 991px) {
+  /* Lock mobile header to always flow LTR regardless of html[dir].
+     Arabic text in logo/nav still renders RTL via Unicode bidi (UBA).
+     This prevents lang-toggle and hamburger from swapping sides.       */
+  header {
+    direction: ltr !important;
+  }
+
+  /* Undo order:-1 so elements follow DOM order (logo → lang → hamburger)
+     in LTR flow: left side = logo, right side = lang-btn + hamburger.  */
+  .header-actions {
+    order: 0 !important;
+    margin-inline-start: auto !important;   /* push group to the right  */
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Hamburger always at the far right */
+  #mobileMenuBtn,
+  .mobile-menu-btn {
+    order: 1 !important;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Form input direction matches active language ─────────────────── */
+html[lang="en"] input,
+html[lang="en"] textarea,
+html[lang="en"] select {
+  direction: ltr;
+  text-align: left;
+}
+
+html[lang="ar"] input,
+html[lang="ar"] textarea,
+html[lang="ar"] select {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ── LTR-safe hero button alignment ──────────────────────────────── */
+html[lang="en"] .hero-buttons {
+  flex-direction: row;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  html[lang="en"] .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
