@@ -127,8 +127,51 @@ const currentPath = pathname.slice(1);
       freshBtn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        var current = getSavedLang();
-        applyHeaderLang(current === 'ar' ? 'en' : 'ar');
+
+        /* ① CRITICAL FIX: freeze nav transitions BEFORE any DOM attribute
+           change. applyHeaderLang() sets html[lang] then html[dir], which
+           triggers CSS html[lang="en"] nav { right:auto; left:-100% }.
+           Without this guard the browser starts a right:-100%→right:auto
+           transition making the nav drawer fly visually onto the screen.
+           MutationObserver in mobile-nav.js also tries to add this class
+           but fires AFTER the CSS engine has already begun the transition.
+           Adding it here — synchronously in the click handler — guarantees
+           the class is active before ANY reflow happens.                  */
+        var navEl = document.getElementById('mainNav');
+        if (navEl) navEl.classList.add('no-transition');
+
+        /* ② Toggle language */
+        var next = getSavedLang() === 'ar' ? 'en' : 'ar';
+        applyHeaderLang(next);
+
+        /* ③ Apply full dawerliDict (superset of the small Header dict).
+           This ensures every [data-i18n] and [data-i18n-placeholder] element
+           on the page is translated — not just the nav items.             */
+        if (window.dawerliDict && window.dawerliDict[next]) {
+          var full = window.dawerliDict[next].strings || {};
+          document.querySelectorAll('[data-i18n]').forEach(function(el) {
+            var k = el.getAttribute('data-i18n');
+            if (full[k] !== undefined) el.textContent = full[k];
+          });
+          document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+            var k = el.getAttribute('data-i18n-placeholder');
+            if (full[k] !== undefined) el.setAttribute('placeholder', full[k]);
+          });
+          /* Update document title per page */
+          var page = document.documentElement.dataset.page || 'index';
+          var titleKey = 'metaTitle_' + page;
+          if (full[titleKey]) document.title = full[titleKey];
+        }
+
+        /* ④ Re-enable transitions only after 2 animation frames:
+           frame 1 → browser applies new CSS position (left:-100%)
+           frame 2 → browser has painted the settled position
+           Only then are smooth transitions restored for user actions.     */
+        window.requestAnimationFrame(function() {
+          window.requestAnimationFrame(function() {
+            if (navEl) navEl.classList.remove('no-transition');
+          });
+        });
       });
     }
   });
