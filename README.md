@@ -1,195 +1,272 @@
-# دورلي - منصة الوساطة التجارية في ليبيا
+<!-- ╔══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║   داورلي · Dawerli — Developer Reference (auto-updated per task) ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════════╝ -->
 
-![دورلي](https://via.placeholder.com/1200x400/2563eb/ffffff?text=دورلي+-+حلقة+الوصل+بينك+وبين+ما+تحتاج)
+<div align="center">
 
-## 📋 نظرة عامة
+# 🚚 Dawerli · دورلي
 
-**دورلي** هي منصة ليبية مبتكرة تهدف إلى ربط العملاء بالمنتجات والخدمات من مختلف المدن الليبية. نحن نوفر حلولاً شاملة للحصول على أي منتج أو خدمة تحتاجها، بغض النظر عن موقعك الجغرافي.
+### منصة التوصيل واللوجستيات الليبية
+**Libya's B2B/B2C Delivery & Procurement Platform**
 
-## 🎯 مهمتنا
+[![Live Site](https://img.shields.io/badge/Live-dawerli.org.ly-4f46e5?style=for-the-badge&logo=astro)](https://dawerli.org.ly)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub_Pages-222?style=for-the-badge&logo=github)](https://github.com/albarshi996/albarshi_dl/actions)
+[![Astro](https://img.shields.io/badge/Astro-4.5-FF5D01?style=for-the-badge&logo=astro)](https://astro.build)
+[![Firebase](https://img.shields.io/badge/Firebase-Spark-FFCA28?style=for-the-badge&logo=firebase)](https://firebase.google.com)
+[![Task](https://img.shields.io/badge/Current_Task-10.2-06b6d4?style=for-the-badge)](#-tasks-history)
 
-تقديم خدمة وساطة تجارية متميزة تربط بين العملاء والبائعين في جميع أنحاء ليبيا، مع التركيز على توفير الوقت والجهد وضمان الجودة والأمان في المعاملات.
+</div>
 
-## ✨ المميزات الرئيسية
+---
 
-### 🔍 البحث الشامل
-- تغطية جميع المدن الليبية
-- بحث في الأسواق التقليدية والإلكترونية
-- مقارنة الأسعار والجودة
+## 📌 Project Overview
 
-### 🛡️ الجودة المضمونة
-- فحص المنتجات قبل الشراء
-- ضمان استبدال المنتجات المعيبة
-- التأكد من سلامة المنتجات
+**دورلي (Dawerli)** هي منصة ليبية لخدمات التوصيل والوساطة التجارية تعمل على مدار الساعة.
+تربط المنصة العملاء الأفراد (B2C) وأصحاب الأعمال (B2B) بالمنتجات والخدمات في أي مدينة ليبية،
+مع دعم 6 فئات خدمية: قطع الغيار، العقارات، البضائع بالجملة، المستندات، "ندورلك"، والتسوق والصحة والتجميل.
 
-### 🚚 التوصيل السريع
-- توصيل لجميع المدن الليبية
-- وقت توصيل محدد مسبقاً
-- تتبع الشحنات
+**الرسالة:** نبحث، نشتري، ونوصل لبابك — من أي مدينة في ليبيا.
 
-## 🛠️ الخدمات المقدمة
+| المعلومة | القيمة |
+|---------|--------|
+| الموقع الحي | https://dawerli.org.ly |
+| المستودع | `albarshi996/albarshi_dl` |
+| الفرع الرئيسي | `main` → GitHub Pages |
+| البريد | dawerly3@gmail.com |
+| واتساب | +218 946 507 954 |
+| فيسبوك | https://www.facebook.com/share/1G2eg1mgpZ/ |
+| حقوق النشر | Dawerli albarshi 2018 |
 
-### 🚗 قطع غيار السيارات والشاحنات
-- قطع غيار أصلية
-- أدوات صيانة
-- إطارات وبطاريات
+---
 
-### 🍽️ المواد الغذائية
-- منتجات محلية مميزة
-- حلويات تقليدية
-- منتجات طازجة
+## 🛠 Tech Stack
 
-### 📄 المستندات الرسمية
-- إنجاز المعاملات الحكومية
-- تصديق وتوثيق المستندات
+| الطبقة | التقنية | الإصدار | الاستخدام |
+|--------|---------|---------|-----------|
+| **Framework** | [Astro](https://astro.build) | 4.5 | SSG — Static Site Generation |
+| **UI Components** | @astrojs/react | 3.6 | React islands داخل Astro |
+| **Styling** | CSS Custom Properties | — | Glassmorphism + CSS Variables |
+| **Fonts** | Tajawal + Inter | Google Fonts | AR (Tajawal) / EN (Inter) |
+| **Icons** | Font Awesome | 6.4 | CDN — جميع الأيقونات |
+| **i18n** | Custom `dawerliDict` | v5.3 | AR/EN مدمج في Layout.astro |
+| **Backend / DB** | Firebase | 10.12 (Spark) | Auth + Firestore + Storage |
+| **Payment** | Moamalat Sandbox | v2.0 | SHA-512 SecureHash — بيئة تجريبية |
+| **Deploy** | GitHub Actions | — | Push to `main` → Pages auto-deploy |
+| **Domain** | CNAME | — | `dawerli.org.ly` → GitHub Pages |
 
-### 💍 مستلزمات الأفراح
-- ديكورات وحلويات
-- أقمشة وخياطة
+---
 
-### 🏗️ مواد البناء
-- مواد خام
-- أدوات التشطيب
+## 📁 Project Tree
 
-### 💄 منتجات التجميل
-- عطور أصلية
-- مكياج ومنتجات عناية
+```
+albarshi_dl/                          ← مستودع الويب الرئيسي
+│
+├── 📄 astro.config.mjs               ← إعدادات Astro (output: static, integrations)
+├── 📄 package.json                   ← npm dependencies
+├── 📄 CNAME                          ← النطاق المخصص: dawerli.org.ly
+├── 📄 robots.txt                     ← SEO: disallow /checkout + crawl rules
+├── 📄 style.css                      ← CSS عالمي (CSS vars, glassmorphism, z-index)
+├── 📄 mobile-nav.js          [v5.3]  ← Mobile nav: body.appendChild + JS scroll lock
+├── 📄 script.js                      ← Reveal animations + WA link handlers
+│
+├── 🔐 .env                   [⚠️]   ← متغيرات بيئة Moamalat Sandbox (sandbox only)
+│   │                                    ❌ لا تضع مفاتيح حقيقية هنا — استخدم GitHub Secrets
+├── 📄 .env.example                   ← قالب متغيرات البيئة (آمن للمشاركة)
+├── 📄 .gitignore
+│
+├── 📂 .github/
+│   └── 📂 workflows/
+│       └── 📄 deploy.yml             ← CI/CD: build Astro → deploy to GitHub Pages
+│                                         ⚠️ يتطلب commit بدون [skip ci] للتشغيل
+├── 📂 .vscode/
+│   └── 📄 launch.json
+│
+├── 📂 js/
+│   └── 📄 i18n.js                    ← Language switcher runtime (AR/EN toggle)
+│
+├── 📂 lang/
+│   ├── 📄 ar.js                      ← Arabic strings (legacy standalone)
+│   └── 📄 en.js                      ← English strings (legacy standalone)
+│
+├── 🖼️ favicon*.{png,svg,ico}         ← Favicons: 16/32/128/256/512px + SVG + ICO
+├── 🖼️ og-image.png                   ← OpenGraph social preview (1200×630)
+├── 📄 googlede9223e6a9e9cea9.html    ← Google Search Console verification
+│
+└── 📂 src/                           ← ✅ كود Astro الرئيسي (اقرأ هنا أولاً)
+    │
+    ├── 📄 env.d.ts                   ← Astro TypeScript env types
+    │
+    ├── 📂 components/
+    │   ├── 🔵 Header.astro           ← Sticky header (backdrop-filter stacking fix)
+    │   │                                 DOMContentLoaded i18n re-apply
+    │   └── 🔵 Footer.astro           ← Footer: links, copyright, social
+    │
+    ├── 📂 firebase/
+    │   └── 🔴 config.js              ← Firebase SDK init
+    │                                     ⚠️ مفاتيح API في .env — لا تُعدّل مباشرة
+    │
+    ├── 📂 layouts/
+    │   └── 🟣 Layout.astro   [CORE] ← Master layout — كل صفحة ترثه
+    │                                     • <head>: SEO, OG, fonts, theme
+    │                                     • dawerliDict: AR+EN i18n (inline)
+    │                                     • Props: title, description, noindex?
+    │                                     ⚠️ أي تغيير هنا يؤثر على كل الصفحات
+    │
+    └── 📂 pages/                     ← Astro file-based routing
+        ├── 🟢 index.astro            ← الرئيسية: hero + 4-chip strip + how-it-works
+        ├── 🟢 services.astro         ← 6 بطاقات B2B/B2C (auto-fit grid)
+        ├── 🟢 request.astro          ← نموذج الطلب + 3 خيارات دفع (WA/تحويل/إلكتروني)
+        ├── 🟡 checkout.astro [⚠️]   ← بوابة Moamalat Sandbox
+        │                                 • noindex={true} → لا أرشفة
+        │                                 • SHA-512 via WebCrypto API
+        │                                 • بيانات بيئة التجريب فقط
+        ├── 🟢 pricing.astro          ← باقات الأسعار + زر اختبار Sandbox
+        ├── 🟢 how-it-works.astro     ← كيف يعمل دورلي (3 خطوات، لغة شاملة م/أ)
+        ├── 🟢 features.astro         ← مميزات المنصة
+        ├── 🟢 contact.astro          ← صفحة التواصل
+        ├── 🟢 track.astro            ← تتبع الطلبات
+        ├── 🟢 privacy.astro          ← سياسة الخصوصية
+        └── 🟢 terms.astro            ← الشروط والأحكام
+```
 
-## 🚀 كيف تعمل الخدمة؟
+**ألوان الترميز:** 🟣 Core/Master · 🔴 Sensitive · 🟡 noindex/Sandbox · 🟢 Regular pages · 🔵 Components
 
-### الخطوة 1: إرسال الطلب
-- حدد المنتج المطلوب
-- اختر المدينة
-- اذكر المواصفات
+---
 
-### الخطوة 2: البحث والتحقق
-- بحث شامل في الأسواق
-- مقارنة الأسعار
-- فحص الجودة
+## ⚙️ Critical Architecture Notes
 
-### الخطوة 3: الشراء والتغليف
-- شراء المنتج
-- فحص النهائي
-- تغليف آمن
+### 🔧 Stacking Context (z-index Hierarchy)
+```
+overlay (modals)  → z-index: 999
+header            → z-index: 1000  ← backdrop-filter creates stacking context!
+mobile-nav        → z-index: 1001  ← must be appended to document.body
+result overlays   → z-index: 9999
+```
+**الحل (v5.3):** `document.body.appendChild(nav)` في `mobile-nav.js` يضع الـ nav في الـ root stacking context.
 
-### الخطوة 4: التوصيل
-- توصيل سريع
-- تتبع الشحنة
-- استلام آمن
+### 🔒 Scroll Lock Pattern
+```javascript
+// ✅ الصحيح — JS-based
+lockScroll()   → body { position: fixed; top: -scrollY; width: 100% }
+unlockScroll() → body { position: static } + window.scrollTo(0, savedY)
+// ❌ الخاطئ — touch-action: none على body يُعطّل scroll على iOS
+```
 
-## 📞 طرق التواصل
+### 🌐 i18n Architecture
+```
+Layout.astro → window.dawerliDict = { ar: { strings: {...} }, en: { strings: {...} } }
+Header.astro → applyLang(lang) → querySelectorAll('[data-i18n]') → textContent swap
+deploy rule  → commit WITHOUT [skip ci] → GitHub Actions build → Pages deploy
+```
 
-### 📱 واتساب
-**0946507954**
+### 💳 Payment Flow
+```
+request.astro (3 payment cards)
+    │
+    ├── 💵 نقدي      → WhatsApp message (طريقة الدفع: نقدي عند الاستلام)
+    ├── 🏦 تحويل     → WhatsApp message (طريقة الدفع: تحويل مصرفي)
+    └── 💳 إلكتروني  → redirect: /checkout?ref=DW-...&cat=...&city=...&fee=...
+                              ↓
+                       checkout.astro (noindex, Sandbox banner)
+                              ↓
+                       SHA-512(MID+TID+Amount+CCY+DateTime+OrderRef+SK)
+                       via window.crypto.subtle.digest('SHA-512')
+                              ↓
+                       Moamalat Sandbox simulation modal (✅ or ❌)
+```
 
-### 📞 هاتف
-**0946507954**
+### 🔐 Environment Variables
+| المتغير | الملف | الاستخدام |
+|---------|-------|-----------|
+| `MOAMALAT_MERCHANT_ID` | `.env` | رقم التاجر في Moamalat |
+| `MOAMALAT_TERMINAL_ID` | `.env` | رقم الطرفية |
+| `MOAMALAT_SECRET_KEY` | `.env` | مفتاح SHA-512 |
+| `MOAMALAT_ENV` | `.env` | `sandbox` أو `production` |
+| `MOAMALAT_CURRENCY` | `.env` | `434` = LYD |
 
-### 📧 بريد إلكتروني
-**Albarshi.96@gmail.com**
+> ⚠️ **مهم:** مفاتيح الإنتاج يجب إضافتها كـ GitHub Repository Secrets وليس في `.env` المُودَع.
 
-### 🌐 فيسبوك
-[صفحتنا على فيسبوك](https://www.facebook.com/share/19gV7R8DHB/)
+---
 
-## 🏙️ المناطق التي نغطيها
+## ✅ Tasks History
 
-### 🎯 المدن الرئيسية
-- طرابلس (توصيل خلال 24 ساعة)
-- بنغازي (توصيل خلال 24 ساعة)
-- مصراتة
-- سبها
+| # | المهمة | الوصف | الحالة | Commit |
+|---|--------|-------|--------|--------|
+| 1 | **Project Init** | إعداد Astro 4.5 + GitHub Pages + CNAME | ✅ مكتملة | — |
+| 2 | **Core Pages** | index, services, request, pricing, contact | ✅ مكتملة | — |
+| 3 | **i18n System** | `dawerliDict` AR/EN مدمج في Layout.astro | ✅ مكتملة | — |
+| 4 | **Firebase Integration** | Firebase 10.12 Spark — config + init | ✅ مكتملة | — |
+| 5 | **Mobile Navigation** | Mobile nav + hamburger + overlay | ✅ مكتملة | — |
+| 5.3 | **Stacking Context Fix** | `body.appendChild(nav)` + JS scroll lock + DOMContentLoaded i18n | ✅ مكتملة | `0d8dd219e0` |
+| 6 | **SEO & Schema.org** | robots.txt + JSON-LD + OG tags + Google Verification | ✅ مكتملة | — |
+| 7 | **B2B/B2C Services Restructure** | 5 بطاقات خدمات + image upload UI + `capture="environment"` | ✅ مكتملة | `e0b8b257c3` |
+| 8 | **Legal Pages** | privacy.astro + terms.astro + track.astro | ✅ مكتملة | — |
+| 9 | **Female Audience Integration** | بطاقة 6 (تجميل/صحة) + لغة شاملة م/أ + 4-chip strip | ✅ مكتملة | `defb7f847e` |
+| 10 | **Moamalat Sandbox — Page** | checkout.astro: noindex + sandbox banner + anti-fraud | ✅ مكتملة | `9d064d5189` |
+| 10.1 | **Moamalat Sandbox — Integration** | SHA-512 WebCrypto + `import.meta.env` + 3 payment cards | ✅ مكتملة | `7bb529aeb3` |
+| 10.2 | **README Overhaul** | توثيق شامل: project tree + tasks history + architecture notes | ✅ مكتملة | — |
+| **11** | **Mobile App Init** | React Native (Expo) — مشروع مستقل منفصل | 🔜 قادمة | — |
 
-### 🗺️ المناطق النائية
-- جالو
-- أوجلة
-- شخرة
-- كفرة
-- مناطق الجبل الشرقي
-- الجنوب الغربي
+---
 
-## 💰 العروض الخاصة
+## 🚀 Local Development
 
-### 🎁 عرض الترحيب
-- **خصم 10%** على أول طلب
-- كود الخصم: **DORLY10**
+```bash
+# Install dependencies
+npm install
 
-### 🔥 عرض الطلبات المتعددة
-- **خصم 15%** عند طلب 3 منتجات أو أكثر
-- كود الخصم: **MULTI15**
+# Start dev server (http://localhost:4321)
+npm run dev
 
-### 🚚 توصيل مجاني
-- توصيل مجاني للطلبات فوق **200 دينار**
-- تطبق تلقائياً
+# Build for production
+npm run build
 
-## 🔒 الأمان والخصوصية
+# Preview production build
+npm run preview
+```
 
-### 🔐 حماية البيانات
-- بياناتك الشخصية محمية
-- لا نشارك معلوماتك مع أي طرف ثالث
-- معاملات آمنة
+> **ملاحظة:** لا تُشغّل `npm run dev` مباشرةً على GitHub Actions — التشغيل يتم فقط عبر `deploy.yml`.
 
-### 💳 طرق الدفع
-- الدفع نقداً عند الاستلام
-- التحويل البنكي
-- إيصالات رسمية
+---
 
-## 📊 إحصائياتنا
+## 🚢 Deployment Rules
 
-### 📈 أرقام تهمك
-- **500+** عميل سعيد
-- **1000+** طلب منفذ
-- **15+** مدينة ليبية
-- **4.8/5** تقييم العملاء
+```
+✅ commit WITHOUT [skip ci]  →  GitHub Actions build + deploy to Pages
+❌ commit WITH    [skip ci]  →  GitHub Actions skipped (code update only)
+❌ NEVER modify deploy.yml   →  Token lacks workflow scope
+```
 
-## 🤝 سياسة الإرجاع والاستبدال
+**Pattern:** الـ deploy يُشغَّل دائماً عبر آخر commit في الدفعة (بدون `[skip ci]`).
+كل الـ commits الوسيطة تحمل `[skip ci]` لتجنب deploys متعددة.
 
-### 🔄 سياسة الإرجاع
-- يمكن إرجاع المنتج خلال 24 ساعة
-- يجب أن يكون المنتج بحالته الأصلية
-- رسوم الإرجاع حسب السبب
+---
 
-### 🔧 سياسة الاستبدال
-- استبدال مجاني للمنتجات المعيبة
-- خلال 48 ساعة من الاستلام
-- شروط وأحكام تطبق
+## 🗺️ Roadmap — المرحلة القادمة
 
-## 🌟 لماذا تختار دورلي؟
+| المهمة | الوصف | الأولوية |
+|--------|-------|---------|
+| **Task 11** | React Native (Expo) — Mobile App initialization | 🔴 عالية |
+| **Task 12** | Mobile App: Navigation + Dark Theme + RTL/LTR | 🔴 عالية |
+| **Task 13** | Mobile App: Order form + Firebase shared backend | 🟡 متوسطة |
+| **Task 14** | Moamalat Production — Backend SecureHash endpoint | 🟡 متوسطة |
+| **Task 15** | Mobile App: Store submission (App Store / Google Play) | 🟢 منخفضة |
 
-### ⏱️ توفير الوقت
-لا داعي للبحث بنفسك، نحن نبحث عن كل ما تحتاجه
+---
 
-### 💰 توفير المال
-نحصل لك على أفضل الأسعار من مختلف المدن
+## 📋 Update Policy (بداية من Task 11)
 
-### 🛡️ أمان تام
-جميع معاملاتك محمية ومدفوعاتك مؤمنة
+> مع كل مهمة جديدة يجب تحديث هذا الملف ليعكس:
+> 1. ✅ إضافة المهمة لجدول **Tasks History** مع رقم الـ commit
+> 2. 🌳 تحديث **Project Tree** إذا تمت إضافة ملفات/مجلدات جديدة
+> 3. ⚙️ تحديث **Architecture Notes** إذا تغيرت بنية النظام
 
-### 📞 دعم مستمر
-فريق دعم فني متاح لمساعدتك على مدار الساعة
+---
 
-## 📄 الشروط والأحكام
+<div align="center">
 
-### 📝 شروط الاستخدام
-- يجب أن يكون العميل فوق 18 سنة
-- الالتزام بدفع قيمة الطلب
-- تقديم معلومات صحيحة ودقيقة
+**دورلي — حلقة الوصل بينك وبين ما تحتاج في ليبيا**
 
-### ⚖️ المسؤولية
-- لا نتحمل مسؤولية المنتجات بعد الاستلام
-- المسؤولية تنتهي بتسليم المنتج
-- يحق للعميل فحص المنتج قبل الاستلام
+© Dawerli albarshi 2018 · [dawerli.org.ly](https://dawerli.org.ly)
 
-## 🔄 التحديثات المستقبلية
-
-### 🎯 الميزات القادمة
-- تطبيق جوال
-- نظام تتبع متقدم
-- خدمة العملاء الآلية
-- توسيع نطاق التغطية
-
-## 📞 للتواصل والاستفسارات
-
-لا تتردد في التواصل معنا لأي استفسار أو ملاحظة أو اقتراح. نحن هنا لخدمتك على مدار الساعة.
-
-**مع تحيات،**
-فريق دورلي
+</div>
