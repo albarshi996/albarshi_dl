@@ -118,14 +118,12 @@ albarshi_dl/                          ← مستودع الويب الرئيسي
 [REPLIT MONOREPO — Task 11+]
 artifacts/dawerli-mobile/          ← 📱 React Native (Expo) App
     ├── app/
-    │   ├── _layout.tsx            ← Root: SafeArea, QueryClient, LangProvider, Tajawal+Inter fonts
-    │   └── (tabs)/
-    │       ├── _layout.tsx        ← 5-tab bar (Home/Services/Request/Track/More)
-    │       ├── index.tsx          ← Home: hero + 6-category grid + stats
-    │       ├── services.tsx       ← Services list → navigate to request
-    │       ├── request.tsx        ← Order form + 3 payment method cards
-    │       ├── track.tsx          ← Order tracking + WhatsApp support
-    │       └── more.tsx           ← Language toggle + contact + about
+    │   ├── _layout.tsx            ← Root: SafeAreaProvider, ErrorBoundary, Stack
+    │   └── index.tsx              ← 🌐 WebView → https://dawerli.org.ly/
+    │                                  • javaScriptEnabled + domStorageEnabled
+    │                                  • Deep link: wa.me → Linking.openURL()
+    │                                  • ActivityIndicator أثناء التحميل
+    │                                  • Custom User-Agent: DawerliApp/1.0
     ├── constants/
     │   ├── colors.ts              ← Dawerli dark theme (#050505 bg, #4f46e5 primary, #06b6d4 accent)
     │   └── i18n.ts               ← AR/EN strings + WhatsApp/Facebook/Email constants
@@ -180,6 +178,22 @@ Header.astro → applyLang(lang) → querySelectorAll('[data-i18n]') → textCon
 deploy rule  → commit WITHOUT [skip ci] → GitHub Actions build → Pages deploy
 ```
 
+### 📱 Mobile App Architecture (Task 11.5 — WebView Strategy)
+```
+React Native (Expo) Shell
+        ↓
+react-native-webview → https://dawerli.org.ly/
+        ↓
+onShouldStartLoadWithRequest interceptor
+        ↓
+   wa.me link?  ──YES──► Linking.openURL() → WhatsApp App
+       │
+      NO
+       ↓
+  داخل WebView (navigation continues normally)
+```
+**الفلسفة:** التطبيق "حاوية ذكية" تعرض الموقع المتجاوب — تحديث الموقع = تحديث التطبيق فوراً.
+
 ### 💳 Payment Flow
 ```
 request.astro (3 payment cards)
@@ -226,7 +240,8 @@ request.astro (3 payment cards)
 | 10 | **Moamalat Sandbox — Page** | checkout.astro: noindex + sandbox banner + anti-fraud | ✅ مكتملة | `9d064d5189` |
 | 10.1 | **Moamalat Sandbox — Integration** | SHA-512 WebCrypto + `import.meta.env` + 3 payment cards | ✅ مكتملة | `7bb529aeb3` |
 | 10.2 | **README Overhaul** | توثيق شامل: project tree + tasks history + architecture notes | ✅ مكتملة | — |
-| **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `task11-init` |
+| **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `24e083926a82` |
+| **11.5** | **WebView Pivot** | تحويل التطبيق إلى WebView Smart Shell يعرض dawerli.org.ly | ✅ مكتملة | `task11.5-webview` |
 
 ---
 
@@ -267,7 +282,7 @@ npm run preview
 
 | المهمة | الوصف | الأولوية |
 |--------|-------|---------|
-| **Task 11** | React Native (Expo) — Mobile App initialization | 🔴 عالية |
+| **Task 11/11.5** | React Native (Expo) — WebView Smart Shell لـ dawerli.org.ly | ✅ مكتملة |
 | **Task 12** | Mobile App: Navigation + Dark Theme + RTL/LTR | 🔴 عالية |
 | **Task 13** | Mobile App: Order form + Firebase shared backend | 🟡 متوسطة |
 | **Task 14** | Moamalat Production — Backend SecureHash endpoint | 🟡 متوسطة |
