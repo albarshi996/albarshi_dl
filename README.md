@@ -113,6 +113,27 @@ albarshi_dl/                          ← مستودع الويب الرئيسي
     │                                     ⚠️ أي تغيير هنا يؤثر على كل الصفحات
     │
     └── 📂 pages/                     ← Astro file-based routing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[REPLIT MONOREPO — Task 11+]
+artifacts/dawerli-mobile/          ← 📱 React Native (Expo) App
+    ├── app/
+    │   ├── _layout.tsx            ← Root: SafeArea, QueryClient, LangProvider, Tajawal+Inter fonts
+    │   └── (tabs)/
+    │       ├── _layout.tsx        ← 5-tab bar (Home/Services/Request/Track/More)
+    │       ├── index.tsx          ← Home: hero + 6-category grid + stats
+    │       ├── services.tsx       ← Services list → navigate to request
+    │       ├── request.tsx        ← Order form + 3 payment method cards
+    │       ├── track.tsx          ← Order tracking + WhatsApp support
+    │       └── more.tsx           ← Language toggle + contact + about
+    ├── constants/
+    │   ├── colors.ts              ← Dawerli dark theme (#050505 bg, #4f46e5 primary, #06b6d4 accent)
+    │   └── i18n.ts               ← AR/EN strings + WhatsApp/Facebook/Email constants
+    ├── context/
+    │   └── LangContext.tsx        ← AR/EN state (AsyncStorage persistent)
+    ├── lib/
+    │   └── firebase.ts            ← Firebase config (EXPO_PUBLIC_FIREBASE_* env vars)
+    └── app.json                   ← name: دورلي, dark theme, splash: #050505
         ├── 🟢 index.astro            ← الرئيسية: hero + 4-chip strip + how-it-works
         ├── 🟢 services.astro         ← 6 بطاقات B2B/B2C (auto-fit grid)
         ├── 🟢 request.astro          ← نموذج الطلب + 3 خيارات دفع (WA/تحويل/إلكتروني)
@@ -205,7 +226,7 @@ request.astro (3 payment cards)
 | 10 | **Moamalat Sandbox — Page** | checkout.astro: noindex + sandbox banner + anti-fraud | ✅ مكتملة | `9d064d5189` |
 | 10.1 | **Moamalat Sandbox — Integration** | SHA-512 WebCrypto + `import.meta.env` + 3 payment cards | ✅ مكتملة | `7bb529aeb3` |
 | 10.2 | **README Overhaul** | توثيق شامل: project tree + tasks history + architecture notes | ✅ مكتملة | — |
-| **11** | **Mobile App Init** | React Native (Expo) — مشروع مستقل منفصل | 🔜 قادمة | — |
+| **11** | **Mobile App Init** | React Native (Expo) — 5 tabs, Dark Theme, AR/EN i18n, Firebase ready | ✅ مكتملة | `task11-init` |
 
 ---
 
