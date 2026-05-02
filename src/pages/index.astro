@@ -189,6 +189,114 @@ import Layout from '../layouts/Layout.astro';
     .banner-pills { justify-content: center; }
     .banner-btn { width: 100%; justify-content: center; }
   }
+
+  /* ══════════════════════════════════════════════════════════════════
+     TASK 5.1 — Home Page Mobile UX Improvements
+     ══════════════════════════════════════════════════════════════════ */
+
+  /* ── Hero: ensure content clears the fixed header on mobile ──────── */
+  @media (max-width: 991px) {
+    /* Hero buttons: stack vertically, full-width on narrow screens */
+    .hero-buttons {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .hero-buttons .hero-btn {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+      min-height: 52px;
+    }
+  }
+
+  /* ── Services strip: WCAG touch targets (min 44px) ───────────────── */
+  .service-chip {
+    min-height: 44px;
+    padding: 0.7rem 1.2rem;
+  }
+
+  /* ── How steps: better mobile card rhythm ────────────────────────── */
+  @media (max-width: 768px) {
+    .how-steps {
+      gap: 1rem;
+    }
+    .how-step {
+      padding: 1.2rem 1rem;
+    }
+    .how-num {
+      width: 44px;
+      height: 44px;
+      font-size: 1.1rem;
+    }
+    .how-section {
+      padding: 3rem 1rem;
+    }
+  }
+
+  /* ── Stats: larger numbers on small screens ───────────────────────── */
+  @media (max-width: 480px) {
+    .stat-number {
+      font-size: 2.4rem !important;
+    }
+    .stats-grid {
+      gap: 1rem;
+    }
+  }
+
+  /* ── Pricing banner: tighter mobile spacing ───────────────────────── */
+  @media (max-width: 480px) {
+    .pricing-banner {
+      margin: 1.5rem 1rem;
+      padding: 1.5rem 1.2rem;
+    }
+    .banner-text h3 {
+      font-size: 1.05rem;
+    }
+  }
+
+  /* ── Quick order form: better mobile input sizing ────────────────── */
+  @media (max-width: 768px) {
+    .quick-order-form {
+      padding: 1.5rem 1rem;
+      border-radius: 16px;
+    }
+  }
+
+  /* ── Feature cards: full bleed on very narrow screens ────────────── */
+  @media (max-width: 480px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+    .feature-card {
+      padding: 1.5rem 1.2rem;
+    }
+  }
+
+  /* ── Strip scroll: smooth momentum scrolling on iOS ─────────────── */
+  .services-strip {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .service-chip {
+    scroll-snap-align: start;
+  }
+
+  /* ── "كيف يعمل" link: larger tap target ─────────────────────────── */
+  .how-more a {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .how-more a:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
 </style>
 
   <!-- Hero -->
