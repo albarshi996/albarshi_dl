@@ -1244,3 +1244,38 @@ body.drawer-open {
     flex-shrink: 0;
   }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   TASK 5.1 — CRITICAL CSS FIX: Language Switch Transition Guard
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* nav.no-transition: added by mobile-nav.js BEFORE the html[lang] CSS
+   rule reflows the nav element. Prevents the RTL→LTR "fly-in" flash
+   where the nav visually slides in during the direction CSS transition.
+   Double rAF in JS removes this class after the browser repaints.    */
+nav.no-transition,
+nav.no-transition * {
+  transition: none !important;
+  animation:  none !important;
+}
+
+/* Ensure overlay also has no animation during lang switch */
+.nav-overlay.no-transition {
+  transition: none !important;
+}
+
+/* ── TASK 5.1: Desktop nav — guard against leaking mobile styles ──── */
+@media (min-width: 992px) {
+  nav {
+    /* Reset any mobile positioning that might leak through media query edge */
+    position: static;
+    right: auto;
+    left:  auto;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+    overflow: visible;
+    padding: 0;
+  }
+}
