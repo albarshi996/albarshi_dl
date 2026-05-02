@@ -5,15 +5,17 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout
   title="دورلي - تتبع طلبك"
-  description="تتبع حالة طلبك في دورلي عبر واتساب — أدخل رقم طلبك واستعلم مباشرة مع فريقنا."
+  description="تتبع حالة طلبك في دورلي — أدخل رقم طلبك واستعلم عن مراحل معالجته."
 >
-  <!-- noindex لصون السيو ومنع تصنيف الصفحة كمحتوى مشبوه -->
   <meta name="robots" content="noindex,nofollow" slot="head" />
-
   <script is:inline>document.documentElement.dataset.page = 'track';</script>
 
 <style>
-  /* ===== بطل الصفحة ===== */
+  /* ══════════════════════════════════════════════════════════════
+     TRACK PAGE — TASK 14-A: Interactive Order Timeline
+  ══════════════════════════════════════════════════════════════ */
+
+  /* ── Hero ──────────────────────────────────────────────────── */
   .track-hero {
     padding: 5rem 1.5rem 3rem;
     text-align: center;
@@ -48,9 +50,9 @@ import Layout from '../layouts/Layout.astro';
     line-height: 1.7;
   }
 
-  /* ===== بطاقة التتبع ===== */
+  /* ── Track Card ──────────────────────────────────────────── */
   .track-section {
-    padding: 3rem 1.5rem 4rem;
+    padding: 3rem 1.5rem 1.5rem;
     max-width: 640px;
     margin: 0 auto;
   }
@@ -91,11 +93,7 @@ import Layout from '../layouts/Layout.astro';
     text-align: center;
     letter-spacing: 0.05em;
   }
-  .track-input::placeholder {
-    color: var(--text-muted);
-    font-weight: 400;
-    letter-spacing: 0;
-  }
+  .track-input::placeholder { color: var(--text-muted); font-weight: 400; letter-spacing: 0; }
   .track-input:focus {
     border-color: var(--accent);
     background: rgba(6,182,212,0.05);
@@ -122,13 +120,8 @@ import Layout from '../layouts/Layout.astro';
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .track-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37,211,102,0.3);
-  }
+  .track-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.3); }
   .track-btn:active { transform: translateY(0); }
-  .track-btn i { font-size: 1.1rem; }
-
   .track-error {
     display: none;
     align-items: center;
@@ -139,7 +132,6 @@ import Layout from '../layouts/Layout.astro';
     font-weight: 600;
   }
   .track-error.visible { display: flex; }
-
   .track-format-hint {
     text-align: center;
     color: var(--text-muted);
@@ -155,130 +147,9 @@ import Layout from '../layouts/Layout.astro';
     color: var(--accent-light);
     font-family: monospace;
   }
-
-  /* فاصل */
-  .track-divider {
-    height: 1px;
-    background: var(--glass-border);
-    margin: 2rem 0;
-  }
-
-  /* ===== كيف يعمل التتبع ===== */
-  .track-steps-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1.2rem;
-  }
-  .track-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .track-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .track-step-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: white;
-    font-size: 0.8rem;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-  }
-  .track-step-text h4 {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.2rem;
-  }
-  .track-step-text p {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* ===== مراحل الطلب ===== */
-  .order-stages {
-    margin-top: 3rem;
-    padding: 2rem 1.5rem 3rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .order-stages h2 {
-    text-align: center;
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 2rem;
-  }
-  .stages-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    position: relative;
-  }
-  .stages-grid::before {
-    content: '';
-    position: absolute;
-    top: 28px;
-    right: 12.5%;
-    left: 12.5%;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    z-index: 0;
-  }
-  html[dir="ltr"] .stages-grid::before {
-    right: 12.5%;
-    left: 12.5%;
-  }
-  .stage-item {
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-  .stage-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid var(--glass-border);
-    background: var(--bg-surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 0.75rem;
-    font-size: 1.2rem;
-    color: var(--text-muted);
-    transition: var(--transition);
-  }
-  .stage-item.active .stage-icon {
-    border-color: var(--accent);
-    background: rgba(6,182,212,0.1);
-    color: var(--accent-light);
-    box-shadow: 0 0 0 4px rgba(6,182,212,0.1);
-  }
-  .stage-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-  .stage-item.active .stage-label { color: var(--accent-light); }
-
-  /* ===== تنبيه الخصوصية ===== */
   .track-notice {
     max-width: 640px;
-    margin: 0 auto 3rem;
+    margin: 1.25rem auto 0;
     padding: 1rem 1.5rem;
     background: rgba(79,70,229,0.06);
     border: 1px solid rgba(79,70,229,0.2);
@@ -290,18 +161,228 @@ import Layout from '../layouts/Layout.astro';
     color: var(--text-muted);
     line-height: 1.6;
   }
-  .track-notice i {
-    color: var(--primary-light);
-    margin-top: 0.15rem;
-    flex-shrink: 0;
+  .track-notice i { color: var(--primary-light); margin-top: 0.15rem; flex-shrink: 0; }
+
+  /* ══════════════════════════════════════════════════════════════
+     VERTICAL TIMELINE — TASK 14-A
+     5 stages: received → searching → quotation → transit → delivered
+  ══════════════════════════════════════════════════════════════ */
+  .timeline-wrapper {
+    max-width: 640px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem 4rem;
+  }
+  .timeline-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .timeline-header h2 {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .timeline-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
 
+  /* demo status selector */
+  .demo-selector {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .demo-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .demo-btn:hover,
+  .demo-btn.active {
+    background: rgba(79,70,229,0.15);
+    border-color: var(--primary);
+    color: var(--white);
+  }
+
+  /* timeline container */
+  .timeline {
+    position: relative;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* vertical spine */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 28px;
+    right: 27px;            /* RTL: spine on the right */
+    width: 2px;
+    background: var(--glass-border);
+    z-index: 0;
+  }
+  html[dir="ltr"] .timeline::before {
+    right: auto;
+    left: 27px;
+  }
+
+  /* filled spine overlay (progress) */
+  .timeline-progress-spine {
+    position: absolute;
+    top: 28px;
+    right: 27px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--primary), var(--accent));
+    z-index: 1;
+    transition: height 0.7s cubic-bezier(0.4,0,0.2,1);
+    height: 0;
+  }
+  html[dir="ltr"] .timeline-progress-spine {
+    right: auto;
+    left: 27px;
+  }
+
+  /* each row */
+  .tl-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    z-index: 2;
+  }
+  .tl-item:last-child { margin-bottom: 0; }
+
+  /* icon bubble */
+  .tl-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--glass-border);
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: border-color 0.4s, background 0.4s, color 0.4s, box-shadow 0.4s;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* completed */
+  .tl-item.done .tl-icon {
+    border-color: #22c55e;
+    background: rgba(34,197,94,0.12);
+    color: #4ade80;
+    box-shadow: 0 0 0 4px rgba(34,197,94,0.08);
+  }
+  /* active / in-progress */
+  .tl-item.active .tl-icon {
+    border-color: var(--accent);
+    background: rgba(6,182,212,0.12);
+    color: var(--accent-light);
+    box-shadow: 0 0 0 6px rgba(6,182,212,0.1);
+    animation: tl-pulse 2s ease-in-out infinite;
+  }
+  @keyframes tl-pulse {
+    0%,100% { box-shadow: 0 0 0 6px rgba(6,182,212,0.1); }
+    50%      { box-shadow: 0 0 0 10px rgba(6,182,212,0.04); }
+  }
+
+  /* body card */
+  .tl-body {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+    transition: border-color 0.4s, background 0.4s;
+    margin-top: 0.3rem;
+  }
+  .tl-item.done .tl-body {
+    border-color: rgba(34,197,94,0.2);
+    background: rgba(34,197,94,0.04);
+  }
+  .tl-item.active .tl-body {
+    border-color: rgba(6,182,212,0.3);
+    background: rgba(6,182,212,0.06);
+  }
+  .tl-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .tl-item.done .tl-title  { color: #4ade80; }
+  .tl-item.active .tl-title { color: var(--accent-light); }
+  .tl-item.pending .tl-title { color: var(--text-muted); }
+
+  .tl-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .tl-item.done   .tl-badge { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .tl-item.active .tl-badge { background: rgba(6,182,212,0.15); color: var(--accent-light); }
+  .tl-item.pending .tl-badge { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+
+  .tl-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .tl-item.done   .tl-desc { color: rgba(74,222,128,0.7); }
+  .tl-item.active .tl-desc { color: rgba(34,211,238,0.8); }
+
+  /* estimated time chip */
+  .tl-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 0.15rem 0.6rem;
+  }
+  .tl-item.active .tl-time {
+    color: var(--accent-light);
+    background: rgba(6,182,212,0.06);
+    border-color: rgba(6,182,212,0.2);
+  }
+
+  /* responsive */
   @media (max-width: 600px) {
     .track-input-row { flex-direction: column; }
     .track-btn { justify-content: center; }
-    .stages-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
-    .stages-grid::before { display: none; }
     .track-card { padding: 1.5rem; }
+    .timeline::before,
+    .timeline-progress-spine { right: 23px; }
+    html[dir="ltr"] .timeline::before,
+    html[dir="ltr"] .timeline-progress-spine { right: auto; left: 23px; }
+    .tl-icon { width: 48px; height: 48px; font-size: 1rem; }
   }
 </style>
 
@@ -324,7 +405,6 @@ import Layout from '../layouts/Layout.astro';
         <i class="fas fa-hashtag" style="color: var(--accent);"></i>
         <span data-i18n="trackInputLabel"> رقم الطلب</span>
       </label>
-
       <div class="track-input-row">
         <input
           type="text"
@@ -343,7 +423,6 @@ import Layout from '../layouts/Layout.astro';
           <span data-i18n="trackWhatsappBtn">تتبع عبر واتساب</span>
         </button>
       </div>
-
       <p id="trackError" class="track-error">
         <i class="fas fa-exclamation-circle"></i>
         <span id="trackErrorMsg" data-i18n="trackInvalidId">رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX</span>
@@ -352,147 +431,258 @@ import Layout from '../layouts/Layout.astro';
         <span data-i18n="trackFormatHint">الصيغة الصحيحة:</span>
         <code>DW-2026-XXXX</code>
       </p>
-
-      <div class="track-divider"></div>
-
-      <div class="track-steps-title">
-        <i class="fas fa-info-circle"></i>
-        <span data-i18n="trackInfoTitle"> كيف تتتبع طلبك؟</span>
-      </div>
-      <div class="track-steps">
-        <div class="track-step">
-          <div class="track-step-num">1</div>
-          <div class="track-step-text">
-            <h4><span data-i18n="trackInfo1Title">أدخل رقم طلبك</span></h4>
-            <p><span data-i18n="trackInfo1Desc">الرقم يبدأ بـ DW ويليه سنة ورقم الطلب</span></p>
-          </div>
-        </div>
-        <div class="track-step">
-          <div class="track-step-num">2</div>
-          <div class="track-step-text">
-            <h4><span data-i18n="trackInfo2Title">تتحول لواتساب تلقائياً</span></h4>
-            <p><span data-i18n="trackInfo2Desc">ستُفتح محادثة جاهزة مع رسالة الاستعلام</span></p>
-          </div>
-        </div>
-        <div class="track-step">
-          <div class="track-step-num">3</div>
-          <div class="track-step-text">
-            <h4><span data-i18n="trackInfo3Title">رد الفريق خلال دقائق</span></h4>
-            <p><span data-i18n="trackInfo3Desc">سيرد فريقنا بآخر تحديث لحالة طلبك</span></p>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- تنبيه الخصوصية -->
     <div class="track-notice">
       <i class="fas fa-shield-alt"></i>
       <span data-i18n="trackPrivacyNote">رقم طلبك يُرسل عبر واتساب فقط — لا تخزين لبياناتك، لا حسابات، لا كلمات مرور.</span>
     </div>
   </div>
 
-  <!-- مراحل الطلب -->
-  <section class="order-stages reveal">
-    <h2><span data-i18n="trackStagesTitle">مراحل معالجة الطلب</span></h2>
-    <div class="stages-grid">
-      <div class="stage-item active">
-        <div class="stage-icon"><i class="fas fa-inbox"></i></div>
-        <div class="stage-label"><span data-i18n="trackStage1">استلام الطلب</span></div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-icon"><i class="fas fa-search"></i></div>
-        <div class="stage-label"><span data-i18n="trackStage2">البحث والتسعير</span></div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-icon"><i class="fas fa-shopping-bag"></i></div>
-        <div class="stage-label"><span data-i18n="trackStage3">الشراء والتجهيز</span></div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-icon"><i class="fas fa-truck"></i></div>
-        <div class="stage-label"><span data-i18n="trackStage4">التوصيل لبابك</span></div>
-      </div>
+  <!-- ══════════════════════════════════════════════════════
+       TASK 14-A: Interactive Vertical Order Timeline
+  ══════════════════════════════════════════════════════ -->
+  <div class="timeline-wrapper reveal">
+    <div class="timeline-header">
+      <h2><i class="fas fa-route" style="color:var(--accent-light);margin-left:0.5rem;"></i> مراحل معالجة طلبك</h2>
+      <p>اضغط على أي مرحلة لمعاينة الحالة البصرية</p>
     </div>
-  </section>
+
+    <!-- Demo stage selector (mock data — يُستبدل بـ Firebase لاحقاً) -->
+    <div class="demo-selector" id="demoSelector" role="group" aria-label="اختر مرحلة للمعاينة">
+      <button class="demo-btn" data-stage="0">استلام الطلب</button>
+      <button class="demo-btn active" data-stage="1">التدوير والبحث</button>
+      <button class="demo-btn" data-stage="2">عرض السعر</button>
+      <button class="demo-btn" data-stage="3">الشحن</button>
+      <button class="demo-btn" data-stage="4">تم التسليم</button>
+    </div>
+
+    <!-- Vertical Timeline -->
+    <ol class="timeline" id="orderTimeline" aria-label="خط زمني لمراحل الطلب">
+      <!-- الخط المتحرك (progress spine) -->
+      <div class="timeline-progress-spine" id="tlSpine"></div>
+
+      <!-- Stage 0: تم استلام الطلب -->
+      <li class="tl-item" data-stage-idx="0">
+        <div class="tl-icon"><i class="fas fa-inbox"></i></div>
+        <div class="tl-body">
+          <div class="tl-title">
+            <span data-tl-ar="تم استلام الطلب" data-tl-en="Order Received">تم استلام الطلب</span>
+            <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="جاري" data-badge-pending="قادم"></span>
+          </div>
+          <p class="tl-desc" data-tl-ar="تم تسجيل طلبك في نظامنا وسيتم مراجعته فوراً بواسطة الفريق." data-tl-en="Your order has been registered and will be reviewed immediately by our team.">تم تسجيل طلبك في نظامنا وسيتم مراجعته فوراً بواسطة الفريق.</p>
+          <div class="tl-time"><i class="fas fa-clock"></i> خلال ساعة من الإرسال</div>
+        </div>
+      </li>
+
+      <!-- Stage 1: جاري التدوير والبحث -->
+      <li class="tl-item" data-stage-idx="1">
+        <div class="tl-icon"><i class="fas fa-search"></i></div>
+        <div class="tl-body">
+          <div class="tl-title">
+            <span data-tl-ar="جاري التدوير والبحث" data-tl-en="Searching for Your Item">جاري التدوير والبحث</span>
+            <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="جاري الآن" data-badge-pending="قادم"></span>
+          </div>
+          <p class="tl-desc" data-tl-ar="فريقنا يبحث عن المنتج أو الخدمة المطلوبة بأفضل سعر وجودة مضمونة." data-tl-en="Our team is searching for your requested item at the best price with guaranteed quality.">فريقنا يبحث عن المنتج أو الخدمة المطلوبة بأفضل سعر وجودة مضمونة.</p>
+          <div class="tl-time"><i class="fas fa-clock"></i> 2 – 24 ساعة</div>
+        </div>
+      </li>
+
+      <!-- Stage 2: بانتظار موافقة عرض السعر -->
+      <li class="tl-item" data-stage-idx="2">
+        <div class="tl-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="tl-body">
+          <div class="tl-title">
+            <span data-tl-ar="بانتظار موافقة عرض السعر" data-tl-en="Awaiting Quotation Approval">بانتظار موافقة عرض السعر</span>
+            <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="بانتظارك" data-badge-pending="قادم"></span>
+          </div>
+          <p class="tl-desc" data-tl-ar="وجدنا المنتج! سيتواصل معك فريقنا عبر واتساب لتأكيد السعر والكمية قبل المتابعة." data-tl-en="We found the item! Our team will contact you via WhatsApp to confirm the price before proceeding.">وجدنا المنتج! سيتواصل معك فريقنا عبر واتساب لتأكيد السعر والكمية قبل المتابعة.</p>
+          <div class="tl-time"><i class="fas fa-clock"></i> ينتظر ردك</div>
+        </div>
+      </li>
+
+      <!-- Stage 3: جاري الشحن والتوصيل -->
+      <li class="tl-item" data-stage-idx="3">
+        <div class="tl-icon"><i class="fas fa-truck"></i></div>
+        <div class="tl-body">
+          <div class="tl-title">
+            <span data-tl-ar="جاري الشحن والتوصيل" data-tl-en="In Transit">جاري الشحن والتوصيل</span>
+            <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="في الطريق" data-badge-pending="قادم"></span>
+          </div>
+          <p class="tl-desc" data-tl-ar="تم شراء المنتج وهو الآن في طريقه إليك عبر شركة الشحن المختارة." data-tl-en="Your item has been purchased and is now on its way to you via the shipping company.">تم شراء المنتج وهو الآن في طريقه إليك عبر شركة الشحن المختارة.</p>
+          <div class="tl-time"><i class="fas fa-clock"></i> 1 – 5 أيام عمل</div>
+        </div>
+      </li>
+
+      <!-- Stage 4: تم التسليم -->
+      <li class="tl-item" data-stage-idx="4">
+        <div class="tl-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="tl-body">
+          <div class="tl-title">
+            <span data-tl-ar="تم التسليم بنجاح" data-tl-en="Successfully Delivered">تم التسليم بنجاح</span>
+            <span class="tl-badge" data-badge-done="✓ مُسلَّم" data-badge-active="جاري" data-badge-pending="قادم"></span>
+          </div>
+          <p class="tl-desc" data-tl-ar="وصل طلبك! نأمل أن تكون راضياً عن خدمتنا. شاركنا تقييمك عبر واتساب." data-tl-en="Your order has arrived! We hope you're satisfied with our service. Share your feedback via WhatsApp.">وصل طلبك! نأمل أن تكون راضياً عن خدمتنا. شاركنا تقييمك عبر واتساب.</p>
+          <div class="tl-time"><i class="fas fa-star" style="color:#facc15;"></i> شاركنا رأيك</div>
+        </div>
+      </li>
+    </ol>
+  </div>
 
   <script is:inline>
+  /* ════════════════════════════════════════════════════════════════
+     TRACK PAGE SCRIPTS — WhatsApp lookup + Timeline interactivity
+  ════════════════════════════════════════════════════════════════ */
   (function () {
     var WA_PHONE = '218946507954';
     var ORDER_REGEX = /^DW-\d{4}-\d{1,6}$/i;
 
+    /* ── i18n helper ──────────────────────────────────────────── */
+    function getLang() {
+      try { return localStorage.getItem('dawerli_lang') || 'ar'; } catch(e) { return 'ar'; }
+    }
     function getStr(key, fallback) {
       try {
-        var lang = localStorage.getItem('dawerli_lang') || 'ar';
         var d = window.dawerliDict;
-        if (d && d[lang] && d[lang].strings && d[lang].strings[key]) {
-          return d[lang].strings[key];
-        }
-      } catch (e) {}
+        var lang = getLang();
+        if (d && d[lang] && d[lang].strings && d[lang].strings[key]) return d[lang].strings[key];
+      } catch(e) {}
       return fallback || key;
     }
 
+    /* ── WhatsApp lookup ──────────────────────────────────────── */
     function doTrack() {
       var input = document.getElementById('trackInput');
       var errorEl = document.getElementById('trackError');
       var errorMsg = document.getElementById('trackErrorMsg');
       var val = (input.value || '').trim().toUpperCase();
-
-      if (!val) {
+      if (!val || !ORDER_REGEX.test(val)) {
         input.classList.add('error');
         errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX');
         errorEl.classList.add('visible');
         input.focus();
         return;
       }
-
-      if (!ORDER_REGEX.test(val)) {
-        input.classList.add('error');
-        errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX');
-        errorEl.classList.add('visible');
-        input.focus();
-        return;
-      }
-
       input.classList.remove('error');
       errorEl.classList.remove('visible');
-
-      var lang = localStorage.getItem('dawerli_lang') || 'ar';
+      var lang = getLang();
       var msg = lang === 'ar'
         ? 'السلام عليكم، أريد الاستعلام عن حالة طلبي رقم: ' + val
         : 'Hello, I would like to inquire about my order status. Order ID: ' + val;
-
       window.open('https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg), '_blank');
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-      var btn = document.getElementById('trackBtn');
-      var input = document.getElementById('trackInput');
-      var errorEl = document.getElementById('trackError');
+    /* ══════════════════════════════════════════════════════════
+       TIMELINE ENGINE (TASK 14-A)
+       activeStage: 0–4  (0=received … 4=delivered)
+       Each stage item gets class: done / active / pending
+       The progress spine height is calculated from stages.
+    ══════════════════════════════════════════════════════════ */
+    var TOTAL_STAGES = 5;
+    var activeStage = 1; // default mock: "Searching"
 
-      if (btn) btn.addEventListener('click', doTrack);
+    function applyTimeline(stage) {
+      activeStage = stage;
+      var items = document.querySelectorAll('.tl-item');
+      var spine = document.getElementById('tlSpine');
+      var lang = getLang();
 
-      if (input) {
-        input.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') doTrack();
-        });
-        input.addEventListener('input', function () {
-          input.classList.remove('error');
-          if (errorEl) errorEl.classList.remove('visible');
-          /* تلقائياً تحويل للأحرف الكبيرة وإزالة الفراغات */
-          var pos = input.selectionStart;
-          input.value = input.value.toUpperCase().replace(/\s/g, '');
-          try { input.setSelectionRange(pos, pos); } catch (e) {}
-        });
+      items.forEach(function(item, idx) {
+        var stageState = idx < stage ? 'done' : idx === stage ? 'active' : 'pending';
+        item.classList.remove('done', 'active', 'pending');
+        item.classList.add(stageState);
+
+        /* Update badge text */
+        var badge = item.querySelector('.tl-badge');
+        if (badge) {
+          badge.textContent = badge.getAttribute('data-badge-' + stageState) || '';
+        }
+
+        /* Update AR/EN text */
+        var titleSpan = item.querySelector('.tl-title [data-tl-ar]');
+        if (titleSpan) {
+          titleSpan.textContent = lang === 'en'
+            ? titleSpan.getAttribute('data-tl-en')
+            : titleSpan.getAttribute('data-tl-ar');
+        }
+        var descP = item.querySelector('.tl-desc[data-tl-ar]');
+        if (descP) {
+          descP.textContent = lang === 'en'
+            ? descP.getAttribute('data-tl-en')
+            : descP.getAttribute('data-tl-ar');
+        }
+      });
+
+      /* Animate spine height: covers from top of stage-0 to bottom of last completed stage */
+      if (spine) {
+        if (stage === 0) {
+          spine.style.height = '0px';
+        } else {
+          /* Each stage row is approx equal height — use % of total steps */
+          var pct = (stage / (TOTAL_STAGES - 1)) * 100;
+          /* Cap between 0 and 100 */
+          pct = Math.min(100, Math.max(0, pct));
+          /* Convert to actual pixel height based on spine container */
+          var timelineEl = document.getElementById('orderTimeline');
+          if (timelineEl) {
+            var totalH = timelineEl.offsetHeight - 56; /* subtract icon radius */
+            spine.style.height = Math.round((pct / 100) * totalH) + 'px';
+          }
+        }
       }
 
-      /* تحقق من وجود رقم طلب في URL (مثال: /track?id=DW-2026-1234) */
+      /* Update demo selector buttons */
+      document.querySelectorAll('.demo-btn').forEach(function(btn) {
+        btn.classList.toggle('active', parseInt(btn.getAttribute('data-stage')) === stage);
+      });
+    }
+
+    /* ── Init ─────────────────────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', function () {
+      /* WhatsApp form */
+      var btn  = document.getElementById('trackBtn');
+      var input = document.getElementById('trackInput');
+      var errorEl = document.getElementById('trackError');
+      if (btn)   btn.addEventListener('click', doTrack);
+      if (input) {
+        input.addEventListener('keydown', function(e) { if (e.key === 'Enter') doTrack(); });
+        input.addEventListener('input', function() {
+          input.classList.remove('error');
+          if (errorEl) errorEl.classList.remove('visible');
+          var pos = input.selectionStart;
+          input.value = input.value.toUpperCase().replace(/\s/g, '');
+          try { input.setSelectionRange(pos, pos); } catch(e) {}
+        });
+      }
+      /* Pre-fill from URL param */
       try {
         var params = new URLSearchParams(window.location.search);
         var idParam = params.get('id') || params.get('order');
-        if (idParam && input) {
-          input.value = idParam.toUpperCase();
+        if (idParam && input) input.value = idParam.toUpperCase();
+        /* Allow URL param ?stage=N for Firebase integration later */
+        var stageParam = params.get('stage');
+        if (stageParam !== null) {
+          var s = parseInt(stageParam);
+          if (!isNaN(s) && s >= 0 && s < TOTAL_STAGES) activeStage = s;
         }
-      } catch (e) {}
+      } catch(e) {}
+
+      /* Demo selector buttons */
+      document.querySelectorAll('.demo-btn').forEach(function(dBtn) {
+        dBtn.addEventListener('click', function() {
+          applyTimeline(parseInt(dBtn.getAttribute('data-stage')));
+        });
+      });
+
+      /* Re-apply on lang change */
+      document.addEventListener('dawerli:langChanged', function() {
+        applyTimeline(activeStage);
+      });
+
+      /* Initial render */
+      applyTimeline(activeStage);
     });
+
   })();
   </script>
 
