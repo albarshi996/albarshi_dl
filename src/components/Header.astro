@@ -99,16 +99,40 @@ const currentPath = pathname.slice(1);
 
   function applyHeaderLang(lang) {
     var d = dict[lang] || dict['ar'];
-    document.documentElement.lang = lang;
-    document.documentElement.dir = d.dir;
 
+    /* Resolve full dictionary: window.dawerliDict (Layout.astro head)
+       is the superset. Support both .strings-wrapped and flat formats. */
+    var full = {};
+    try {
+      var wd = window.dawerliDict && window.dawerliDict[lang];
+      if (wd) full = (typeof wd.strings === 'object' && wd.strings !== null)
+                     ? wd.strings : wd;
+    } catch (_) {}
+
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = d.dir;
+
+    /* Translate every [data-i18n] element.
+       Full dict wins → small dict fallback → leave unchanged. */
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
-      if (d[key] !== undefined) el.textContent = d[key];
+      var val = full[key] !== undefined ? full[key] : d[key];
+      if (val !== undefined) el.textContent = val;
     });
 
+    /* Translate [data-i18n-placeholder] (form inputs) */
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      var val = full[key] !== undefined ? full[key] : d[key];
+      if (val !== undefined) el.setAttribute('placeholder', val);
+    });
+
+    /* Update lang-toggle label */
     var label = document.querySelector('.lang-label');
-    if (label) label.textContent = d.langLabelShort || (lang === 'ar' ? 'ع' : 'EN');
+    if (label) {
+      label.textContent = full.langLabelShort || d.langLabelShort
+                          || (lang === 'ar' ? 'ع' : 'EN');
+    }
 
     try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
   }
@@ -144,24 +168,15 @@ const currentPath = pathname.slice(1);
         var next = getSavedLang() === 'ar' ? 'en' : 'ar';
         applyHeaderLang(next);
 
-        /* ③ Apply full dawerliDict (superset of the small Header dict).
-           This ensures every [data-i18n] and [data-i18n-placeholder] element
-           on the page is translated — not just the nav items.             */
-        if (window.dawerliDict && window.dawerliDict[next]) {
-          var full = window.dawerliDict[next].strings || {};
-          document.querySelectorAll('[data-i18n]').forEach(function(el) {
-            var k = el.getAttribute('data-i18n');
-            if (full[k] !== undefined) el.textContent = full[k];
-          });
-          document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
-            var k = el.getAttribute('data-i18n-placeholder');
-            if (full[k] !== undefined) el.setAttribute('placeholder', full[k]);
-          });
-          /* Update document title per page */
+        /* ③ Update document title (lang-specific). applyHeaderLang()
+           already translated all [data-i18n] elements in one pass.      */
+        try {
+          var wd   = window.dawerliDict && window.dawerliDict[next];
+          var full = wd ? ((wd.strings && typeof wd.strings === 'object')
+                          ? wd.strings : wd) : {};
           var page = document.documentElement.dataset.page || 'index';
-          var titleKey = 'metaTitle_' + page;
-          if (full[titleKey]) document.title = full[titleKey];
-        }
+          if (full['metaTitle_' + page]) document.title = full['metaTitle_' + page];
+        } catch (_) {}
 
         /* ④ Re-enable transitions only after 2 animation frames:
            frame 1 → browser applies new CSS position (left:-100%)
