@@ -1456,3 +1456,27 @@ body.drawer-open {
   pointer-events: auto !important;
   cursor: pointer !important;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   TASK 11.6 — BUGFIX: Body-appended nav bleeding below footer on desktop
+   ══════════════════════════════════════════════════════════════════════
+   ROOT CAUSE: mobile-nav.js v5.3 always runs document.body.appendChild(nav)
+   to escape header's backdrop-filter stacking context. On mobile this is
+   correct (nav is position:fixed so it floats). On desktop (≥992px) the
+   nav has position:static → renders as a block element BELOW the footer.
+
+   PRIMARY FIX: mobile-nav.js init() now only body-appends when <992px.
+   CSS FALLBACK (belt-and-suspenders): hide body-direct-child nav on desktop
+   in case the JS guard hasn't loaded yet or is cached from a previous build. */
+@media (min-width: 992px) {
+  /* If nav was already moved to body before the JS fix took effect,
+     hide it there. The header's own nav (when kept in place) is unaffected
+     because it is a descendant of header, not a direct child of body.     */
+  body > #mainNav,
+  body > nav:not(header nav) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
