@@ -690,10 +690,12 @@ import Layout from '../layouts/Layout.astro';
 
       // رقم واتساب منصة دورلي الثابت والمضمون
       const waNumber = "218946507954";
-      const whatsappUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+      // encodeURIComponent يضمن وصول كامل النص حتى على أجهزة Xiaomi وInfinix
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${waNumber}?text=${encodedMessage}`;
       
-      // توجيه الزبون فوراً للواتساب
-      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      // window.location.href يتخطى حاجب النوافذ المنبثقة على متصفحات Android
+      window.location.href = whatsappUrl;
     });
 
     // ── Image upload preview ─────────────────────────────────────────
