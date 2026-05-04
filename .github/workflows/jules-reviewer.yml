@@ -1,0 +1,30 @@
+name: Jules AI PR Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  jules-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Run Jules PR Reviewer
+        uses: google/jules-pr-reviewer@main # افتراض مسار الأداة من المتجر
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          custom-instructions: |
+            You are a Senior Full-Stack Engineer reviewing code for the 'Dawerli' platform.
+            Project Stack: Astro, React, TailwindCSS.
+            Infrastructure: Firebase Spark, Cloudinary Free.
+            
+            CRITICAL HARD CONSTRAINTS:
+            1. NEVER suggest deleting or removing existing functional code. Only suggest additions, optimizations, or non-destructive refactoring.
+            2. Ensure all suggestions are compatible with free-tier infrastructure.
+            3. Prioritize mobile-first performance and fast loading times.
