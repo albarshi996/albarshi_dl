@@ -16,10 +16,6 @@ jobs:
         with:
           node-version: "20"
       - run: npm install
-      - run: |
-          mkdir -p public
-          cp *.css *.js *.ico *.txt CNAME public/ 2>/dev/null || true
-          cp *.png public/ 2>/dev/null || true
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
