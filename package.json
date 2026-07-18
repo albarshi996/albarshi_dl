@@ -10,7 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.5.0",
-    "@astrojs/sitemap": "3.2.1"
+    "@astrojs/sitemap": "3.2.1",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/tajawal": "^5.2.7",
+    "astro": "^4.5.0"
   }
 }

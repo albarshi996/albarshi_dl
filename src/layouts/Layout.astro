@@ -9,6 +9,16 @@ interface Props {
 const { title, description = "منصة دورلي - حلقة الوصل بينك وبين ما تحتاجه في ليبيا." , noindex = false } = Astro.props;
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+// Self-hosted fonts via @fontsource (replaces render-blocking Google Fonts CDN).
+// Tajawal has no 600 weight — using its real weights 400/500/700/900.
+import '@fontsource/tajawal/400.css';
+import '@fontsource/tajawal/500.css';
+import '@fontsource/tajawal/700.css';
+import '@fontsource/tajawal/900.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
 ---
 
 <!DOCTYPE html>
@@ -41,11 +51,11 @@ import Footer from '../components/Footer.astro';
   <meta name="geo.placename" content="Benghazi, Jalu, Awjila, Ijkhara">
 
   <title>{title}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Fonts self-hosted via @fontsource (imported in Layout frontmatter) -->
+  <!-- Font Awesome kept on CDN but preconnected + loaded async (non-render-blocking) -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <link rel="stylesheet" href="/style.css">
 
   <!-- v5.3+task10.1: checkout SHA-512 real hash, 3 payment method cards, .env -->
