@@ -1,11 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-// ── Moamalat credentials — read from .env at Astro build time ────
-// In production: set these as GitHub repository secrets, NOT in .env
+// ── Moamalat credentials (SANDBOX demo only) ─────────────────────
+// Values come from env vars (set as GitHub Secrets for CI builds).
+// ⚠️ SECURITY: never hardcode the SecretKey here, and never ship it to
+//    the browser. Before enabling REAL payments the SecureHash MUST be
+//    computed on a server endpoint (Firebase Function / Worker) so the
+//    SecretKey never reaches the client. MID/TID below are Moamalat's
+//    PUBLIC sandbox test identifiers — safe to keep as demo fallbacks.
 const MID          = import.meta.env.MOAMALAT_MERCHANT_ID  || '10081014740';
 const TID          = import.meta.env.MOAMALAT_TERMINAL_ID  || '99881350';
-const SK           = import.meta.env.MOAMALAT_SECRET_KEY   || 'C187BF0E0A1F42F1888EA9BDCE6DF0C05AD3B4CE2B5AC2A71A8C3A8AC0F69348';
+const SK           = import.meta.env.MOAMALAT_SECRET_KEY   || ''; // ⛔ no secret in source
 const MOAMALAT_ENV = import.meta.env.MOAMALAT_ENV          || 'sandbox';
 const CCY          = import.meta.env.MOAMALAT_CURRENCY     || '434';
 const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moamalat.net';
