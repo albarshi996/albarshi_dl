@@ -61,8 +61,8 @@ import Layout from '../layouts/Layout.astro';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(79,70,229,0.15);
-      border: 1px solid rgba(79,70,229,0.4);
+      background: rgba(34,211,238,0.15);
+      border: 1px solid rgba(34,211,238,0.4);
       color: var(--accent-light);
       padding: 0.5rem 1.2rem;
       border-radius: 50px;
@@ -103,20 +103,20 @@ import Layout from '../layouts/Layout.astro';
     .pricing-card:hover {
       transform: translateY(-8px);
       border-color: var(--primary);
-      box-shadow: 0 20px 40px rgba(79,70,229,0.15);
+      box-shadow: 0 20px 40px rgba(34,211,238,0.15);
     }
 
     /* بطاقة VIP مميزة */
     .pricing-card.featured {
       border-color: var(--accent);
       background: linear-gradient(135deg,
-        rgba(79,70,229,0.1),
-        rgba(6,182,212,0.08));
-      box-shadow: 0 0 30px rgba(6,182,212,0.1);
+        rgba(34,211,238,0.1),
+        rgba(124,58,237,0.08));
+      box-shadow: 0 0 30px rgba(124,58,237,0.1);
     }
 
     .pricing-card.featured:hover {
-      box-shadow: 0 20px 50px rgba(6,182,212,0.2);
+      box-shadow: 0 20px 50px rgba(124,58,237,0.2);
       border-color: var(--accent-light);
     }
 
@@ -233,12 +233,12 @@ import Layout from '../layouts/Layout.astro';
     .pricing-btn.primary {
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
-      box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+      box-shadow: 0 4px 15px rgba(34,211,238,0.3);
     }
 
     .pricing-btn.primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(6,182,212,0.4);
+      box-shadow: 0 8px 25px rgba(124,58,237,0.4);
     }
 
     .pricing-btn.outline {
@@ -250,7 +250,7 @@ import Layout from '../layouts/Layout.astro';
     .pricing-btn.outline:hover {
       border-color: var(--primary);
       color: var(--white);
-      background: rgba(79,70,229,0.1);
+      background: rgba(34,211,238,0.1);
     }
 
     /* ===== مقارنة الخدمات ===== */
@@ -278,7 +278,7 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .compare-table th {
-      background: rgba(79,70,229,0.15);
+      background: rgba(34,211,238,0.15);
       color: var(--white);
       padding: 1rem 1.5rem;
       font-size: 0.95rem;
@@ -315,7 +315,7 @@ import Layout from '../layouts/Layout.astro';
     .guarantee-card {
       background: linear-gradient(135deg,
         rgba(16,185,129,0.1),
-        rgba(6,182,212,0.08));
+        rgba(124,58,237,0.08));
       border: 1px solid rgba(16,185,129,0.3);
       border-radius: var(--border-radius-lg);
       padding: 2.5rem 2rem;
@@ -344,7 +344,7 @@ import Layout from '../layouts/Layout.astro';
     .pricing-cta {
       padding: 4rem 1.5rem;
       text-align: center;
-      background: rgba(79,70,229,0.05);
+      background: rgba(34,211,238,0.05);
       border-top: 1px solid var(--glass-border);
     }
 
@@ -411,7 +411,7 @@ import Layout from '../layouts/Layout.astro';
     /* ── TASK 14-C: How Pricing Works (detailed block) ───────── */
     .how-pricing {
       padding: 4rem 1.5rem;
-      background: rgba(79,70,229,0.03);
+      background: rgba(34,211,238,0.03);
       border-top: 1px solid var(--glass-border);
       border-bottom: 1px solid var(--glass-border);
     }
@@ -469,7 +469,7 @@ import Layout from '../layouts/Layout.astro';
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(79,70,229,0.3);
+      box-shadow: 0 4px 16px rgba(34,211,238,0.3);
     }
     .ps-body {
       flex: 1;
@@ -494,7 +494,7 @@ import Layout from '../layouts/Layout.astro';
       max-width: 780px;
       margin: 2.5rem auto 0;
       padding: 1.1rem 1.4rem;
-      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(6,182,212,0.05));
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(124,58,237,0.05));
       border: 1px solid rgba(34,197,94,0.25);
       border-radius: var(--border-radius);
       display: flex;
@@ -754,7 +754,7 @@ import Layout from '../layouts/Layout.astro';
       <!-- TASK 10: Sandbox payment test link (remove in production) -->
       <a href="/checkout?ref=TEST-SANDBOX&cat=توصيل+عادي&city=بنغازي&fee=20&desc=اختبار+بوابة+الدفع"
          class="cta-btn"
-         style="background:linear-gradient(135deg,rgba(79,70,229,0.3),rgba(6,182,212,0.3));border:1px solid var(--primary);color:var(--accent-light);"
+         style="background:linear-gradient(135deg,rgba(34,211,238,0.3),rgba(124,58,237,0.3));border:1px solid var(--primary);color:var(--accent-light);"
          title="بيئة تجريبية — لن يتم خصم أي مبلغ">
         <i class="fas fa-credit-card"></i> 🧪 جرب الدفع الإلكتروني (Sandbox)
       </a>
