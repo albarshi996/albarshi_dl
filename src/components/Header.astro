@@ -7,7 +7,19 @@ const currentPath = pathname.slice(1);
 
 <header>
   <a href="/" class="logo" aria-label="الصفحة الرئيسية - دورلي">
-    <i class="fas fa-link pulse"></i> دورلي
+    <svg class="logo-mark" width="34" height="34" viewBox="0 0 48 48" aria-hidden="true">
+      <defs>
+        <linearGradient id="dwLogo" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#22D3EE"/><stop offset=".55" stop-color="#38BDF8"/><stop offset="1" stop-color="#7C3AED"/>
+        </linearGradient>
+      </defs>
+      <rect x="3" y="3" width="42" height="42" rx="12.5" fill="url(#dwLogo)"/>
+      <path d="M15 17 C 23 13 26 27 33 29" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+      <circle cx="15" cy="17" r="3.4" fill="#fff"/>
+      <path d="M32.5 21.5c-3.6 0-6.5 2.9-6.5 6.5 0 4.7 6.5 9.5 6.5 9.5s6.5-4.8 6.5-9.5c0-3.6-2.9-6.5-6.5-6.5z" fill="#fff"/>
+      <circle cx="32.5" cy="28" r="2.4" fill="url(#dwLogo)"/>
+    </svg>
+    <span class="logo-word">دورلي</span>
   </a>
 
   <div class="header-actions">
