@@ -19,15 +19,15 @@ import Layout from '../layouts/Layout.astro';
   .track-hero {
     padding: 5rem 1.5rem 3rem;
     text-align: center;
-    background: radial-gradient(ellipse at 50% 0%, rgba(79,70,229,0.12) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(34,211,238,0.12) 0%, transparent 70%);
     border-bottom: 1px solid var(--glass-border);
   }
   .track-hero .badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(6,182,212,0.1);
-    border: 1px solid rgba(6,182,212,0.25);
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.25);
     color: var(--accent-light);
     border-radius: 50px;
     padding: 0.4rem 1rem;
@@ -96,8 +96,8 @@ import Layout from '../layouts/Layout.astro';
   .track-input::placeholder { color: var(--text-muted); font-weight: 400; letter-spacing: 0; }
   .track-input:focus {
     border-color: var(--accent);
-    background: rgba(6,182,212,0.05);
-    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+    background: rgba(124,58,237,0.05);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
   }
   .track-input.error {
     border-color: #ef4444;
@@ -151,8 +151,8 @@ import Layout from '../layouts/Layout.astro';
     max-width: 640px;
     margin: 1.25rem auto 0;
     padding: 1rem 1.5rem;
-    background: rgba(79,70,229,0.06);
-    border: 1px solid rgba(79,70,229,0.2);
+    background: rgba(34,211,238,0.06);
+    border: 1px solid rgba(34,211,238,0.2);
     border-radius: var(--border-radius);
     display: flex;
     align-items: flex-start;
@@ -209,7 +209,7 @@ import Layout from '../layouts/Layout.astro';
   }
   .demo-btn:hover,
   .demo-btn.active {
-    background: rgba(79,70,229,0.15);
+    background: rgba(34,211,238,0.15);
     border-color: var(--primary);
     color: var(--white);
   }
@@ -292,14 +292,14 @@ import Layout from '../layouts/Layout.astro';
   /* active / in-progress */
   .tl-item.active .tl-icon {
     border-color: var(--accent);
-    background: rgba(6,182,212,0.12);
+    background: rgba(124,58,237,0.12);
     color: var(--accent-light);
-    box-shadow: 0 0 0 6px rgba(6,182,212,0.1);
+    box-shadow: 0 0 0 6px rgba(124,58,237,0.1);
     animation: tl-pulse 2s ease-in-out infinite;
   }
   @keyframes tl-pulse {
-    0%,100% { box-shadow: 0 0 0 6px rgba(6,182,212,0.1); }
-    50%      { box-shadow: 0 0 0 10px rgba(6,182,212,0.04); }
+    0%,100% { box-shadow: 0 0 0 6px rgba(124,58,237,0.1); }
+    50%      { box-shadow: 0 0 0 10px rgba(124,58,237,0.04); }
   }
 
   /* body card */
@@ -317,8 +317,8 @@ import Layout from '../layouts/Layout.astro';
     background: rgba(34,197,94,0.04);
   }
   .tl-item.active .tl-body {
-    border-color: rgba(6,182,212,0.3);
-    background: rgba(6,182,212,0.06);
+    border-color: rgba(124,58,237,0.3);
+    background: rgba(124,58,237,0.06);
   }
   .tl-title {
     font-size: 0.95rem;
@@ -343,7 +343,7 @@ import Layout from '../layouts/Layout.astro';
     flex-shrink: 0;
   }
   .tl-item.done   .tl-badge { background: rgba(34,197,94,0.15); color: #4ade80; }
-  .tl-item.active .tl-badge { background: rgba(6,182,212,0.15); color: var(--accent-light); }
+  .tl-item.active .tl-badge { background: rgba(124,58,237,0.15); color: var(--accent-light); }
   .tl-item.pending .tl-badge { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
   .tl-desc {
@@ -369,8 +369,8 @@ import Layout from '../layouts/Layout.astro';
   }
   .tl-item.active .tl-time {
     color: var(--accent-light);
-    background: rgba(6,182,212,0.06);
-    border-color: rgba(6,182,212,0.2);
+    background: rgba(124,58,237,0.06);
+    border-color: rgba(124,58,237,0.2);
   }
 
   /* responsive */

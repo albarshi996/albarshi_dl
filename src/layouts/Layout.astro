@@ -19,10 +19,17 @@ import '@fontsource/tajawal/900.css';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
+// "القفزة" identity fonts — Rubik (Arabic display+body) + Space Grotesk (Latin display).
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/700.css';
+import '@fontsource/rubik/900.css';
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/700.css';
 ---
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" style="background-color: #050505;">
+<html lang="ar" dir="rtl" style="background-color: #08080C;">
 <head>
   {noindex && <meta name="robots" content="noindex, nofollow">}
   <meta charset="UTF-8">
@@ -57,9 +64,10 @@ import '@fontsource/inter/700.css';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/theme-polish.css">
 
   <!-- v5.3+task10.1: checkout SHA-512 real hash, 3 payment method cards, .env -->
-  <meta name="theme-color" content="#050505">
+  <meta name="theme-color" content="#08080C">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- قاموس اللغات مدمج مباشرة (النسخة الكاملة والمصلحة) -->
@@ -67,7 +75,7 @@ import '@fontsource/inter/700.css';
     window.dawerliDict = {
       ar: {
         direction: 'rtl',
-        font: 'Tajawal, sans-serif',
+        font: 'Rubik, Tajawal, sans-serif',
         strings: {
           home: 'الرئيسية', howItWorks: 'كيف يعمل', features: 'الميزات',
           services: 'خدماتنا', contact: 'تواصل معنا', pricing: 'الباقات',
@@ -257,7 +265,7 @@ import '@fontsource/inter/700.css';
       },
       en: {
         direction: 'ltr',
-        font: 'Inter, sans-serif',
+        font: 'Space Grotesk, Rubik, sans-serif',
         strings: {
           home: 'Home', howItWorks: 'How it works', features: 'Features',
           services: 'Services', contact: 'Contact', pricing: 'Pricing',
@@ -482,7 +490,7 @@ import '@fontsource/inter/700.css';
     }
   })} />
 </head>
-<body style="background-color: #050505;">
+<body style="background-color: #08080C;">
   <Header />
 
   <main>
@@ -499,5 +507,6 @@ import '@fontsource/inter/700.css';
   <script is:inline src="/script.js"></script>
   <script is:inline src="/mobile-nav.js"></script>
   <script is:inline defer src="/js/i18n.js"></script>
+  <script is:inline defer src="/js/fx.js"></script>
 </body>
 </html>

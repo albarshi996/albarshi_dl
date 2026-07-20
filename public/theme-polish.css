@@ -1,0 +1,92 @@
+/* ===================================================================
+   "القفزة" polish layer — loads AFTER style.css (wins the cascade).
+   Additive, token-driven glass + neon micro-interactions site-wide.
+   =================================================================== */
+
+/* Shared glass cards — soft glass + neon edge glow on hover */
+.feature-card, .stat-card, .how-step, .category-card, .benefit-card,
+.quick-search-item, .contact-item-detailed, .co-card {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: transform var(--dur) var(--ease-out),
+              border-color var(--dur) var(--ease-out),
+              box-shadow var(--dur) var(--ease-out);
+}
+.feature-card:hover, .stat-card:hover, .how-step:hover,
+.category-card:hover, .benefit-card:hover, .quick-search-item:hover {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Card icons — cyan */
+.feature-icon, .stat-icon, .benefit-icon, .search-icon { color: var(--cyan); }
+
+/* Stat numbers — display face, cyan→violet gradient */
+.stat-number {
+  font-family: var(--font-dsp);
+  background: linear-gradient(120deg, var(--cyan), var(--violet));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* Accessible cyan focus ring on all fields */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: var(--ring-focus);
+}
+
+/* Primary CTAs — glow lift */
+.hero-btn, .submit-btn, .services-btn, .banner-btn, .cta-btn,
+.pricing-btn, .card-action-btn {
+  transition: transform var(--dur) var(--ease-out),
+              box-shadow var(--dur) var(--ease-out),
+              filter var(--dur) var(--ease-out);
+}
+.hero-btn:hover, .submit-btn:hover, .services-btn:hover,
+.banner-btn:hover, .cta-btn:hover {
+  box-shadow: var(--glow-cyan);
+  filter: brightness(1.05);
+}
+
+/* Header — glass + cyan hairline */
+header {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--glass-border);
+}
+header.scrolled { border-bottom-color: rgba(34, 211, 238, 0.25); }
+nav a.active, nav a:hover { color: var(--text-main); }
+
+/* Floating WhatsApp — brand green kept, lime pulse ring */
+.floating-whatsapp { position: fixed; }
+.floating-whatsapp::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  animation: waPulse 2.4s ease-out infinite; pointer-events: none;
+}
+@keyframes waPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(163, 230, 53, 0.45); }
+  70%  { box-shadow: 0 0 0 16px rgba(163, 230, 53, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(163, 230, 53, 0); }
+}
+
+/* Neon cursor (element created by /js/fx.js) */
+.neon-cursor {
+  position: fixed; top: 0; left: 0; width: 26px; height: 26px; border-radius: 50%;
+  border: 1.5px solid var(--cyan); background: rgba(34, 211, 238, 0.08);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+  transform: translate(-100px, -100px); pointer-events: none;
+  z-index: 99999; mix-blend-mode: screen;
+}
+body.neon-cursor-on,
+body.neon-cursor-on a, body.neon-cursor-on button,
+body.neon-cursor-on input, body.neon-cursor-on textarea,
+body.neon-cursor-on select, body.neon-cursor-on label { cursor: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-whatsapp::after { animation: none; }
+}
+@media (pointer: coarse) {
+  .neon-cursor { display: none; }
+  body.neon-cursor-on, body.neon-cursor-on * { cursor: auto; }
+}

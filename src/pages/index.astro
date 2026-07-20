@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import '../components/herofx.css';
 ---
 
 <Layout title="دورلي - الرئيسية">
@@ -39,7 +40,7 @@ import Layout from '../layouts/Layout.astro';
   .service-chip:hover {
     border-color: var(--primary);
     color: var(--accent-light);
-    background: rgba(79,70,229,0.1);
+    background: rgba(34,211,238,0.1);
     transform: translateY(-2px);
   }
   .service-chip i { color: var(--accent); }
@@ -122,9 +123,9 @@ import Layout from '../layouts/Layout.astro';
   .pricing-banner {
     margin: 3rem 1.5rem;
     background: linear-gradient(135deg,
-      rgba(79,70,229,0.15),
-      rgba(6,182,212,0.1));
-    border: 1px solid rgba(79,70,229,0.35);
+      rgba(34,211,238,0.15),
+      rgba(124,58,237,0.1));
+    border: 1px solid rgba(34,211,238,0.35);
     border-radius: var(--border-radius-lg);
     padding: 2rem 1.5rem;
     display: flex;
@@ -180,7 +181,7 @@ import Layout from '../layouts/Layout.astro';
   }
   .banner-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+    box-shadow: 0 8px 20px rgba(34,211,238,0.3);
   }
 
   @media (max-width: 768px) {
@@ -292,15 +293,29 @@ import Layout from '../layouts/Layout.astro';
     transition: background 0.2s ease, border-color 0.2s ease;
   }
   .how-more a:hover {
-    background: rgba(6, 182, 212, 0.08);
+    background: rgba(124, 58, 237, 0.08);
     border-color: var(--accent);
     text-decoration: none;
   }
 
 </style>
 
+  <style>
+    /* Flagship home hero — immersive, atmosphere behind translatable content */
+    .hero { position: relative; min-height: 90vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+    .hero .hero-content { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; }
+    .hero h1 { filter: drop-shadow(0 0 34px rgba(34, 211, 238, 0.22)); }
+    .hero .hero-btn { box-shadow: var(--glow-cyan); }
+    .hero .hero-btn.secondary { box-shadow: none; }
+  </style>
+
   <!-- Hero -->
   <section class="hero">
+    <div class="herofx" aria-hidden="true">
+      <div class="fx-aurora"><span class="fx-blob fx-b1"></span><span class="fx-blob fx-b2"></span><span class="fx-blob fx-b3"></span></div>
+      <div class="fx-grid"></div>
+      <canvas class="fx-particles" id="heroParticles"></canvas>
+    </div>
     <div class="hero-content reveal">
       <h1><span data-i18n="heroTitle">حلقة الوصل بينك وبين ما تحتاج</span></h1>
       <p><span data-i18n="heroDesc">من قطع غيار السيارات والمعدات، إلى الأدوية والفساتين ومستلزمات العناية — دورلي يجيبلك/يجيبلك طلبك وين ما كنت. نبحث، نشتري، ونوصل لبابك!</span></p>
@@ -315,7 +330,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- CSS للـ chips المميزة (featured) — إضافة أعلى المستوى -->
   <style>
     .service-chip.featured {
-      background: rgba(79, 70, 229, 0.18);
+      background: rgba(34, 211, 238, 0.18);
       border: 1px solid var(--primary);
       color: var(--accent-light);
       font-weight: 700;
@@ -459,5 +474,7 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
   </section>
+
+  <script is:inline src="/js/hero-particles.js"></script>
 
 </Layout>

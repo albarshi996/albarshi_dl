@@ -1,0 +1,23 @@
+/* Decorative hero atmosphere (background only, pointer-events:none). Global (island DOM). */
+.herofx { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.herofx .fx-aurora { position: absolute; inset: 0; filter: blur(66px); opacity: 0.55; }
+.herofx .fx-blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+.herofx .fx-b1 { width: 44vw; height: 44vw; background: radial-gradient(circle, #22d3ee, transparent 65%); top: -14%; inset-inline-end: -8%; animation: fxDrift1 19s ease-in-out infinite; }
+.herofx .fx-b2 { width: 40vw; height: 40vw; background: radial-gradient(circle, #7c3aed, transparent 65%); bottom: -18%; inset-inline-start: -10%; animation: fxDrift2 24s ease-in-out infinite; }
+.herofx .fx-b3 { width: 22vw; height: 22vw; background: radial-gradient(circle, #a3e635, transparent 60%); top: 44%; inset-inline-start: 44%; opacity: 0.4; animation: fxDrift3 28s ease-in-out infinite; }
+@keyframes fxDrift1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-4%,6%); } }
+@keyframes fxDrift2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(5%,-5%); } }
+@keyframes fxDrift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-6%,-4%) scale(1.12); } }
+.herofx .fx-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 54px 54px;
+  -webkit-mask-image: radial-gradient(ellipse 74% 66% at 50% 40%, #000 28%, transparent 78%);
+  mask-image: radial-gradient(ellipse 74% 66% at 50% 40%, #000 28%, transparent 78%);
+}
+.herofx .fx-particles { position: absolute; inset: 0; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  .herofx .fx-blob { animation: none !important; }
+}
