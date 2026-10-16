@@ -4,8 +4,8 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="دورلي - تتبع طلبك"
-  description="تتبع حالة طلبك في دورلي — أدخل رقم طلبك واستعلم عن مراحل معالجته."
+  title="دورلي - وين طلبي؟"
+  description="تتبع حالة طلبك في دورلي — حط رقم طلبك واستعلم عن مراحل معالجته."
 >
   <meta name="robots" content="noindex,nofollow" slot="head" />
   <script is:inline>document.documentElement.dataset.page = 'track';</script>
@@ -19,15 +19,15 @@ import Layout from '../layouts/Layout.astro';
   .track-hero {
     padding: 5rem 1.5rem 3rem;
     text-align: center;
-    background: radial-gradient(ellipse at 50% 0%, rgba(34,211,238,0.12) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,165,36,0.12) 0%, transparent 70%);
     border-bottom: 1px solid var(--glass-border);
   }
   .track-hero .badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(124,58,237,0.1);
-    border: 1px solid rgba(124,58,237,0.25);
+    background: rgba(217,91,67,0.1);
+    border: 1px solid rgba(217,91,67,0.25);
     color: var(--accent-light);
     border-radius: 50px;
     padding: 0.4rem 1rem;
@@ -96,8 +96,8 @@ import Layout from '../layouts/Layout.astro';
   .track-input::placeholder { color: var(--text-muted); font-weight: 400; letter-spacing: 0; }
   .track-input:focus {
     border-color: var(--accent);
-    background: rgba(124,58,237,0.05);
-    box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+    background: rgba(217,91,67,0.05);
+    box-shadow: 0 0 0 3px rgba(217,91,67,0.12);
   }
   .track-input.error {
     border-color: #ef4444;
@@ -151,8 +151,8 @@ import Layout from '../layouts/Layout.astro';
     max-width: 640px;
     margin: 1.25rem auto 0;
     padding: 1rem 1.5rem;
-    background: rgba(34,211,238,0.06);
-    border: 1px solid rgba(34,211,238,0.2);
+    background: rgba(245,165,36,0.06);
+    border: 1px solid rgba(245,165,36,0.2);
     border-radius: var(--border-radius);
     display: flex;
     align-items: flex-start;
@@ -209,7 +209,7 @@ import Layout from '../layouts/Layout.astro';
   }
   .demo-btn:hover,
   .demo-btn.active {
-    background: rgba(34,211,238,0.15);
+    background: rgba(245,165,36,0.15);
     border-color: var(--primary);
     color: var(--white);
   }
@@ -292,14 +292,14 @@ import Layout from '../layouts/Layout.astro';
   /* active / in-progress */
   .tl-item.active .tl-icon {
     border-color: var(--accent);
-    background: rgba(124,58,237,0.12);
+    background: rgba(217,91,67,0.12);
     color: var(--accent-light);
-    box-shadow: 0 0 0 6px rgba(124,58,237,0.1);
+    box-shadow: 0 0 0 6px rgba(217,91,67,0.1);
     animation: tl-pulse 2s ease-in-out infinite;
   }
   @keyframes tl-pulse {
-    0%,100% { box-shadow: 0 0 0 6px rgba(124,58,237,0.1); }
-    50%      { box-shadow: 0 0 0 10px rgba(124,58,237,0.04); }
+    0%,100% { box-shadow: 0 0 0 6px rgba(217,91,67,0.1); }
+    50%      { box-shadow: 0 0 0 10px rgba(217,91,67,0.04); }
   }
 
   /* body card */
@@ -317,8 +317,8 @@ import Layout from '../layouts/Layout.astro';
     background: rgba(34,197,94,0.04);
   }
   .tl-item.active .tl-body {
-    border-color: rgba(124,58,237,0.3);
-    background: rgba(124,58,237,0.06);
+    border-color: rgba(217,91,67,0.3);
+    background: rgba(217,91,67,0.06);
   }
   .tl-title {
     font-size: 0.95rem;
@@ -343,7 +343,7 @@ import Layout from '../layouts/Layout.astro';
     flex-shrink: 0;
   }
   .tl-item.done   .tl-badge { background: rgba(34,197,94,0.15); color: #4ade80; }
-  .tl-item.active .tl-badge { background: rgba(124,58,237,0.15); color: var(--accent-light); }
+  .tl-item.active .tl-badge { background: rgba(217,91,67,0.15); color: var(--accent-light); }
   .tl-item.pending .tl-badge { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
   .tl-desc {
@@ -352,7 +352,7 @@ import Layout from '../layouts/Layout.astro';
     line-height: 1.55;
   }
   .tl-item.done   .tl-desc { color: rgba(74,222,128,0.7); }
-  .tl-item.active .tl-desc { color: rgba(34,211,238,0.8); }
+  .tl-item.active .tl-desc { color: rgba(245,165,36,0.8); }
 
   /* estimated time chip */
   .tl-time {
@@ -369,8 +369,8 @@ import Layout from '../layouts/Layout.astro';
   }
   .tl-item.active .tl-time {
     color: var(--accent-light);
-    background: rgba(124,58,237,0.06);
-    border-color: rgba(124,58,237,0.2);
+    background: rgba(217,91,67,0.06);
+    border-color: rgba(217,91,67,0.2);
   }
 
   /* responsive */
@@ -391,10 +391,10 @@ import Layout from '../layouts/Layout.astro';
     <div class="reveal">
       <div class="badge">
         <i class="fab fa-whatsapp"></i>
-        <span data-i18n="trackOrder">تتبع طلبك</span>
+        <span data-i18n="trackOrder">وين طلبي؟</span>
       </div>
-      <h1><span data-i18n="trackHeroTitle">تتبع طلبك</span></h1>
-      <p><span data-i18n="trackHeroDesc">أدخل رقم طلبك وسنتواصل معك فوراً عبر واتساب للاستفسار عن حالة شحنتك.</span></p>
+      <h1><span data-i18n="trackHeroTitle">وين طلبي؟</span></h1>
+      <p><span data-i18n="trackHeroDesc">حط رقم طلبك، ونردوا عليك على الواتساب بآخر تحديث على شحنتك.</span></p>
     </div>
   </section>
 
@@ -420,12 +420,12 @@ import Layout from '../layouts/Layout.astro';
         />
         <button type="button" id="trackBtn" class="track-btn">
           <i class="fab fa-whatsapp"></i>
-          <span data-i18n="trackWhatsappBtn">تتبع عبر واتساب</span>
+          <span data-i18n="trackWhatsappBtn">اسأل على طلبك في الواتساب</span>
         </button>
       </div>
       <p id="trackError" class="track-error">
         <i class="fas fa-exclamation-circle"></i>
-        <span id="trackErrorMsg" data-i18n="trackInvalidId">رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX</span>
+        <span id="trackErrorMsg" data-i18n="trackInvalidId">رقم الطلب مش صحيح — الصيغة: DW-YYYY-XXXX</span>
       </p>
       <p class="track-format-hint">
         <span data-i18n="trackFormatHint">الصيغة الصحيحة:</span>
@@ -435,7 +435,7 @@ import Layout from '../layouts/Layout.astro';
 
     <div class="track-notice">
       <i class="fas fa-shield-alt"></i>
-      <span data-i18n="trackPrivacyNote">رقم طلبك يُرسل عبر واتساب فقط — لا تخزين لبياناتك، لا حسابات، لا كلمات مرور.</span>
+      <span data-i18n="trackPrivacyNote">رقم طلبك يمشي عبر الواتساب وبس — لا تخزين، لا حسابات، لا كلمات سر.</span>
     </div>
   </div>
 
@@ -450,7 +450,7 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Demo stage selector (mock data — يُستبدل بـ Firebase لاحقاً) -->
     <div class="demo-selector" id="demoSelector" role="group" aria-label="اختر مرحلة للمعاينة">
-      <button class="demo-btn" data-stage="0">استلام الطلب</button>
+      <button class="demo-btn" data-stage="0">استلمنا طلبك</button>
       <button class="demo-btn active" data-stage="1">التدوير والبحث</button>
       <button class="demo-btn" data-stage="2">عرض السعر</button>
       <button class="demo-btn" data-stage="3">الشحن</button>
@@ -462,12 +462,12 @@ import Layout from '../layouts/Layout.astro';
       <!-- الخط المتحرك (progress spine) -->
       <div class="timeline-progress-spine" id="tlSpine"></div>
 
-      <!-- Stage 0: تم استلام الطلب -->
+      <!-- Stage 0: تم استلمنا طلبك -->
       <li class="tl-item" data-stage-idx="0">
         <div class="tl-icon"><i class="fas fa-inbox"></i></div>
         <div class="tl-body">
           <div class="tl-title">
-            <span data-tl-ar="تم استلام الطلب" data-tl-en="Order Received">تم استلام الطلب</span>
+            <span data-tl-ar="تم استلمنا طلبك" data-tl-en="Order Received">تم استلمنا طلبك</span>
             <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="جاري" data-badge-pending="قادم"></span>
           </div>
           <p class="tl-desc" data-tl-ar="تم تسجيل طلبك في نظامنا وسيتم مراجعته فوراً بواسطة الفريق." data-tl-en="Your order has been registered and will be reviewed immediately by our team.">تم تسجيل طلبك في نظامنا وسيتم مراجعته فوراً بواسطة الفريق.</p>
@@ -558,7 +558,7 @@ import Layout from '../layouts/Layout.astro';
       var val = (input.value || '').trim().toUpperCase();
       if (!val || !ORDER_REGEX.test(val)) {
         input.classList.add('error');
-        errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب غير صحيح. يجب أن يكون بصيغة DW-YYYY-XXXX');
+        errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب مش صحيح — الصيغة: DW-YYYY-XXXX');
         errorEl.classList.add('visible');
         input.focus();
         return;

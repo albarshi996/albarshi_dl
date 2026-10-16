@@ -80,7 +80,7 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
     .order-line .val { color: var(--text-main); font-weight: 600; }
     .order-total {
       margin-top: 1rem; padding: 1rem;
-      background: rgba(34,211,238,0.1); border: 1px solid var(--primary);
+      background: rgba(245,165,36,0.1); border: 1px solid var(--primary);
       border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
     }
     .order-total .t-lbl { font-weight: 700; color: var(--white); }
@@ -106,7 +106,7 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
     /* ── Hash debug panel ───────────────────────────────────────────── */
     .hash-panel {
       margin-top: 1rem; padding: 0.9rem;
-      background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.25);
+      background: rgba(245,165,36,0.06); border: 1px solid rgba(245,165,36,0.25);
       border-radius: 10px; font-size: 0.73rem; color: var(--text-muted);
     }
     .hash-panel strong { color: var(--accent-light); display: block; margin-bottom: 0.3rem; }
@@ -114,7 +114,7 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
       font-family: monospace; word-break: break-all;
       color: #a5b4fc; font-size: 0.68rem;
     }
-    .hash-input-str { font-family: monospace; color: #94a3b8; font-size: 0.68rem; word-break: break-all; }
+    .hash-input-str { font-family: monospace; color: #A99F8D; font-size: 0.68rem; word-break: break-all; }
     /* ── Payment form ───────────────────────────────────────────────── */
     .fg { margin-bottom: 1.05rem; }
     .fg label {
@@ -145,7 +145,7 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       gap: 0.7rem; transition: all 0.25s; margin-top: 0.4rem;
     }
-    .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(34,211,238,0.4); }
+    .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245,165,36,0.4); }
     .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .spinner {
       width: 20px; height: 20px;
@@ -182,7 +182,7 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
     .result-modal h3 { font-size: 1.3rem; font-weight: 800; color: var(--white); margin-bottom: 0.5rem; }
     .result-modal p  { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.4rem; }
     .result-ref {
-      display: inline-block; background: rgba(34,211,238,0.15);
+      display: inline-block; background: rgba(245,165,36,0.15);
       border: 1px solid var(--primary); border-radius: 8px;
       padding: 0.35rem 1rem; font-size: 0.82rem; color: var(--accent-light);
       font-family: monospace; margin-bottom: 1.4rem;
@@ -253,9 +253,9 @@ const SANDBOX_URL  = import.meta.env.MOAMALAT_SANDBOX_URL  || 'https://demo.moam
       <!-- SHA-512 SecureHash debug (sandbox only) -->
       <div class="hash-panel" id="hashPanel">
         <strong><i class="fas fa-fingerprint"></i> SecureHash (SHA-512) — مباشر:</strong>
-        <div style="margin-bottom:0.4rem;color:#94a3b8;font-size:0.7rem;">المدخلات:</div>
+        <div style="margin-bottom:0.4rem;color:#A99F8D;font-size:0.7rem;">المدخلات:</div>
         <div class="hash-input-str" id="hashInput">—</div>
-        <div style="margin-top:0.5rem;margin-bottom:0.3rem;color:#94a3b8;font-size:0.7rem;">الناتج (SHA-512):</div>
+        <div style="margin-top:0.5rem;margin-bottom:0.3rem;color:#A99F8D;font-size:0.7rem;">الناتج (SHA-512):</div>
         <div class="hash-value" id="hashValue">جارٍ الحساب...</div>
       </div>
 

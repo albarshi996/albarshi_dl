@@ -79,7 +79,7 @@ function initFAQ() {
   });
 }
 
-// دالة الطلب السريع المعدلة (تم تثبيت الرقم مباشرة لضمان العمل)
+// دالة اطلب على السريع المعدلة (تم تثبيت الرقم مباشرة لضمان العمل)
 function initQuickOrder() {
   const form = document.getElementById('quickOrderForm');
   if (form) {
@@ -89,7 +89,7 @@ function initQuickOrder() {
       const submitBtn = this.querySelector('.submit-btn');
       const originalBtnText = submitBtn ? submitBtn.innerHTML : 'إرسال';
       if(submitBtn) {
-        submitBtn.innerHTML = 'جاري التحويل للواتساب... <i class="fas fa-spinner fa-spin"></i>';
+        submitBtn.innerHTML = 'ثواني… قاعدين نحوّلوا فيك للواتساب <i class="fas fa-spinner fa-spin"></i>';
         submitBtn.disabled = true;
       }
 
@@ -106,7 +106,7 @@ function initQuickOrder() {
       const product = productInput ? productInput.value.trim() : '';
 
       if(!name || !phone || !product) {
-         alert("الرجاء تعبئة جميع الحقول المطلوبة (الاسم، الرقم، وتفاصيل الطلب).");
+         alert("باقي خانات فاضية (الاسم، الرقم، وتفاصيل الطلب) — عبّيها وابعت.");
          if(submitBtn) { submitBtn.innerHTML = originalBtnText; submitBtn.disabled = false; }
          return;
       }

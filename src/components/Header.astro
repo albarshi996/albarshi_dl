@@ -1,6 +1,6 @@
 ---
 // src/components/Header.astro
-// ✅ CHANGE: أُضيف رابط "تتبع طلبك" في القائمة الرئيسية
+// ✅ CHANGE: أُضيف رابط "وين طلبي؟" في القائمة الرئيسية
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname.slice(1);
 ---
@@ -10,7 +10,7 @@ const currentPath = pathname.slice(1);
     <svg class="logo-mark" width="34" height="34" viewBox="0 0 48 48" aria-hidden="true">
       <defs>
         <linearGradient id="dwLogo" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#22D3EE"/><stop offset=".55" stop-color="#38BDF8"/><stop offset="1" stop-color="#7C3AED"/>
+          <stop stop-color="#F5A524"/><stop offset=".55" stop-color="#F27B35"/><stop offset="1" stop-color="#D95B43"/>
         </linearGradient>
       </defs>
       <rect x="3" y="3" width="42" height="42" rx="12.5" fill="url(#dwLogo)"/>
@@ -33,7 +33,7 @@ const currentPath = pathname.slice(1);
       <i class="fas fa-home"></i> <span data-i18n="home">الرئيسية</span>
     </a>
     <a href="/how-it-works" class={currentPath === "how-it-works" ? "active" : ""}>
-      <i class="fas fa-question"></i> <span data-i18n="howItWorks">كيف يعمل</span>
+      <i class="fas fa-question"></i> <span data-i18n="howItWorks">شن الطريقة</span>
     </a>
     <a href="/features" class={currentPath === "features" ? "active" : ""}>
       <i class="fas fa-gem"></i> <span data-i18n="features">الميزات</span>
@@ -43,16 +43,16 @@ const currentPath = pathname.slice(1);
     </a>
     <!-- ✅ ADDED: رابط تتبع الطلب -->
     <a href="/track" class={currentPath === "track" ? "active" : ""}>
-      <i class="fab fa-whatsapp"></i> <span data-i18n="trackOrder">تتبع طلبك</span>
+      <i class="fab fa-whatsapp"></i> <span data-i18n="trackOrder">وين طلبي؟</span>
     </a>
     <a href="/contact" class={currentPath === "contact" ? "active" : ""}>
-      <i class="fas fa-envelope"></i> <span data-i18n="contact">تواصل معنا</span>
+      <i class="fas fa-envelope"></i> <span data-i18n="contact">كلمنا</span>
     </a>
     <a href="/pricing" class={currentPath === "pricing" ? "active" : ""}>
       <i class="fas fa-tags"></i> <span data-i18n="pricing">الباقات</span>
     </a>
     <a href="/request" class="services-btn">
-      <i class="fas fa-paper-plane"></i> <span data-i18n="request">اطلب الآن</span>
+      <i class="fas fa-paper-plane"></i> <span data-i18n="request">اطلب توا</span>
     </a>
   </nav>
 
@@ -68,23 +68,23 @@ const currentPath = pathname.slice(1);
   var dict = {
     ar: {
       dir: 'rtl',
-      home: 'الرئيسية', howItWorks: 'كيف يعمل', features: 'الميزات',
-      services: 'خدماتنا', contact: 'تواصل معنا', pricing: 'الباقات',
-      request: 'اطلب الآن',
-      trackOrder: 'تتبع طلبك',
-      heroTitle: 'حلقة الوصل بينك وبين ما تحتاج',
-      heroDesc: 'منصة دورلي توفر لك كل ما تحتاجه من أي مدينة في ليبيا، بأسرع وقت وأقل تكلفة. نحن نبحث، نشتري، ونوصل لك!',
-      heroOrderBtn: 'اطلب الآن', heroServicesBtn: 'تصفح الخدمات',
-      howTitle: 'كيف يعمل دورلي؟', howSub: '3 خطوات بسيطة وطلبك في طريقه إليك',
-      howStep1Title: 'أرسل طلبك', howStep1Desc: 'اكتب ما تحتاجه بالتفصيل عبر النموذج أو واتساب',
-      howStep2Title: 'نبحث ونشتري', howStep2Desc: 'فريقنا يبحث ويشتري بأفضل سعر وجودة مضمونة',
-      howStep3Title: 'نوصل لبابك', howStep3Desc: 'توصيل سريع وآمن لأي مدينة في ليبيا',
-      howHeroTitle: 'كيف يعمل دورلي؟',
-      howHeroDesc: 'أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد.',
-      hiwStep1Title: 'أخبرنا بما تحتاج', hiwStep1Desc: 'قم بتعبئة نموذج الطلب أو تواصل معنا عبر الواتساب.',
-      hiwStep2Title: 'البحث والتسعير', hiwStep2Desc: 'فريقنا يبحث ويتواصل معك بالتكلفة الإجمالية.',
-      hiwStep3Title: 'تأكيد الطلب والشراء', hiwStep3Desc: 'بعد موافقتك نشتري نيابة عنك ونجهز المنتج.',
-      hiwStep4Title: 'الاستلام والدفع', hiwStep4Desc: 'مندوبنا يوصل لبابك، تتأكد ثم تدفع عند الاستلام.',
+      home: 'الرئيسية', howItWorks: 'شن الطريقة', features: 'الميزات',
+      services: 'خدماتنا', contact: 'كلمنا', pricing: 'الباقات',
+      request: 'اطلب توا',
+      trackOrder: 'وين طلبي؟',
+      heroTitle: 'تدوّر على حاجة؟ دورلي يجيبهالك',
+      heroDesc: 'قطعة غيار، دواء، فستان، ولا بضاعة لمحلّك — اكتبلنا شن تبي، واحنا ندوّروا ونشروا ونوصّلوا لين باب الحوش.',
+      heroOrderBtn: 'اطلب توا', heroServicesBtn: 'شوف الخدمات',
+      howTitle: 'شن الطريقة؟', howSub: 'ثلاث خطوات وبس… وطلبك في الطريق',
+      howStep1Title: 'ابعت طلبك', howStep1Desc: 'اكتبلنا شن تبي بالتفصيل، في النموذج ولا على الواتساب',
+      howStep2Title: 'ندوّروا ونشروا', howStep2Desc: 'فريقنا يدوّر على أحسن سعر وجودة، ويشري عنك',
+      howStep3Title: 'نوصّلوا لبابك', howStep3Desc: 'توصيل سريع ومضمون لأي مدينة في ليبيا',
+      howHeroTitle: 'شن الطريقة؟',
+      howHeroDesc: 'أربع خطوات بس تفصلك على اللي تبيه.',
+      hiwStep1Title: 'قولنا شن تبي', hiwStep1Desc: 'عبّي نموذج الطلب ولا كلمنا على الواتساب.',
+      hiwStep2Title: 'ندوّروا ونسعّروا', hiwStep2Desc: 'فريقنا يدوّر ويكلمك بالتكلفة الكاملة.',
+      hiwStep3Title: 'توافق ونشروا', hiwStep3Desc: 'كان وافقت، نشروا عنك ونجهزوا طلبك.',
+      hiwStep4Title: 'يوصلك وتدفع', hiwStep4Desc: 'مندوبنا يوصلك، تتأكد وبعدين تدفع.',
       langLabelShort: 'ع', themeToggleTitle: 'تبديل المظهر', logoAria: 'الصفحة الرئيسية - دورلي',
     },
     en: {

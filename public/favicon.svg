@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="دورلي">
   <defs>
     <linearGradient id="dwFav" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22D3EE"/>
-      <stop offset=".55" stop-color="#38BDF8"/>
-      <stop offset="1" stop-color="#7C3AED"/>
+      <stop stop-color="#F5A524"/>
+      <stop offset=".55" stop-color="#F27B35"/>
+      <stop offset="1" stop-color="#D95B43"/>
     </linearGradient>
   </defs>
   <rect x="3" y="3" width="42" height="42" rx="12.5" fill="url(#dwFav)"/>

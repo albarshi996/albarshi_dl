@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,7 +12,6 @@ export default defineConfig({
       priority: 0.8,
       lastmod: new Date(),
       filter: (page) => !page.includes('/google')
-    }),
-    react()
+    })
   ]
 });

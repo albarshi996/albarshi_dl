@@ -67,9 +67,8 @@
 
 | الطبقة | التقنية | الإصدار | الاستخدام |
 |--------|---------|---------|-----------|
-| **Framework** | [Astro](https://astro.build) | 4.5 | SSG — Static Site Generation |
-| **UI Components** | @astrojs/react | 3.6 | React islands داخل Astro |
-| **Styling** | CSS Custom Properties | — | Glassmorphism + CSS Variables |
+| **Framework** | [Astro](https://astro.build) | 4.5 | SSG — Static Site Generation (بدون React) |
+| **Styling** | CSS Custom Properties | — | هوية "غروب ليبي" الدافئة (عنبري #F5A524 → طيني #D95B43) |
 | **Fonts** | Tajawal + Inter | Google Fonts | AR (Tajawal) / EN (Inter) |
 | **Icons** | Font Awesome | 6.4 | CDN — جميع الأيقونات |
 | **i18n** | Custom `dawerliDict` | v5.3 | AR/EN مدمج في Layout.astro |
@@ -270,6 +269,7 @@ request.astro (3 payment cards)
 | **14-ب** | **Spare Parts Engine** | نموذج قطع الغيار الشرطي — موديل السيارة + حالة جديدة/رابش + صورة + رسالة WA منسقة | ✅ مكتملة | `feat(task14b)` |
 | **14-ج** | **Pricing Transparency** | قسم شفافية التسعير في services.astro + 4 خطوات تفصيلية في pricing.astro — المعادلة + ضمان الشفافية | ✅ مكتملة | `feat(task14c)` |
 | **11.6–11.8** | **Nav Smart Placement** | placeNav() ذكي: header على desktop، body على mobile + resize debounce 200ms | ✅ مكتملة | `4e4651b3abc8` |
+| **15** | **التجريد (De-AI Pass)** | حذف مؤثرات القالب (نيون/جزيئات/مغناطيس/إمالة + صفحة /lab وReact) · لوحة "غروب ليبي" دافئة (عنبري→طيني) · إعادة كتابة النصوص التسويقية باللهجة الليبية · المحتوى يظهر بدون JS (html.js reveal gate) | ✅ مكتملة | `feat(task15)` |
 
 ---
 

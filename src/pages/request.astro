@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="دورلي - اطلب الآن عبر واتساب" description="نموذج طلب دورلي - اطلب أي منتج أو خدمة من أي مدينة في ليبيا. لا يتم تسجيل دخول، يتم تحويلك مباشرة لمحادثة واتساب.">
+<Layout title="دورلي - اطلب توا عبر واتساب" description="نموذج طلب دورلي - اطلب أي منتج أو خدمة من أي مدينة في ليبيا. لا يتم تسجيل دخول، يتم تحويلك مباشرة لمحادثة واتساب.">
   <script is:inline>document.documentElement.dataset.page = 'request';</script>
 
   <!-- Schema.org markup يوضح لجوجل أن هذا نموذج طلب وليس تسجيل دخول -->
@@ -87,7 +87,7 @@ import Layout from '../layouts/Layout.astro';
     }
     .image-upload-zone:hover, .image-upload-zone:focus-within {
       border-color: var(--accent);
-      background: rgba(124,58,237,0.04);
+      background: rgba(217,91,67,0.04);
     }
     .upload-icon-wrap i {
       font-size: 2.2rem;
@@ -134,10 +134,10 @@ import Layout from '../layouts/Layout.astro';
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    .pm-card:hover { border-color: var(--accent); background: rgba(124,58,237,0.05); }
+    .pm-card:hover { border-color: var(--accent); background: rgba(217,91,67,0.05); }
     .pm-card:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
     .pm-card.pm-sel-cash    { border-color: #10b981; background: rgba(16,185,129,0.08); }
-    .pm-card.pm-sel-bank    { border-color: var(--primary); background: rgba(34,211,238,0.08); }
+    .pm-card.pm-sel-bank    { border-color: var(--primary); background: rgba(245,165,36,0.08); }
     .pm-card.pm-sel-online  { border-color: #f59e0b; background: rgba(245,158,11,0.07); }
     .pm-icon  { font-size: 1.7rem; margin-bottom: 0.3rem; line-height: 1; }
     .pm-label { font-size: 0.88rem; font-weight: 800; color: var(--white); margin-bottom: 0.15rem; }
@@ -163,8 +163,8 @@ import Layout from '../layouts/Layout.astro';
     /* ── TASK 14-B: Spare Parts Conditional Form ─────────────────────── */
     .spare-parts-section {
       display: none;
-      background: linear-gradient(135deg, rgba(34,211,238,0.07), rgba(124,58,237,0.04));
-      border: 1px solid rgba(34,211,238,0.3);
+      background: linear-gradient(135deg, rgba(245,165,36,0.07), rgba(217,91,67,0.04));
+      border: 1px solid rgba(245,165,36,0.3);
       border-radius: var(--border-radius);
       padding: 1.25rem 1.4rem;
       margin-bottom: 1rem;
@@ -183,7 +183,7 @@ import Layout from '../layouts/Layout.astro';
       letter-spacing: 0.04em;
       margin-bottom: 1rem;
       padding-bottom: 0.6rem;
-      border-bottom: 1px solid rgba(34,211,238,0.2);
+      border-bottom: 1px solid rgba(245,165,36,0.2);
     }
     /* Condition toggle: جديدة / رابش */
     .condition-toggle {
@@ -211,7 +211,7 @@ import Layout from '../layouts/Layout.astro';
     }
     .cond-btn i { font-size: 1.3rem; }
     .cond-btn.cond-new.active  { border-color: #22c55e; background: rgba(34,197,94,0.1);  color: #4ade80; }
-    .cond-btn.cond-used.active { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent-light); }
+    .cond-btn.cond-used.active { border-color: var(--accent); background: rgba(217,91,67,0.1); color: var(--accent-light); }
     .cond-btn:not(.active):hover { border-color: var(--glass-border); background: rgba(255,255,255,0.04); }
     /* Spare parts image upload highlight */
     .sp-img-note {
@@ -222,8 +222,8 @@ import Layout from '../layouts/Layout.astro';
       color: var(--accent-light);
       margin-top: 0.5rem;
       padding: 0.4rem 0.75rem;
-      background: rgba(124,58,237,0.06);
-      border: 1px solid rgba(124,58,237,0.2);
+      background: rgba(217,91,67,0.06);
+      border: 1px solid rgba(217,91,67,0.2);
       border-radius: 8px;
     }
   </style>
@@ -231,7 +231,7 @@ import Layout from '../layouts/Layout.astro';
   <div class="whatsapp-notice" role="region" aria-label="تنبيه: نموذج طلب توصيل، ليس صفحة تسجيل دخول">
     <div class="wn-icon"><i class="fab fa-whatsapp"></i></div>
     <div class="wn-text">
-      <strong><span data-i18n="noticeTitle">هذا نموذج طلب توصيل — وليس صفحة تسجيل دخول</span></strong>
+      <strong><span data-i18n="noticeTitle">هذا نموذج طلب توصيل — مش صفحة تسجيل دخول</span></strong>
       <span data-i18n="noticeDesc">عند الإرسال سيتم تحويلك مباشرة لمحادثة <strong style="display:inline">واتساب</strong> مع فريق دورلي. لا نطلب كلمات مرور أو بيانات بنكية.</span>
       <small><span data-i18n="noticeLinks">للاطلاع على معلومات الخصوصية: <a href="/privacy/">سياسة الخصوصية</a> | <a href="/terms/">الشروط</a></span></small>
     </div>
@@ -250,14 +250,14 @@ import Layout from '../layouts/Layout.astro';
       <div class="form-container">
         <div class="form-header">
           <h2><i class="fas fa-shopping-cart"></i> <span data-i18n="orderDetailsTitle">تفاصيل الطلب</span></h2>
-          <p><span data-i18n="orderDetailsDesc">يرجى إدخال معلومات الطلب لتحويلك لمحادثة واتساب جاهزة</span></p>
+          <p><span data-i18n="orderDetailsDesc">عبّي البيانات وتتفتحلك محادثة واتساب جاهزة</span></p>
         </div>
 
         <form id="orderForm" class="request-form" method="GET" data-wa-form role="form" aria-label="نموذج طلب توصيل عبر واتساب — لا يتم تخزين بيانات أو تسجيل دخول">
           <div class="form-row">
             <div class="form-group">
-              <label for="name"><i class="fas fa-user"></i> <span data-i18n="labelName">الاسم الكريم</span> <span class="badge-required" data-i18n="required">مطلوب</span></label>
-              <input type="text" id="name" name="customer_name" autocomplete="name" placeholder="اكتب اسمك الثلاثي" data-i18n-placeholder="placeholderName" required aria-describedby="name-help">
+              <label for="name"><i class="fas fa-user"></i> <span data-i18n="labelName">اسمك</span> <span class="badge-required" data-i18n="required">مطلوب</span></label>
+              <input type="text" id="name" name="customer_name" autocomplete="name" placeholder="اكتب اسمك" data-i18n-placeholder="placeholderName" required aria-describedby="name-help">
               <span id="name-help" class="visually-hidden">اسمك سيُستخدم في رسالة الواتساب فقط</span>
             </div>
             <div class="form-group">
@@ -392,7 +392,7 @@ import Layout from '../layouts/Layout.astro';
           </div>
 
           <div class="form-group full-width">
-            <label><i class="fas fa-clock"></i> <span data-i18n="labelUrgency">درجة الاستعجال</span></label>
+            <label><i class="fas fa-clock"></i> <span data-i18n="labelUrgency">قداش مستعجل؟</span></label>
             <div class="urgency-options">
               <button type="button" class="urgency-btn sel-normal" data-urgency="عادي">
                 <i class="fas fa-leaf"></i> <span data-i18n="urgencyNormal">عادي</span>
@@ -414,12 +414,12 @@ import Layout from '../layouts/Layout.astro';
 
 
           <div class="form-group full-width">
-            <label><i class="fas fa-camera"></i> <span data-i18n="labelImage">إرفاق صورة للطلب (اختياري)</span></label>
+            <label><i class="fas fa-camera"></i> <span data-i18n="labelImage">زيد صورة للطلب (اختياري)</span></label>
             <label class="image-upload-zone" id="imageUploadZone">
               <div id="uploadContent">
                 <div class="upload-icon-wrap"><i class="fas fa-cloud-upload-alt"></i></div>
-                <span class="upload-main-text" data-i18n="uploadText">اسحب صورة هنا أو انقر للاختيار</span>
-                <span class="upload-sub-text" data-i18n="uploadSubText">مثالي لقطع الغيار — يساعد في التطابق 100%</span>
+                <span class="upload-main-text" data-i18n="uploadText">حط الصورة هني ولا اضغط باش تختارها</span>
+                <span class="upload-sub-text" data-i18n="uploadSubText">الصورة تساعدنا نجيبولك القطعة الصح 100%</span>
               </div>
               <div id="imgPreviewWrap" class="img-preview-wrap" style="display:none;">
                 <img id="imgPreview" src="" alt="معاينة الصورة">
@@ -469,10 +469,10 @@ import Layout from '../layouts/Layout.astro';
 
           <div class="form-submit">
             <button type="submit" class="submit-btn" aria-label="فتح محادثة واتساب لإرسال الطلب">
-              <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i> <span data-i18n="submitSendWhatsapp">فتح محادثة واتساب وإرسال الطلب</span>
+              <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i> <span data-i18n="submitSendWhatsapp">افتح الواتساب وابعت الطلب</span>
             </button>
             <p class="form-note">
-              <i class="fas fa-shield-alt"></i> <span data-i18n="formNote">بياناتك تُرسل عبر تطبيق واتساب الرسمي فقط — لا تخزين، لا حسابات، لا كلمات مرور.</span>
+              <i class="fas fa-shield-alt"></i> <span data-i18n="formNote">بياناتك تمشي عبر تطبيق واتساب الرسمي وبس — لا تخزين، لا حسابات، لا كلمات سر.</span>
               <br>
               <a href="/privacy/" data-i18n="linkPrivacy">اقرأ سياسة الخصوصية</a> · <a href="/terms/" data-i18n="linkTerms">الشروط والأحكام</a>
             </p>
@@ -684,7 +684,7 @@ import Layout from '../layouts/Layout.astro';
       // إذا اختار المستخدم صورة — أضف تنبيهاً في رسالة الواتساب
       const imgFile = document.getElementById('orderImage');
       if (imgFile && imgFile.files && imgFile.files.length > 0) {
-        const imgNote = get('whatsapp_image_note') || '📷 ملاحظة: سأرفق صورة المنتج في هذه المحادثة.';
+        const imgNote = get('whatsapp_image_note') || '📷 ملاحظة: باش نبعتلكم صورة المنتج في المحادثة هذي.';
         message += `\n${imgNote}`;
       }
 

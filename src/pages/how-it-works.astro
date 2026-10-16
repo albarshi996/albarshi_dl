@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="دورلي - كيف يعمل" description="أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد من أي مكان في ليبيا بكل أمان وسرعة.">
+<Layout title="دورلي - شن الطريقة" description="أربع خطوات بس تفصلك على اللي تبيه — من أي مكان في ليبيا، بأمان وبلا وجع راس.">
   <script is:inline>document.documentElement.dataset.page = 'how';</script>
 
 <style>
@@ -58,13 +58,13 @@ import Layout from '../layouts/Layout.astro';
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 0 20px rgba(34,211,238,0.4);
+    box-shadow: 0 0 20px rgba(245,165,36,0.4);
     transition: var(--transition);
   }
 
   .step-item:hover .step-badge {
     transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(124,58,237,0.5);
+    box-shadow: 0 0 30px rgba(217,91,67,0.5);
   }
 
   /* محتوى الخطوة */
@@ -80,7 +80,7 @@ import Layout from '../layouts/Layout.astro';
 
   .step-item:hover .step-body {
     border-color: var(--primary);
-    box-shadow: 0 8px 25px rgba(34,211,238,0.1);
+    box-shadow: 0 8px 25px rgba(245,165,36,0.1);
     transform: translateX(-4px);
   }
 
@@ -108,7 +108,7 @@ import Layout from '../layouts/Layout.astro';
   /* ===== قسم الوقت المتوقع ===== */
   .timeline-section {
     padding: 3rem 1.5rem;
-    background: rgba(34,211,238,0.04);
+    background: rgba(245,165,36,0.04);
     border-top: 1px solid var(--glass-border);
     border-bottom: 1px solid var(--glass-border);
   }
@@ -222,7 +222,7 @@ import Layout from '../layouts/Layout.astro';
   .how-cta {
     padding: 4rem 1.5rem;
     text-align: center;
-    background: rgba(34,211,238,0.05);
+    background: rgba(245,165,36,0.05);
     border-top: 1px solid var(--glass-border);
   }
 
@@ -265,7 +265,7 @@ import Layout from '../layouts/Layout.astro';
 
   .cta-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(34,211,238,0.3);
+    box-shadow: 0 8px 20px rgba(245,165,36,0.3);
   }
 
   .cta-btn.whatsapp {
@@ -288,9 +288,9 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- Hero -->
   <section class="page-hero">
-    <div class="hero-content reveal">
-      <h1><span data-i18n="howHeroTitle">كيف يعمل دورلي؟</span></h1>
-      <p><span data-i18n="howHeroDesc">أربع خطوات بسيطة فقط تفصلك عن الحصول على ما تريد من أي مكان في ليبيا بكل أمان وسرعة.</span></p>
+    <div class="hero-content">
+      <h1><span data-i18n="howHeroTitle">شن الطريقة؟</span></h1>
+      <p><span data-i18n="howHeroDesc">أربع خطوات بس تفصلك على اللي تبيه — من أي مكان في ليبيا، بأمان وبلا وجع راس.</span></p>
     </div>
   </section>
 
@@ -303,16 +303,16 @@ import Layout from '../layouts/Layout.astro';
         <div class="step-body">
           <h3>
             <i class="fas fa-camera"></i>
-            <span data-i18n="hiwStep1Title">أخبرنا بما تحتاج/تحتاجين (وأرفق/ي صورة)</span>
+            <span data-i18n="hiwStep1Title">قولنا شن تبي (وزيد صورة إن قدرت)</span>
           </h3>
-          <p><span data-i18n="hiwStep1Desc">سواء كنتِ تبحثين عن فستان معين، مستحضرات تجميل، أو دواء غير متوفر في مدينتك... أو كنت تبحث عن قطعة غيار لسيارتك أو بضائع لمحلك التجاري — فقط أرسل/ي طلبك/ي عبر النموذج أو الواتساب وأرفق/ي صورة إن أمكن، وسنتكفل بالباقي.</span></p>
+          <p><span data-i18n="hiwStep1Desc">تدوّري على فستان معيّن، ميك أب، ولا دواء مش موجود في مدينتك؟ ولا تدوّر على قطعة لسيارتك ولا بضاعة لمحلّك؟ ابعتوا الطلب في النموذج ولا على الواتساب — وزيدوا صورة إن أمكن — والباقي علينا.</span></p>
         </div>
       </div>
 
       <div class="step-item reveal">
         <div class="step-badge">2</div>
         <div class="step-body">
-          <h3><i class="fas fa-search"></i> <span data-i18n="hiwStep2Title">البحث والتسعير</span></h3>
+          <h3><i class="fas fa-search"></i> <span data-i18n="hiwStep2Title">ندوّروا ونسعّروا</span></h3>
           <p><span data-i18n="hiwStep2Desc">سيقوم فريقنا فوراً بالبحث عن طلبك، والتأكد من جودته ومطابقته للمواصفات، ثم نتواصل معك لإخبارك بالتكلفة الإجمالية (سعر المنتج + رسوم التوصيل).</span></p>
         </div>
       </div>
@@ -320,7 +320,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="step-item reveal">
         <div class="step-badge">3</div>
         <div class="step-body">
-          <h3><i class="fas fa-shopping-bag"></i> <span data-i18n="hiwStep3Title">تأكيد الطلب والشراء</span></h3>
+          <h3><i class="fas fa-shopping-bag"></i> <span data-i18n="hiwStep3Title">توافق ونشروا</span></h3>
           <p><span data-i18n="hiwStep3Desc">بعد موافقتك على السعر واعتمادك للطلب، نقوم بعملية الشراء نيابة عنك من المصدر وتغليف المنتج بشكل آمن ومناسب للنقل لتجهيزه للشحن.</span></p>
         </div>
       </div>
@@ -328,8 +328,8 @@ import Layout from '../layouts/Layout.astro';
       <div class="step-item reveal">
         <div class="step-badge">4</div>
         <div class="step-body">
-          <h3><i class="fas fa-handshake"></i> <span data-i18n="hiwStep4Title">الاستلام والدفع</span></h3>
-          <p><span data-i18n="hiwStep4Desc">يصلك مندوبنا بالمنتج حتى باب بيتك في مدينتك. تقوم بالتأكد من طلبك ثم الدفع عند الاستلام بكل راحة وثقة.</span></p>
+          <h3><i class="fas fa-handshake"></i> <span data-i18n="hiwStep4Title">يوصلك وتدفع</span></h3>
+          <p><span data-i18n="hiwStep4Desc">مندوبنا يجيبهولك لين باب الحوش. شوف طلبك واتأكد منه، وبعدين ادفع — على راحتك.</span></p>
         </div>
       </div>
 
@@ -338,17 +338,17 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- الوقت المتوقع -->
   <section class="timeline-section">
-    <h2><span data-i18n="hiwTimelineTitle">⏱️ الوقت المتوقع لكل خطوة</span></h2>
+    <h2><span data-i18n="hiwTimelineTitle">الوقت المتوقع لكل خطوة</span></h2>
     <div class="timeline-grid reveal">
       <div class="timeline-card">
         <div class="timeline-icon">💬</div>
-        <div class="timeline-duration"><span data-i18n="hiwDur1">فوري</span></div>
-        <div class="timeline-label"><span data-i18n="hiwLabel1">استلام طلبك</span></div>
+        <div class="timeline-duration"><span data-i18n="hiwDur1">طوالي</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel1">نستلموا طلبك</span></div>
       </div>
       <div class="timeline-card">
         <div class="timeline-icon">🔍</div>
         <div class="timeline-duration"><span data-i18n="hiwDur2">2-4 ساعات</span></div>
-        <div class="timeline-label"><span data-i18n="hiwLabel2">البحث والتسعير</span></div>
+        <div class="timeline-label"><span data-i18n="hiwLabel2">ندوّروا ونسعّروا</span></div>
       </div>
       <div class="timeline-card">
         <div class="timeline-icon">📦</div>
@@ -365,41 +365,41 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- الضمانات -->
   <section class="guarantees-section">
-    <h2><span data-i18n="hiwGuaranteesTitle">🛡️ ضماناتنا لك</span></h2>
+    <h2><span data-i18n="hiwGuaranteesTitle">ضماناتنا ليك</span></h2>
     <div class="guarantees-grid reveal">
       <div class="guarantee-item">
         <i class="fas fa-shield-alt"></i>
         <h4><span data-i18n="hiwGuarantee1Title">ضمان الجودة</span></h4>
-        <p><span data-i18n="hiwGuarantee1Desc">نتحقق من كل منتج قبل الشراء لضمان مطابقته لطلبك</span></p>
+        <p><span data-i18n="hiwGuarantee1Desc">نتأكدوا من كل منتج قبل ما نشروه، باش يجيك مطابق لطلبك</span></p>
       </div>
       <div class="guarantee-item">
         <i class="fas fa-money-bill-wave"></i>
-        <h4><span data-i18n="hiwGuarantee2Title">الدفع عند الاستلام</span></h4>
-        <p><span data-i18n="hiwGuarantee2Desc">لا دفع مسبق — تدفع فقط بعد استلام طلبك بيدك</span></p>
+        <h4><span data-i18n="hiwGuarantee2Title">ادفع عند الاستلام</span></h4>
+        <p><span data-i18n="hiwGuarantee2Desc">ما تدفع شي مقدّم — تدفع بس بعد ما يوصلك طلبك في يدك</span></p>
       </div>
       <div class="guarantee-item">
         <i class="fas fa-undo"></i>
         <h4><span data-i18n="hiwGuarantee3Title">ضمان الاسترداد</span></h4>
-        <p><span data-i18n="hiwGuarantee3Desc">إذا لم يطابق المنتج الوصف نعيد لك رسوم الخدمة كاملة</span></p>
+        <p><span data-i18n="hiwGuarantee3Desc">كان المنتج ما جاش مطابق للوصف، نرجّعولك رسوم الخدمة كاملة</span></p>
       </div>
       <div class="guarantee-item">
         <i class="fas fa-headset"></i>
-        <h4><span data-i18n="hiwGuarantee4Title">دعم مستمر</span></h4>
-        <p><span data-i18n="hiwGuarantee4Desc">فريقنا متاح طوال رحلة طلبك من البداية للنهاية</span></p>
+        <h4><span data-i18n="hiwGuarantee4Title">معاك لين النهاية</span></h4>
+        <p><span data-i18n="hiwGuarantee4Desc">فريقنا متابع طلبك من أول رسالة لين ما يوصلك</span></p>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
   <section class="how-cta">
-    <h2><span data-i18n="hiwCtaTitle">جاهز تجرب؟ 🚀</span></h2>
-    <p><span data-i18n="hiwCtaDesc">أرسل طلبك الآن وسنتواصل معك خلال دقائق</span></p>
+    <h2><span data-i18n="hiwCtaTitle">جرّب بروحك</span></h2>
+    <p><span data-i18n="hiwCtaDesc">ابعت طلبك توا، وفي دقائق يكلمك واحد من الفريق</span></p>
     <div class="cta-btns">
       <a href="/request" class="cta-btn primary">
-        <i class="fas fa-paper-plane"></i> <span data-i18n="hiwCtaOrderBtn">اطلب الآن</span>
+        <i class="fas fa-paper-plane"></i> <span data-i18n="hiwCtaOrderBtn">اطلب توا</span>
       </a>
       <a data-wa class="cta-btn whatsapp">
-        <i class="fab fa-whatsapp"></i> <span data-i18n="hiwCtaWhatsappBtn">تواصل مباشرة</span>
+        <i class="fab fa-whatsapp"></i> <span data-i18n="hiwCtaWhatsappBtn">كلمنا طوالي</span>
       </a>
     </div>
   </section>

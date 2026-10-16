@@ -22,9 +22,8 @@ import Layout from '../layouts/Layout.astro';
       width: 500px; height: 500px;
       background: var(--primary);
       filter: blur(150px);
-      opacity: 0.2;
+      opacity: 0.16;
       border-radius: 50%;
-      animation: float 8s ease-in-out infinite alternate;
     }
     .pricing-hero::after {
       content: '';
@@ -39,7 +38,7 @@ import Layout from '../layouts/Layout.astro';
     .pricing-hero h1 {
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 900;
-      background: linear-gradient(to right, #ffffff, #94a3b8);
+      background: linear-gradient(to right, #ffffff, #A99F8D);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -61,8 +60,8 @@ import Layout from '../layouts/Layout.astro';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(34,211,238,0.15);
-      border: 1px solid rgba(34,211,238,0.4);
+      background: rgba(245,165,36,0.15);
+      border: 1px solid rgba(245,165,36,0.4);
       color: var(--accent-light);
       padding: 0.5rem 1.2rem;
       border-radius: 50px;
@@ -103,20 +102,20 @@ import Layout from '../layouts/Layout.astro';
     .pricing-card:hover {
       transform: translateY(-8px);
       border-color: var(--primary);
-      box-shadow: 0 20px 40px rgba(34,211,238,0.15);
+      box-shadow: 0 20px 40px rgba(245,165,36,0.15);
     }
 
     /* بطاقة VIP مميزة */
     .pricing-card.featured {
       border-color: var(--accent);
       background: linear-gradient(135deg,
-        rgba(34,211,238,0.1),
-        rgba(124,58,237,0.08));
-      box-shadow: 0 0 30px rgba(124,58,237,0.1);
+        rgba(245,165,36,0.1),
+        rgba(217,91,67,0.08));
+      box-shadow: 0 0 30px rgba(217,91,67,0.1);
     }
 
     .pricing-card.featured:hover {
-      box-shadow: 0 20px 50px rgba(124,58,237,0.2);
+      box-shadow: 0 20px 50px rgba(217,91,67,0.2);
       border-color: var(--accent-light);
     }
 
@@ -233,12 +232,12 @@ import Layout from '../layouts/Layout.astro';
     .pricing-btn.primary {
       background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
-      box-shadow: 0 4px 15px rgba(34,211,238,0.3);
+      box-shadow: 0 4px 15px rgba(245,165,36,0.3);
     }
 
     .pricing-btn.primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(124,58,237,0.4);
+      box-shadow: 0 8px 25px rgba(217,91,67,0.4);
     }
 
     .pricing-btn.outline {
@@ -250,7 +249,7 @@ import Layout from '../layouts/Layout.astro';
     .pricing-btn.outline:hover {
       border-color: var(--primary);
       color: var(--white);
-      background: rgba(34,211,238,0.1);
+      background: rgba(245,165,36,0.1);
     }
 
     /* ===== مقارنة الخدمات ===== */
@@ -278,7 +277,7 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .compare-table th {
-      background: rgba(34,211,238,0.15);
+      background: rgba(245,165,36,0.15);
       color: var(--white);
       padding: 1rem 1.5rem;
       font-size: 0.95rem;
@@ -315,7 +314,7 @@ import Layout from '../layouts/Layout.astro';
     .guarantee-card {
       background: linear-gradient(135deg,
         rgba(16,185,129,0.1),
-        rgba(124,58,237,0.08));
+        rgba(217,91,67,0.08));
       border: 1px solid rgba(16,185,129,0.3);
       border-radius: var(--border-radius-lg);
       padding: 2.5rem 2rem;
@@ -344,7 +343,7 @@ import Layout from '../layouts/Layout.astro';
     .pricing-cta {
       padding: 4rem 1.5rem;
       text-align: center;
-      background: rgba(34,211,238,0.05);
+      background: rgba(245,165,36,0.05);
       border-top: 1px solid var(--glass-border);
     }
 
@@ -411,7 +410,7 @@ import Layout from '../layouts/Layout.astro';
     /* ── TASK 14-C: How Pricing Works (detailed block) ───────── */
     .how-pricing {
       padding: 4rem 1.5rem;
-      background: rgba(34,211,238,0.03);
+      background: rgba(245,165,36,0.03);
       border-top: 1px solid var(--glass-border);
       border-bottom: 1px solid var(--glass-border);
     }
@@ -469,7 +468,7 @@ import Layout from '../layouts/Layout.astro';
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(34,211,238,0.3);
+      box-shadow: 0 4px 16px rgba(245,165,36,0.3);
     }
     .ps-body {
       flex: 1;
@@ -494,7 +493,7 @@ import Layout from '../layouts/Layout.astro';
       max-width: 780px;
       margin: 2.5rem auto 0;
       padding: 1.1rem 1.4rem;
-      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(124,58,237,0.05));
+      background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(217,91,67,0.05));
       border: 1px solid rgba(34,197,94,0.25);
       border-radius: var(--border-radius);
       display: flex;
@@ -517,15 +516,15 @@ import Layout from '../layouts/Layout.astro';
     <div class="hero-badge">
       <i class="fas fa-tags"></i> <span data-i18n="pricingHeroBadge">الباقات والأسعار</span>
     </div>
-    <h1><span data-i18n="pricingHeroTitle">اختر الباقة المناسبة لك</span></h1>
-    <p><span data-i18n="pricingHeroDesc">نقدم خدمات مرنة تناسب جميع الاحتياجات — من الطلبات البسيطة إلى الطلبات العاجلة والمميزة</span></p>
+    <h1><span data-i18n="pricingHeroTitle">اختار الباقة اللي تناسبك</span></h1>
+    <p><span data-i18n="pricingHeroDesc">باقات مرنة على قد كل الاحتياجات — من الطلبات البسيطة إلى الطلبات العاجلة والمميزة</span></p>
   </section>
 
   <!-- شريط الثقة عند نقطة القرار -->
   <style>
     .trust-strip { display:flex; flex-wrap:wrap; justify-content:center; gap:0.9rem 2rem; max-width:900px; margin:-1rem auto 2.5rem; padding:1rem 1.5rem; }
     .trust-item { display:inline-flex; align-items:center; gap:0.55rem; font-size:0.92rem; font-weight:600; color:var(--text-main); }
-    .trust-item i { color:var(--lime); font-size:1.05rem; }
+    .trust-item i { color:var(--success-bright); font-size:1.05rem; }
     @media (max-width:560px){ .trust-strip{ flex-direction:column; align-items:center; gap:0.75rem; margin-top:-0.5rem; } }
   </style>
   <div class="trust-strip reveal">
@@ -542,7 +541,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="pricing-card reveal">
         <div class="card-icon">📦</div>
         <div class="card-title"><span data-i18n="planStandardTitle">عادي</span></div>
-        <div class="card-subtitle"><span data-i18n="planStandardSubtitle">مثالي للطلبات غير العاجلة</span></div>
+        <div class="card-subtitle"><span data-i18n="planStandardSubtitle">للطلبات اللي ما فيهاش عجلة</span></div>
 
         <div class="price-box">
           <div class="price-label"><span data-i18n="priceLabel">رسوم الخدمة</span></div>
@@ -560,16 +559,16 @@ import Layout from '../layouts/Layout.astro';
         </ul>
 
         <a data-wa data-wa-key="wa_pricing_standard" class="pricing-btn outline">
-          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">اعرف السعر</span>
         </a>
       </div>
 
       <!-- باقة سريع (الأكثر طلباً) -->
       <div class="pricing-card featured reveal">
-        <div class="popular-badge"><span data-i18n="popularBadge">⭐ الأكثر طلباً</span></div>
+        <div class="popular-badge"><span data-i18n="popularBadge">الأكثر طلباً</span></div>
         <div class="card-icon">🚀</div>
         <div class="card-title"><span data-i18n="planFastTitle">سريع</span></div>
-        <div class="card-subtitle"><span data-i18n="planFastSubtitle">للطلبات التي تحتاج سرعة</span></div>
+        <div class="card-subtitle"><span data-i18n="planFastSubtitle">للطلبات اللي تبيها بسرعة</span></div>
 
         <div class="price-box">
           <div class="price-label">رسوم الخدمة</div>
@@ -587,7 +586,7 @@ import Layout from '../layouts/Layout.astro';
         </ul>
 
         <a data-wa data-wa-key="wa_pricing_fast" class="pricing-btn primary">
-          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">اعرف السعر</span>
         </a>
       </div>
 
@@ -595,7 +594,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="pricing-card reveal">
         <div class="card-icon">👑</div>
         <div class="card-title"><span data-i18n="planVipTitle">VIP</span></div>
-        <div class="card-subtitle"><span data-i18n="planVipSubtitle">خدمة مميزة بلا حدود</span></div>
+        <div class="card-subtitle"><span data-i18n="planVipSubtitle">خدمة ما فيهاش حدود</span></div>
 
         <div class="price-box">
           <div class="price-label">رسوم الخدمة</div>
@@ -613,7 +612,7 @@ import Layout from '../layouts/Layout.astro';
         </ul>
 
         <a data-wa data-wa-key="wa_pricing_vip" class="pricing-btn outline">
-          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">احصل على سعر</span>
+          <i class="fab fa-whatsapp"></i> <span data-i18n="pricingGetPrice">اعرف السعر</span>
         </a>
       </div>
 
@@ -640,7 +639,7 @@ import Layout from '../layouts/Layout.astro';
           <td>نفس اليوم</td>
         </tr>
         <tr>
-          <td>تتبع عبر واتساب</td>
+          <td>اسأل على طلبك في الواتساب</td>
           <td><i class="fas fa-check check"></i></td>
           <td><i class="fas fa-check check"></i></td>
           <td><i class="fas fa-check check"></i></td>
@@ -708,7 +707,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="ps-num"><i class="fas fa-search"></i></div>
         <div class="ps-body">
           <h4><i class="fas fa-circle-dot"></i> الخطوة الأولى: نبحث عن المنتج مجاناً</h4>
-          <p>بعد استلام طلبك، يبدأ فريق دورلي البحث عن المنتج أو الخدمة في جميع المدن الليبية.
+          <p>بعد نستلموا طلبك، يبدأ فريق دورلي البحث عن المنتج أو الخدمة في جميع المدن الليبية.
              <strong style="color:var(--white);">لا تدفع شيئاً لمجرد البحث.</strong></p>
         </div>
       </div>
@@ -756,7 +755,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- CTA -->
   <section class="pricing-cta">
     <h2>مش متأكد أي باقة تناسبك؟</h2>
-    <p>تواصل معنا مباشرة وسنساعدك تختار الأنسب لطلبك</p>
+    <p>كلمنا مباشرة وسنساعدك تختار الأنسب لطلبك</p>
     <div class="cta-buttons">
       <a data-wa data-wa-key="wa_pricing_help" class="cta-btn whatsapp">
         <i class="fab fa-whatsapp"></i> تحدث معنا الآن
@@ -767,7 +766,7 @@ import Layout from '../layouts/Layout.astro';
       <!-- TASK 10: Sandbox payment test link (remove in production) -->
       <a href="/checkout?ref=TEST-SANDBOX&cat=توصيل+عادي&city=بنغازي&fee=20&desc=اختبار+بوابة+الدفع"
          class="cta-btn"
-         style="background:linear-gradient(135deg,rgba(34,211,238,0.3),rgba(124,58,237,0.3));border:1px solid var(--primary);color:var(--accent-light);"
+         style="background:linear-gradient(135deg,rgba(245,165,36,0.3),rgba(217,91,67,0.3));border:1px solid var(--primary);color:var(--accent-light);"
          title="بيئة تجريبية — لن يتم خصم أي مبلغ">
         <i class="fas fa-credit-card"></i> 🧪 جرب الدفع الإلكتروني (Sandbox)
       </a>
