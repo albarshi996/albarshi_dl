@@ -1,0 +1,241 @@
+---
+// لوحة التحكم — سجل العملاء: بحث، ترقيم، إضافة/تعديل/حذف، عدد الطلبات وآخر طلب لكل عميل.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="العملاء" portal="admin" page="customers">
+  <div slot="actions">
+    <button type="button" class="icon-btn" id="refreshBtn" title="تحديث" aria-label="تحديث"><i class="fas fa-rotate-right"></i></button>
+  </div>
+  <div id="toolbar"></div>
+  <div id="list"></div>
+  <div id="pager"></div>
+</AdminLayout>
+
+<style is:global>
+  /* عام (لا scoped) لأن الصفوف تُبنى بـ innerHTML بعد التحميل */
+  .notes-cell { color: var(--muted); max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cell-sub { display: block; color: var(--muted-2); font-size: .78rem; }
+  .table td.actions .btn + .btn { margin-right: .35rem; }
+</style>
+
+<script>
+  (async () => {
+    const { db, ui, sb, profile } = await window.dawerliReady;
+    if (!sb || !profile) return; // غير مهيأ أو محجوب — التخطيط عرض الرسالة المناسبة
+
+    const { esc, formatDate } = db;
+    const PAGE_SIZE = 25;
+    const state = { page: 1, q: '' };
+    let reqId = 0;
+
+    const listEl = document.getElementById('list');
+    const pagerEl = document.getElementById('pager');
+    const toolbarEl = document.getElementById('toolbar');
+
+    // ───────── أدوات محلية ─────────
+    const cleanTerm = s => String(s || '').replace(/[,()"'\\%]/g, ' ').replace(/\s+/g, ' ').trim();
+    // أرقام عربية → لاتينية، إزالة الفواصل، و +218/00218 → 0 (نفس normalize_phone في القاعدة)
+    const normPhone = s => String(s || '')
+      .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+      .replace(/[\s\-()]/g, '')
+      .replace(/^(\+?218|00218)/, '0');
+    const looksLikePhone = s => /^[\d٠-٩\s+\-]+$/.test(s);
+    const truncate = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+
+    function waHref(phone) {
+      let d = String(phone || '').replace(/\D/g, '');
+      if (!d) return '';
+      if (d.startsWith('00')) d = d.slice(2);
+      if (d.startsWith('0')) d = '218' + d.slice(1);
+      else if (!d.startsWith('218')) d = '218' + d;
+      return 'https://wa.me/' + d;
+    }
+
+    /**
+     * نموذج سجل داخل نافذة — نفس حقول ui.form (عبر ui.fieldHtml) مع زر حذف في التذييل.
+     * يُرجع Promise<values | {deleted:true} | null>.
+     */
+    function recordForm({ title, fields, values = {}, submitText = 'حفظ', onSubmit, onDelete, confirmDelete = '', wide = false }) {
+      return new Promise(resolve => {
+        const body = `<form class="form-grid" novalidate>${fields.map(f => ui.fieldHtml(f, values[f.name])).join('')}
+          <p class="form-error" data-error hidden></p></form>`;
+        const footer = `<button type="button" class="btn btn-ghost" data-close>إلغاء</button>
+          <button type="button" class="btn btn-primary" data-submit>${esc(submitText)}</button>
+          ${onDelete ? '<button type="button" class="btn btn-danger" data-delete style="margin-left:auto"><i class="fas fa-trash"></i> حذف</button>' : ''}`;
+        const m = ui.modal({ title, body, footer, wide });
+        const form = m.querySelector('form');
+        const errEl = m.querySelector('[data-error]');
+        const showErr = msg => { errEl.textContent = msg; errEl.hidden = false; };
+        let done = false;
+        const finish = val => { done = true; m.close(); resolve(val); };
+
+        const collect = () => {
+          const out = {};
+          for (const f of fields) {
+            const input = form.elements[f.name];
+            if (!input) continue;
+            let v = f.type === 'checkbox' ? input.checked : String(input.value ?? '').trim();
+            if (f.type === 'number') v = v === '' ? null : Number(v);
+            if (f.type === 'tags') v = v ? v.split(/[،,]/).map(s => s.trim()).filter(Boolean) : [];
+            if (f.required && (v === '' || v === null || (Array.isArray(v) && !v.length))) {
+              showErr(`حقل "${f.label}" مطلوب.`); input.focus(); return null;
+            }
+            out[f.name] = v === '' ? null : v;
+          }
+          return out;
+        };
+        const submit = async () => {
+          const out = collect();
+          if (!out) return;
+          errEl.hidden = true;
+          const btn = m.querySelector('[data-submit]');
+          btn.disabled = true;
+          try { await onSubmit(out, m); finish(out); }
+          catch (e) { showErr(db.friendlyError(e)); }
+          finally { btn.disabled = false; }
+        };
+        m.querySelector('[data-submit]').addEventListener('click', submit);
+        form.addEventListener('submit', e => { e.preventDefault(); submit(); });
+
+        const delBtn = m.querySelector('[data-delete]');
+        if (delBtn) delBtn.addEventListener('click', async () => {
+          const ok = await ui.confirm(confirmDelete || 'حذف هذا السجل نهائياً؟', { okText: 'نعم، احذف', danger: true });
+          if (!ok) return;
+          delBtn.disabled = true;
+          try { await onDelete(); finish({ deleted: true }); }
+          catch (e) { showErr(db.friendlyError(e)); delBtn.disabled = false; }
+        });
+        m.addEventListener('closed', () => { if (!done) resolve(null); }, { once: true });
+      });
+    }
+
+    // ───────── التحميل والعرض ─────────
+    async function load() {
+      const my = ++reqId;
+      listEl.innerHTML = ui.skeleton(6);
+      pagerEl.innerHTML = '';
+      try {
+        const from = (state.page - 1) * PAGE_SIZE;
+        let query = sb.from('customers')
+          .select('*', { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1);
+        let q = cleanTerm(state.q);
+        if (looksLikePhone(q)) q = normPhone(q); // بحث برقم: تجاهل المسافات والشرطات ورمز الدولة
+        if (q) query = query.or(`name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%`);
+        const { data: rowsData, error, count } = await query;
+        if (error) throw error;
+        if (my !== reqId) return;
+        const data = rowsData || [];
+        const total = count || 0;
+        // لو صارت الصفحة خارج النطاق (بعد حذف أو بحث) ارجع لآخر صفحة
+        if (!data.length && total > 0 && state.page > 1) {
+          state.page = Math.max(1, Math.ceil(total / PAGE_SIZE));
+          return load();
+        }
+
+        // استعلام واحد إضافي لطلبات عملاء هذه الصفحة ثم تجميع في المتصفح
+        const stats = {};
+        if (data.length) {
+          const ids = data.map(r => r.id);
+          const { data: ords, error: oErr } = await sb.from('orders').select('customer_id, created_at').in('customer_id', ids);
+          if (my !== reqId) return;
+          if (oErr) ui.toast('تعذّر تحميل عدد الطلبات: ' + db.friendlyError(oErr), 'err');
+          for (const o of (ords || [])) {
+            if (!stats[o.customer_id]) stats[o.customer_id] = { n: 0, last: null };
+            const s = stats[o.customer_id];
+            s.n += 1;
+            if (!s.last || o.created_at > s.last) s.last = o.created_at;
+          }
+        }
+        render(data, total, stats);
+      } catch (e) {
+        if (my !== reqId) return;
+        const msg = db.friendlyError(e);
+        listEl.innerHTML = `<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(msg)}</div></div>`;
+        ui.toast(msg, 'err');
+      }
+    }
+
+    function render(rows, total, stats) {
+      const q = cleanTerm(state.q);
+      const columns = [
+        { key: 'name', label: 'الاسم', render: r => `<strong>${esc(r.name)}</strong>` },
+        { key: 'phone', label: 'الهاتف', class: 'num', render: r => `<span class="ltr mono">${esc(r.phone)}</span>` },
+        { key: 'city', label: 'المدينة', render: r => esc(r.city || '—') },
+        { key: 'orders', label: 'عدد الطلبات', class: 'num', render: r => esc(String((stats[r.id] || {}).n || 0)) },
+        { key: 'last', label: 'آخر طلب', render: r => { const s = stats[r.id]; return s && s.last ? esc(formatDate(s.last)) : '<span class="muted">—</span>'; } },
+        { key: 'notes', label: 'ملاحظات', render: r => r.notes ? `<span class="notes-cell" title="${esc(r.notes)}">${esc(truncate(r.notes, 40))}</span>` : '<span class="muted">—</span>' },
+        { key: 'actions', label: '', class: 'actions', render: r => {
+          const wa = waHref(r.phone);
+          return `${wa ? `<a class="btn btn-wa btn-sm" href="${esc(wa)}" target="_blank" rel="noopener" title="واتساب"><i class="fab fa-whatsapp"></i></a>` : ''}
+            <a class="btn btn-ghost btn-sm" href="/admin/orders/?q=${esc(encodeURIComponent(r.phone || ''))}" title="عرض طلبات العميل"><i class="fas fa-box-open"></i> عرض الطلبات</a>`;
+        } },
+      ];
+      const table = ui.table({
+        columns, rows,
+        empty: q ? `ما لقيناش عميل يطابق "${q}".` : 'لا يوجد عملاء بعد — يُضاف العميل تلقائياً مع أول طلب، أو أضفه يدوياً.',
+        onRow: row => openForm(row),
+      });
+      listEl.innerHTML = '';
+      listEl.appendChild(table);
+      pagerEl.innerHTML = '';
+      if (total > 0) pagerEl.appendChild(ui.pager({ page: state.page, pageSize: PAGE_SIZE, total, onPage: p => { state.page = p; load(); } }));
+    }
+
+    // ───────── إضافة / تعديل / حذف ─────────
+    const fields = [
+      { name: 'name',  label: 'الاسم', required: true, placeholder: 'اسم العميل' },
+      { name: 'phone', label: 'الهاتف', type: 'tel', required: true, placeholder: '09XXXXXXXX', inputmode: 'tel' },
+      { name: 'city',  label: 'المدينة', placeholder: 'بنغازي، جالو، طرابلس…' },
+      { name: 'notes', label: 'ملاحظات', type: 'textarea', rows: 3, placeholder: 'ملاحظات داخلية عن العميل' },
+    ];
+
+    async function openForm(row) {
+      const isEdit = !!row;
+      const result = await recordForm({
+        title: isEdit ? `تعديل العميل: ${row.name}` : 'إضافة عميل',
+        fields,
+        values: row || {},
+        submitText: isEdit ? 'حفظ التعديلات' : 'إضافة',
+        confirmDelete: isEdit ? `حذف العميل "${row.name}"؟ طلباته السابقة تبقى في السجل لكن بدون ربط به.` : '',
+        onSubmit: async out => {
+          const phone = normPhone(out.phone);
+          if (!/^09\d{8}$/.test(phone)) throw new Error('رقم الهاتف لازم يكون ليبي صحيح — 10 أرقام ويبدا بـ 09.');
+          const payload = { name: out.name, phone, city: out.city, notes: out.notes };
+          const { error } = isEdit
+            ? await sb.from('customers').update(payload).eq('id', row.id)
+            : await sb.from('customers').insert(payload);
+          if (error) {
+            if (error.code === '23505') throw new Error('رقم الهاتف مسجّل لعميل آخر.');
+            throw error;
+          }
+        },
+        onDelete: isEdit ? async () => {
+          const { error } = await sb.from('customers').delete().eq('id', row.id);
+          if (error) throw error;
+        } : null,
+      });
+      if (!result) return;
+      if (result.deleted) ui.toast('تم حذف العميل.', 'ok');
+      else ui.toast(isEdit ? 'تم حفظ التعديلات.' : 'تمت إضافة العميل.', 'ok');
+      load();
+    }
+
+    // ───────── التهيئة ─────────
+    const tb = ui.toolbar({
+      placeholder: 'بحث بالاسم أو الهاتف أو المدينة…',
+      buttons: '<button type="button" class="btn btn-primary" data-add><i class="fas fa-plus"></i> إضافة عميل</button>',
+    });
+    toolbarEl.appendChild(tb.el);
+    tb.el.querySelector('[data-add]').addEventListener('click', () => openForm(null));
+    let timer = null;
+    tb.input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { state.q = tb.input.value; state.page = 1; load(); }, 300);
+    });
+    document.getElementById('refreshBtn')?.addEventListener('click', () => load());
+
+    load();
+  })();
+</script>

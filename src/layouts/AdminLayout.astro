@@ -1,0 +1,162 @@
+---
+// تخطيط لوحة التحكم وبوابة المندوبين — noindex، RTL، حارس مصادقة.
+// Props:
+//   title   عنوان الصفحة
+//   portal  'admin' | 'delegate'   (يحدد الدور المطلوب وقائمة التنقل)
+//   page    مفتاح الصفحة الحالية (للتمييز في القائمة) — 'login' يعني صفحة دخول بلا حارس
+interface Props { title: string; portal: 'admin' | 'delegate'; page: string; }
+const { title, portal, page } = Astro.props;
+
+import '@fontsource/rubik/400.css';
+import '@fontsource/rubik/500.css';
+import '@fontsource/rubik/700.css';
+import '@fontsource/rubik/900.css';
+
+const adminNav = [
+  { key: 'overview',  href: '/admin/',          icon: 'fa-gauge-high',     label: 'نظرة عامة' },
+  { key: 'orders',    href: '/admin/orders/',   icon: 'fa-box-open',       label: 'الطلبات' },
+  { key: 'customers', href: '/admin/customers/',icon: 'fa-users',          label: 'العملاء' },
+  { key: 'merchants', href: '/admin/merchants/',icon: 'fa-store',          label: 'التجار' },
+  { key: 'suppliers', href: '/admin/suppliers/',icon: 'fa-truck-field',    label: 'الموردون' },
+  { key: 'products',  href: '/admin/products/', icon: 'fa-tags',           label: 'المنتجات' },
+  { key: 'delegates', href: '/admin/delegates/',icon: 'fa-id-badge',       label: 'المندوبون' },
+];
+const delegateNav = [
+  { key: 'pool',      href: '/delegate/',        icon: 'fa-magnifying-glass', label: 'طلبات متاحة' },
+  { key: 'mine',      href: '/delegate/mine/',   icon: 'fa-clipboard-check',  label: 'طلباتي' },
+];
+const nav = portal === 'admin' ? adminNav : delegateNav;
+const loginHref = portal === 'admin' ? '/admin/login/' : '/delegate/login/';
+const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بوابة مندوبي دورلي';
+---
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" style="background-color:#14100B;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#14100B">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>{title} · {portalTitle}</title>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/admin.css">
+  <script is:inline>
+    // وعد الجاهزية: تُحلّه طبقة المصادقة أدناه بـ { db, ui, sb, profile }. سكربتات الصفحات تنتظره.
+    window.dawerliReady = new Promise(function (resolve) { window.__dawerliResolveReady = resolve; });
+  </script>
+</head>
+<body data-portal={portal} data-page={page}>
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar">
+      <a href={portal === 'admin' ? '/admin/' : '/delegate/'} class="brand">
+        <img src="/favicon.svg" alt="" width="34" height="34">
+        <span>{portalTitle}</span>
+      </a>
+      <nav class="side-nav">
+        {nav.map(n => (
+          <a href={n.href} class={page === n.key ? 'active' : ''}><i class={`fas ${n.icon}`}></i> <span>{n.label}</span></a>
+        ))}
+        <a href="/" class="muted"><i class="fas fa-arrow-up-right-from-square"></i> <span>الموقع العام</span></a>
+      </nav>
+      <div class="side-user" id="sideUser">
+        <div class="side-user-name" id="userName">…</div>
+        <div class="side-user-role" id="userRole"></div>
+        <button type="button" class="btn btn-ghost btn-sm" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> خروج</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="القائمة"><i class="fas fa-bars"></i></button>
+        <h1 class="page-title">{title}</h1>
+        <div class="topbar-actions" id="topbarActions"><slot name="actions" /></div>
+      </header>
+      <main class="content" id="content">
+        <div id="gate" class="gate" hidden></div>
+        <div id="pageBody" class="page-body">
+          <slot />
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+  <script>
+    import * as db from '../lib/db.js';
+    import { ui } from '../lib/admin-ui.js';
+
+    const body = document.body;
+    const portal = body.dataset.portal;
+    const page = body.dataset.page;
+    const isLogin = page === 'login';
+    const loginHref = portal === 'admin' ? '/admin/login/' : '/delegate/login/';
+    const gate = document.getElementById('gate');
+    const pageBody = document.getElementById('pageBody');
+
+    function showGate(html) {
+      gate.innerHTML = html;
+      gate.hidden = false;
+      pageBody.hidden = true;
+    }
+
+    document.getElementById('menuBtn')?.addEventListener('click', () => body.classList.toggle('nav-open'));
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+      await db.signOut();
+      location.replace(loginHref);
+    });
+
+    (async () => {
+      if (!db.isConfigured()) {
+        showGate(ui.setupNoticeHtml());
+        window.__dawerliResolveReady({ db, ui, sb: null, profile: null });
+        return;
+      }
+      const sb = await db.getClient();
+      if (isLogin) {
+        const session = await db.getSession();
+        if (session) {
+          const profile = await db.getProfile().catch(() => null);
+          if (profile && (profile.role === 'admin' || (portal === 'delegate' && profile.role !== 'admin'))) {
+            location.replace(portal === 'admin' ? '/admin/' : '/delegate/');
+            return;
+          }
+        }
+        window.__dawerliResolveReady({ db, ui, sb, profile: null });
+        return;
+      }
+
+      const session = await db.getSession();
+      if (!session) { location.replace(loginHref); return; }
+      let profile = null;
+      try { profile = await db.getProfile(); } catch (e) { console.error(e); }
+      if (!profile) {
+        showGate(ui.gateHtml('تعذّر تحميل ملفك الشخصي', 'جرّب تحديث الصفحة أو سجّل الدخول من جديد.', loginHref));
+        return;
+      }
+
+      document.getElementById('userName').textContent = profile.full_name || profile.email || '';
+      document.getElementById('userRole').textContent = db.ROLE_LABELS[profile.role] || profile.role;
+
+      if (portal === 'admin' && profile.role !== 'admin') {
+        showGate(ui.gateHtml('هذه الصفحة للإدارة فقط', 'حسابك ليس حساب مدير. إن كنت مندوباً فبوابتك هنا:', '/delegate/', 'بوابة المندوبين'));
+        return;
+      }
+      if (portal === 'delegate' && profile.role === 'pending') {
+        showGate(ui.gateHtml('حسابك بانتظار الاعتماد', 'استلمنا تسجيلك. فريق دورلي سيعتمد حسابك قريباً، وبعدها تقدر تشوف الطلبات المتاحة وتحجز منها.', null));
+        return;
+      }
+      if (portal === 'delegate' && !profile.active) {
+        showGate(ui.gateHtml('حسابك موقوف', 'كلّم الإدارة لتفعيل حسابك من جديد.', null));
+        return;
+      }
+      body.classList.add('is-' + profile.role);
+      window.__dawerliResolveReady({ db, ui, sb, profile });
+    })();
+  </script>
+</body>
+</html>

@@ -3,6 +3,8 @@
 
 User-agent: *
 Allow: /
+Disallow: /checkout
+Disallow: /admin
+Disallow: /delegate
 
-# السماح لجميع محركات البحث بالوصول
-Sitemap: https://dawerli.org.ly/sitemap.xml
+Sitemap: https://dawerli.org.ly/sitemap-index.xml

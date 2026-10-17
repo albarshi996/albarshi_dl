@@ -1,0 +1,151 @@
+---
+// النظرة العامة: مؤشرات سريعة من admin_stats (v2)، توزيع الحالات، وآخر الطلبات.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="نظرة عامة" portal="admin" page="overview">
+  <Fragment slot="actions">
+    <button type="button" class="btn btn-ghost btn-sm" id="refreshBtn" aria-label="تحديث"><i class="fas fa-rotate"></i></button>
+    <a class="btn btn-primary btn-sm" href="/admin/orders/?new=1"><i class="fas fa-plus"></i> طلب جديد</a>
+  </Fragment>
+
+  <section class="stats" id="stats" aria-label="المؤشرات"></section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>الطلبات حسب الحالة</h2>
+      <a class="muted" href="/admin/orders/">كل الطلبات <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div class="chips" id="byStatus"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>آخر 10 طلبات</h2>
+      <a class="muted" href="/admin/orders/?unassigned=1">بلا مندوب <i class="fas fa-arrow-left"></i></a>
+    </div>
+    <div id="latest"></div>
+  </section>
+</AdminLayout>
+
+<style is:global>
+  .stat-link { display: block; color: inherit; }
+  .stat-link .stat { height: 100%; transition: border-color var(--dur), transform var(--dur) var(--ease); }
+  .stat-link:hover .stat { border-color: rgba(245,165,36,.4); transform: translateY(-2px); }
+  .stat-skel { height: 80px; border-radius: var(--r-lg); }
+  .stat.danger .stat-icon { background: rgba(239,68,68,.14); color: #FCA5A5; }
+  .stat-value small { font-size: .8rem; font-weight: 600; color: var(--muted); margin-right: .25rem; }
+  .chip .cnt { opacity: .75; font-weight: 500; margin-right: .3rem; }
+  .cust { display: flex; flex-direction: column; line-height: 1.3; }
+  .cust small { font-size: .78rem; }
+  .nowrap { white-space: nowrap; }
+  #byStatus .chip { cursor: pointer; }
+</style>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb, profile } = await window.dawerliReady;
+  if (sb && profile) init();
+
+  function init() {
+    const esc = db.esc;
+    const statsEl = document.getElementById('stats');
+    const byStatusEl = document.getElementById('byStatus');
+    const latestEl = document.getElementById('latest');
+    const STATUSES = [...db.STATUS_FLOW, 'cancelled'];
+    // orders له ثلاثة مفاتيح أجنبية نحو profiles → التضمين يجب أن يكون صريحاً
+    const LATEST_SELECT = 'id,code,customer_name,customer_phone,city,category,urgency,status,total,created_at,delegate:profiles!orders_delegate_id_fkey(full_name,email)';
+
+    document.getElementById('refreshBtn').addEventListener('click', load);
+    load();
+
+    async function load() {
+      statsEl.innerHTML = Array.from({ length: 12 }, () => '<div class="skeleton stat-skel"></div>').join('');
+      byStatusEl.innerHTML = ui.skeleton(1);
+      latestEl.innerHTML = ui.skeleton(6);
+
+      const [stats, latest] = await Promise.all([
+        db.adminStats().catch(e => { ui.toast(db.friendlyError(e), 'err'); return null; }),
+        sb.from('orders').select(LATEST_SELECT).order('created_at', { ascending: false }).limit(10)
+          .then(({ data, error }) => { if (error) throw error; return data || []; })
+          .catch(e => { ui.toast(db.friendlyError(e), 'err'); return null; }),
+      ]);
+
+      renderStats(stats);
+      renderByStatus(stats);
+      renderLatest(latest);
+    }
+
+    function renderStats(s) {
+      // admin_stats تُرجع null لغير المدير — الحارس في التخطيط يمنع الوصول أصلاً، لكن نحتاط
+      if (!s) {
+        statsEl.innerHTML = '<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>تعذّر تحميل المؤشرات.</div></div>';
+        return;
+      }
+      const n = k => Number(s[k] || 0).toLocaleString('en-US');
+      const hours = s.avg_delivery_hours;
+      const hoursText = hours === null || hours === undefined || Number.isNaN(Number(hours))
+        ? '—'
+        : Number(hours).toLocaleString('en-US', { maximumFractionDigits: 1 });
+      const tiles = [
+        { label: 'طلبات اليوم',          value: n('today'),           icon: 'fa-calendar-day',  href: '/admin/orders/' },
+        { label: 'طلبات مفتوحة',         value: n('open'),            icon: 'fa-box-open',      tone: 'accent',  href: '/admin/orders/' },
+        { label: 'بلا مندوب',            value: n('unassigned'),      icon: 'fa-user-slash',    tone: 'accent',  href: '/admin/orders/?unassigned=1' },
+        { label: 'وصلت هذا الشهر',       value: n('delivered_month'), icon: 'fa-circle-check',  tone: 'success', href: '/admin/orders/?status=delivered' },
+        { label: 'رسوم هذا الشهر',       value: db.formatMoney(s.fees_month), icon: 'fa-coins', tone: 'success' },
+        { label: 'ملغية هذا الشهر',      value: n('cancelled_month'), icon: 'fa-ban',           tone: 'danger',  href: '/admin/orders/?status=cancelled' },
+        { label: 'متوسط التسليم (ساعة)', value: hoursText,            icon: 'fa-stopwatch',     tone: 'info' },
+        { label: 'العملاء',              value: n('customers'),       icon: 'fa-users',         tone: 'info',    href: '/admin/customers/' },
+        { label: 'التجار',               value: n('merchants'),       icon: 'fa-store',         tone: 'info',    href: '/admin/merchants/' },
+        { label: 'الموردون',             value: n('suppliers'),       icon: 'fa-truck-field',   tone: 'info',    href: '/admin/suppliers/' },
+        { label: 'المنتجات',             value: n('products'),        icon: 'fa-tags',          tone: 'info',    href: '/admin/products/' },
+      ];
+      let html = tiles.map(t => t.href
+        ? `<a class="stat-link" href="${esc(t.href)}">${ui.statTile(t)}</a>`
+        : ui.statTile(t)).join('');
+
+      // بلاطة المندوبين بانتظار الاعتماد تُبنى يدوياً لإدراج عدّاد .pill-count
+      const pend = Number(s.pending_delegates || 0);
+      html += `<a class="stat-link" href="/admin/delegates/">
+        <div class="stat ${pend ? 'accent' : ''}">
+          <div class="stat-icon"><i class="fas fa-id-badge"></i></div>
+          <div>
+            <div class="stat-value">${esc(pend.toLocaleString('en-US'))}${pend ? ' <span class="pill-count">بانتظارك</span>' : ''}</div>
+            <div class="stat-label">مندوبون بانتظار الاعتماد</div>
+          </div>
+        </div></a>`;
+      statsEl.innerHTML = html;
+    }
+
+    function renderByStatus(s) {
+      if (!s) { byStatusEl.innerHTML = '<span class="muted">—</span>'; return; }
+      const by = s.by_status || {};
+      const all = Object.values(by).reduce((a, b) => a + Number(b || 0), 0);
+      const chip = (key, label, count) =>
+        `<a class="chip" href="/admin/orders/${key === 'all' ? '' : '?status=' + esc(key)}">${esc(label)} <span class="cnt">${esc(Number(count || 0).toLocaleString('en-US'))}</span></a>`;
+      byStatusEl.innerHTML = chip('all', 'الكل', all) + STATUSES.map(st => chip(st, db.STATUS_LABELS[st], by[st])).join('');
+    }
+
+    function renderLatest(rows) {
+      if (!rows) {
+        latestEl.innerHTML = '<div class="empty"><i class="fas fa-triangle-exclamation"></i>تعذّر تحميل الطلبات.</div>';
+        return;
+      }
+      const columns = [
+        { key: 'code', label: 'الرقم', render: r => `<span class="mono ltr">${esc(r.code)}</span>` },
+        { key: 'customer_name', label: 'الزبون', render: r => `<div class="cust"><span>${esc(r.customer_name)}</span><small class="muted ltr">${esc(r.customer_phone)}</small></div>` },
+        { key: 'city', label: 'المدينة' },
+        { key: 'category', label: 'النوع' },
+        { key: 'urgency', label: 'الاستعجال', render: r => `<span class="urg-${esc(r.urgency)}">${esc(r.urgency)}</span>` },
+        { key: 'status', label: 'الحالة', render: r => ui.statusBadge(r.status) },
+        { key: 'delegate', label: 'المندوب', render: r => r.delegate && (r.delegate.full_name || r.delegate.email) ? esc(r.delegate.full_name || r.delegate.email) : '<span class="muted">—</span>' },
+        { key: 'total', label: 'الإجمالي', class: 'num', render: r => esc(db.formatMoney(r.total)) },
+        { key: 'created_at', label: 'التاريخ', render: r => `<span class="muted nowrap">${esc(db.formatDate(r.created_at))}</span>` },
+      ];
+      latestEl.replaceChildren(ui.table({
+        columns, rows,
+        empty: 'ما فيش طلبات بعد — أول طلب يوصل من الموقع يظهر هنا.',
+        onRow: r => { location.href = '/admin/orders/?id=' + encodeURIComponent(r.id); },
+      }));
+    }
+  }
+</script>

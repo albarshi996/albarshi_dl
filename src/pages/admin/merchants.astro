@@ -1,0 +1,244 @@
+---
+// لوحة التحكم — سجل التجار (المحلات الشريكة): بحث، ترقيم، إضافة/تعديل/حذف، تفعيل/إيقاف.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="التجار" portal="admin" page="merchants">
+  <div slot="actions">
+    <button type="button" class="icon-btn" id="refreshBtn" title="تحديث" aria-label="تحديث"><i class="fas fa-rotate-right"></i></button>
+  </div>
+  <div id="toolbar"></div>
+  <div id="list"></div>
+  <div id="pager"></div>
+</AdminLayout>
+
+<style is:global>
+  /* عام (لا scoped) لأن الصفوف تُبنى بـ innerHTML بعد التحميل */
+  .cell-main { min-width: 0; }
+  .notes-cell { color: var(--muted); max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-off td { opacity: .6; }
+</style>
+
+<script>
+  (async () => {
+    const { db, ui, sb, profile } = await window.dawerliReady;
+    if (!sb || !profile) return; // غير مهيأ أو محجوب — التخطيط عرض الرسالة المناسبة
+
+    const { esc } = db;
+    const PAGE_SIZE = 25;
+    const state = { page: 1, q: '' };
+    let reqId = 0;
+
+    // قائمة الأنشطة = فئات الموقع + أخرى (تطابق قائمة صفحة الطلب)
+    const CATEGORIES = [
+      'قطع غيار سيارات', 'قطع غيار شاحنات', 'مواد غذائية وحلويات', 'أوراق ومستندات', 'مستلزمات أفراح',
+      'ملابس وأزياء', 'تجميل ونظافة', 'مواد بناء وصيانة', 'إلكترونيات', 'عقارات', 'بضائع جملة', 'أخرى',
+    ];
+
+    const listEl = document.getElementById('list');
+    const pagerEl = document.getElementById('pager');
+    const toolbarEl = document.getElementById('toolbar');
+
+    // ───────── أدوات محلية ─────────
+    const cleanTerm = s => String(s || '').replace(/[,()"'\\%]/g, ' ').replace(/\s+/g, ' ').trim();
+    // أرقام عربية → لاتينية، إزالة الفواصل، و +218/00218 → 0 (نفس normalize_phone في القاعدة)
+    const normPhone = s => String(s || '')
+      .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+      .replace(/[\s\-()]/g, '')
+      .replace(/^(\+?218|00218)/, '0');
+    const looksLikePhone = s => /^[\d٠-٩\s+\-]+$/.test(s);
+    const truncate = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+    const activeBadge = a => a ? '<span class="badge st-delivered">نشط</span>' : '<span class="badge off">موقوف</span>';
+
+    function waHref(phone) {
+      let d = String(phone || '').replace(/\D/g, '');
+      if (!d) return '';
+      if (d.startsWith('00')) d = d.slice(2);
+      if (d.startsWith('0')) d = '218' + d.slice(1);
+      else if (!d.startsWith('218')) d = '218' + d;
+      return 'https://wa.me/' + d;
+    }
+
+    /**
+     * نموذج سجل داخل نافذة — نفس حقول ui.form (عبر ui.fieldHtml) مع زر حذف في التذييل.
+     * يُرجع Promise<values | {deleted:true} | null>.
+     */
+    function recordForm({ title, fields, values = {}, submitText = 'حفظ', onSubmit, onDelete, confirmDelete = '', wide = false }) {
+      return new Promise(resolve => {
+        const body = `<form class="form-grid" novalidate>${fields.map(f => ui.fieldHtml(f, values[f.name])).join('')}
+          <p class="form-error" data-error hidden></p></form>`;
+        const footer = `<button type="button" class="btn btn-ghost" data-close>إلغاء</button>
+          <button type="button" class="btn btn-primary" data-submit>${esc(submitText)}</button>
+          ${onDelete ? '<button type="button" class="btn btn-danger" data-delete style="margin-left:auto"><i class="fas fa-trash"></i> حذف</button>' : ''}`;
+        const m = ui.modal({ title, body, footer, wide });
+        const form = m.querySelector('form');
+        const errEl = m.querySelector('[data-error]');
+        const showErr = msg => { errEl.textContent = msg; errEl.hidden = false; };
+        let done = false;
+        const finish = val => { done = true; m.close(); resolve(val); };
+
+        const collect = () => {
+          const out = {};
+          for (const f of fields) {
+            const input = form.elements[f.name];
+            if (!input) continue;
+            let v = f.type === 'checkbox' ? input.checked : String(input.value ?? '').trim();
+            if (f.type === 'number') v = v === '' ? null : Number(v);
+            if (f.type === 'tags') v = v ? v.split(/[،,]/).map(s => s.trim()).filter(Boolean) : [];
+            if (f.required && (v === '' || v === null || (Array.isArray(v) && !v.length))) {
+              showErr(`حقل "${f.label}" مطلوب.`); input.focus(); return null;
+            }
+            out[f.name] = v === '' ? null : v;
+          }
+          return out;
+        };
+        const submit = async () => {
+          const out = collect();
+          if (!out) return;
+          errEl.hidden = true;
+          const btn = m.querySelector('[data-submit]');
+          btn.disabled = true;
+          try { await onSubmit(out, m); finish(out); }
+          catch (e) { showErr(db.friendlyError(e)); }
+          finally { btn.disabled = false; }
+        };
+        m.querySelector('[data-submit]').addEventListener('click', submit);
+        form.addEventListener('submit', e => { e.preventDefault(); submit(); });
+
+        const delBtn = m.querySelector('[data-delete]');
+        if (delBtn) delBtn.addEventListener('click', async () => {
+          const ok = await ui.confirm(confirmDelete || 'حذف هذا السجل نهائياً؟', { okText: 'نعم، احذف', danger: true });
+          if (!ok) return;
+          delBtn.disabled = true;
+          try { await onDelete(); finish({ deleted: true }); }
+          catch (e) { showErr(db.friendlyError(e)); delBtn.disabled = false; }
+        });
+        m.addEventListener('closed', () => { if (!done) resolve(null); }, { once: true });
+      });
+    }
+
+    // ───────── التحميل والعرض ─────────
+    async function load() {
+      const my = ++reqId;
+      listEl.innerHTML = ui.skeleton(6);
+      pagerEl.innerHTML = '';
+      try {
+        const from = (state.page - 1) * PAGE_SIZE;
+        let query = sb.from('merchants')
+          .select('*', { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1);
+        let q = cleanTerm(state.q);
+        if (looksLikePhone(q)) q = normPhone(q);
+        if (q) query = query.or(`name.ilike.%${q}%,owner_name.ilike.%${q}%,phone.ilike.%${q}%,city.ilike.%${q}%`);
+        const { data: rowsData, error, count } = await query;
+        if (error) throw error;
+        if (my !== reqId) return;
+        const data = rowsData || [];
+        const total = count || 0;
+        if (!data.length && total > 0 && state.page > 1) {
+          state.page = Math.max(1, Math.ceil(total / PAGE_SIZE));
+          return load();
+        }
+        render(data, total);
+      } catch (e) {
+        if (my !== reqId) return;
+        const msg = db.friendlyError(e);
+        listEl.innerHTML = `<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(msg)}</div></div>`;
+        ui.toast(msg, 'err');
+      }
+    }
+
+    function render(rows, total) {
+      const q = cleanTerm(state.q);
+      const columns = [
+        { key: 'name', label: 'المحل', render: r => `<div class="cell-main"><strong>${esc(r.name)}</strong>${r.notes ? `<span class="notes-cell" style="display:block;font-size:.8rem" title="${esc(r.notes)}">${esc(truncate(r.notes, 50))}</span>` : ''}</div>` },
+        { key: 'owner_name', label: 'صاحبه', render: r => esc(r.owner_name || '—') },
+        { key: 'phone', label: 'الهاتف', class: 'num', render: r => `<span class="ltr mono">${esc(r.phone)}</span>` },
+        { key: 'city', label: 'المدينة', render: r => esc(r.city || '—') },
+        { key: 'activity', label: 'النشاط', render: r => r.activity ? `<span class="chip" style="cursor:default">${esc(r.activity)}</span>` : '<span class="muted">—</span>' },
+        { key: 'active', label: 'الحالة', render: r => activeBadge(r.active) },
+        { key: 'actions', label: '', class: 'actions', render: r => {
+          const wa = waHref(r.phone);
+          return wa ? `<a class="btn btn-wa btn-sm" href="${esc(wa)}" target="_blank" rel="noopener" title="واتساب"><i class="fab fa-whatsapp"></i></a>` : '';
+        } },
+      ];
+      const table = ui.table({
+        columns, rows,
+        empty: q ? `ما لقيناش تاجر يطابق "${q}".` : 'لا يوجد تجار بعد — أضف أول محل شريك.',
+        onRow: row => openForm(row),
+      });
+      // تمييز الموقوفين بصرياً
+      table.querySelectorAll('tbody tr').forEach((tr, i) => { if (rows[i] && !rows[i].active) tr.classList.add('row-off'); });
+      listEl.innerHTML = '';
+      listEl.appendChild(table);
+      pagerEl.innerHTML = '';
+      if (total > 0) pagerEl.appendChild(ui.pager({ page: state.page, pageSize: PAGE_SIZE, total, onPage: p => { state.page = p; load(); } }));
+    }
+
+    // ───────── إضافة / تعديل / حذف ─────────
+    function buildFields(row) {
+      const acts = CATEGORIES.slice();
+      // حافظ على نشاط قديم غير موجود في القائمة حتى لا يضيع عند التعديل
+      if (row && row.activity && !acts.includes(row.activity)) acts.unshift(row.activity);
+      return [
+        { name: 'name',       label: 'اسم المحل', required: true, placeholder: 'مثال: سوبر ماركت النخيل' },
+        { name: 'owner_name', label: 'صاحب المحل', placeholder: 'الاسم الكامل' },
+        { name: 'phone',      label: 'الهاتف', type: 'tel', required: true, placeholder: '09XXXXXXXX', inputmode: 'tel' },
+        { name: 'city',       label: 'المدينة', placeholder: 'بنغازي، جالو، طرابلس…' },
+        { name: 'activity',   label: 'النشاط', type: 'select', options: [{ value: '', label: '— غير محدد —' }, ...acts.map(a => ({ value: a, label: a }))] },
+        { name: 'active',     label: 'نشط (يظهر للاستخدام)', type: 'checkbox' },
+        { name: 'notes',      label: 'ملاحظات', type: 'textarea', rows: 3, placeholder: 'اتفاقيات، أوقات العمل، أي تفاصيل مفيدة' },
+      ];
+    }
+
+    async function openForm(row) {
+      const isEdit = !!row;
+      const result = await recordForm({
+        title: isEdit ? `تعديل التاجر: ${row.name}` : 'إضافة تاجر',
+        fields: buildFields(row),
+        values: row || { active: true },
+        submitText: isEdit ? 'حفظ التعديلات' : 'إضافة',
+        confirmDelete: isEdit ? `حذف التاجر "${row.name}"؟ الطلبات المرتبطة به تبقى لكن بدون ربط.` : '',
+        onSubmit: async out => {
+          const phone = normPhone(out.phone);
+          if (!/^0\d{8,9}$/.test(phone)) throw new Error('رقم الهاتف غير صحيح — اكتبه بصيغة 09XXXXXXXX أو رقم أرضي يبدأ بـ 0.');
+          const payload = {
+            name: out.name, owner_name: out.owner_name, phone, city: out.city,
+            activity: out.activity, notes: out.notes, active: !!out.active,
+          };
+          const { error } = isEdit
+            ? await sb.from('merchants').update(payload).eq('id', row.id)
+            : await sb.from('merchants').insert(payload);
+          if (error) {
+            if (error.code === '23505') throw new Error('رقم الهاتف مسجّل لتاجر آخر.');
+            throw error;
+          }
+        },
+        onDelete: isEdit ? async () => {
+          const { error } = await sb.from('merchants').delete().eq('id', row.id);
+          if (error) throw error;
+        } : null,
+      });
+      if (!result) return;
+      if (result.deleted) ui.toast('تم حذف التاجر.', 'ok');
+      else ui.toast(isEdit ? 'تم حفظ التعديلات.' : 'تمت إضافة التاجر.', 'ok');
+      load();
+    }
+
+    // ───────── التهيئة ─────────
+    const tb = ui.toolbar({
+      placeholder: 'بحث باسم المحل أو صاحبه أو الهاتف أو المدينة…',
+      buttons: '<button type="button" class="btn btn-primary" data-add><i class="fas fa-plus"></i> إضافة تاجر</button>',
+    });
+    toolbarEl.appendChild(tb.el);
+    tb.el.querySelector('[data-add]').addEventListener('click', () => openForm(null));
+    let timer = null;
+    tb.input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { state.q = tb.input.value; state.page = 1; load(); }, 300);
+    });
+    document.getElementById('refreshBtn')?.addEventListener('click', () => load());
+
+    load();
+  })();
+</script>

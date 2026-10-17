@@ -1,0 +1,371 @@
+---
+// إدارة المندوبين: اعتماد الحسابات الجديدة، الإيقاف/التفعيل، الترقية/الإرجاع، وتعديل البيانات.
+// لا يمكن إنشاء مستخدمي Auth من المتصفح — المندوب يسجّل بنفسه من /delegate/login/ ثم يُعتمد هنا.
+// لا حذف للملفات الشخصية (لا سياسة حذف في القاعدة): الإيقاف بدل الحذف. approved_at يختمه المحفّز عند الاعتماد.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="المندوبون" portal="admin" page="delegates">
+  <button slot="actions" type="button" class="btn btn-ghost btn-sm" id="refreshBtn">
+    <i class="fas fa-rotate"></i> <span>تحديث</span>
+  </button>
+
+  <div id="pendingNotice" class="notice" hidden></div>
+
+  <div class="stats" id="stats" hidden></div>
+
+  <div class="card help-box">
+    <div class="help-icon"><i class="fas fa-circle-info"></i></div>
+    <div>
+      <strong>كيف ينضم مندوب جديد؟</strong>
+      <p class="muted">
+        لا يمكن إنشاء حسابات من اللوحة مباشرة. المندوب يسجّل بنفسه من
+        <a href="/delegate/login/#register" target="_blank" rel="noopener">صفحة تسجيل المندوبين</a>
+        (<code>/delegate/login/</code>) باسمه وهاتفه ومدينته وإيميله، فيظهر هنا في الأعلى بحالة «بانتظار الاعتماد».
+        راجع بياناته واتصل به إن لزم، ثم اضغط <em>اعتماد</em> ليقدر يشوف الطلبات المتاحة ويحجز منها.
+        ما فيش حذف للحسابات — <em>أوقف</em> الحساب بدل ذلك، وطلباته تبقى مسندة إليه.
+      </p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="chips" id="chips">
+      <button type="button" class="chip active" data-filter="all">الكل</button>
+      <button type="button" class="chip" data-filter="pending">بانتظار الاعتماد <span class="pill-count" id="pendingPill" hidden></span></button>
+      <button type="button" class="chip" data-filter="delegate">مندوبون</button>
+      <button type="button" class="chip" data-filter="admin">مديرون</button>
+      <button type="button" class="chip" data-filter="off">موقوفون</button>
+    </div>
+    <div class="search">
+      <i class="fas fa-magnifying-glass"></i>
+      <input type="search" id="searchInput" placeholder="بحث بالاسم أو الإيميل أو الهاتف أو المدينة…" autocomplete="off">
+    </div>
+  </div>
+
+  <div id="list"></div>
+</AdminLayout>
+
+<style is:global>
+  /* عناصر خاصة بصفحة المندوبين — عامة لأن المحتوى يُدرج ديناميكياً */
+  body[data-page="delegates"] .notice {
+    display: flex; align-items: center; gap: .9rem; flex-wrap: wrap;
+    background: rgba(250,204,21,.09); border: 1px solid rgba(250,204,21,.35);
+    border-radius: var(--r-lg); padding: .9rem 1.1rem;
+  }
+  body[data-page="delegates"] .notice > i { color: #FDE68A; font-size: 1.3rem; }
+  body[data-page="delegates"] .notice > div { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+  body[data-page="delegates"] .notice strong { color: var(--white); }
+  body[data-page="delegates"] .help-box { display: flex; gap: 1rem; align-items: flex-start; }
+  body[data-page="delegates"] .help-box p { margin-top: .2rem; font-size: .9rem; line-height: 1.7; }
+  body[data-page="delegates"] .help-icon {
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    background: rgba(56,189,248,.14); color: var(--info);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+  body[data-page="delegates"] .badge.on { background: rgba(34,197,94,.16); color: #86EFAC; border-color: rgba(34,197,94,.4); }
+  body[data-page="delegates"] .table tr.row-pending td { background: rgba(250,204,21,.05); }
+  body[data-page="delegates"] .table tr.row-off td { opacity: .7; }
+  body[data-page="delegates"] .row-actions { display: inline-flex; gap: .35rem; flex-wrap: wrap; }
+  body[data-page="delegates"] .who { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+  body[data-page="delegates"] .who .email { font-size: .8rem; color: var(--muted); direction: ltr; unicode-bidi: embed; text-align: right; word-break: break-all; }
+  body[data-page="delegates"] .when { display: flex; flex-direction: column; line-height: 1.35; font-size: .85rem; white-space: nowrap; }
+  body[data-page="delegates"] .when .ok { color: #86EFAC; }
+  body[data-page="delegates"] .when .warn { color: #FDE68A; }
+  @media (max-width: 640px) {
+    body[data-page="delegates"] .row-actions { width: 100%; }
+    body[data-page="delegates"] .row-actions .btn { flex: 1 1 auto; min-height: 42px; }
+    body[data-page="delegates"] .who .email { text-align: left; }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb, profile } = await window.dawerliReady;
+
+  const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية', 'زليتن', 'البيضاء', 'الخمس', 'سبها', 'درنة', 'سرت', 'جالو', 'أوجلة', 'إجخرة', 'الكفرة', 'أخرى'];
+  const ROLE_ORDER = { pending: 0, delegate: 1, admin: 2 };
+
+  if (sb && profile) init();
+
+  function init() {
+    const esc = db.esc;
+    const listEl = document.getElementById('list');
+    const noticeEl = document.getElementById('pendingNotice');
+    const statsEl = document.getElementById('stats');
+    const chipsEl = document.getElementById('chips');
+    const pendingPill = document.getElementById('pendingPill');
+    const searchInput = document.getElementById('searchInput');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    let rows = [];      // الملفات الشخصية + عدد الطلبات الجارية لكل واحد
+    let filter = 'all';
+    let query = '';
+    let loadSeq = 0;
+
+    // ───── تحميل البيانات ─────
+    async function load({ quiet = false } = {}) {
+      const seq = ++loadSeq;
+      if (!quiet) listEl.innerHTML = ui.skeleton(6);
+      refreshBtn.disabled = true;
+      try {
+        const { data: profiles, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        if (seq !== loadSeq) return;
+
+        // الطلبات الجارية (ليست مسلّمة ولا ملغية) لكل الحسابات دفعة واحدة
+        const ids = (profiles || []).map(p => p.id);
+        const counts = {};
+        if (ids.length) {
+          const { data: open, error: e2 } = await sb.from('orders').select('delegate_id')
+            .in('delegate_id', ids)
+            .not('status', 'in', '(delivered,cancelled)');
+          if (e2) throw e2;
+          if (seq !== loadSeq) return;
+          for (const o of open || []) counts[o.delegate_id] = (counts[o.delegate_id] || 0) + 1;
+        }
+
+        // بانتظار الاعتماد أولاً، ثم المندوبون، ثم المديرون — والأحدث أولاً داخل كل مجموعة
+        rows = (profiles || [])
+          .map(p => ({ ...p, openCount: counts[p.id] || 0 }))
+          .sort((a, b) =>
+            ((ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9)) ||
+            (new Date(b.created_at) - new Date(a.created_at)));
+        render();
+      } catch (e) {
+        if (seq !== loadSeq) return;
+        listEl.innerHTML = `<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(db.friendlyError(e))}</div></div>`;
+        ui.toast(db.friendlyError(e), 'err');
+      } finally {
+        if (seq === loadSeq) refreshBtn.disabled = false;
+      }
+    }
+
+    // ───── العرض ─────
+    function matches(r) {
+      if (filter === 'off' ? r.active : (filter !== 'all' && r.role !== filter)) return false;
+      const q = query.trim().toLowerCase();
+      if (!q) return true;
+      const qDigits = q.replace(/[\s-]/g, '');
+      return [r.full_name, r.email, r.city].some(v => String(v || '').toLowerCase().includes(q))
+        || (qDigits && String(r.phone || '').includes(qDigits));
+    }
+
+    function render() {
+      const pending = rows.filter(r => r.role === 'pending');
+      const delegates = rows.filter(r => r.role === 'delegate');
+      const admins = rows.filter(r => r.role === 'admin');
+      const openTotal = rows.reduce((n, r) => n + r.openCount, 0);
+
+      noticeEl.hidden = !pending.length;
+      if (pending.length) {
+        noticeEl.innerHTML = `<i class="fas fa-user-clock"></i>
+          <div><strong>${pending.length === 1 ? 'حساب واحد' : pending.length + ' حسابات'} بانتظار الاعتماد</strong>
+          <span class="muted">راجع الاسم والهاتف والمدينة، ثم اعتمد الحساب أو أوقفه.</span></div>
+          <button type="button" class="btn btn-primary btn-sm" data-show-pending><i class="fas fa-filter"></i> عرضهم</button>`;
+      }
+      pendingPill.hidden = !pending.length;
+      pendingPill.textContent = pending.length;
+
+      statsEl.hidden = false;
+      statsEl.innerHTML = [
+        ui.statTile({ label: 'مندوبون نشطون', value: delegates.filter(d => d.active).length, icon: 'fa-id-badge', tone: 'success' }),
+        ui.statTile({ label: 'بانتظار الاعتماد', value: pending.length, icon: 'fa-user-clock', tone: 'accent' }),
+        ui.statTile({ label: 'مديرون', value: admins.length, icon: 'fa-user-shield' }),
+        ui.statTile({ label: 'طلبات جارية محجوزة', value: openTotal, icon: 'fa-box-open', tone: 'info' }),
+      ].join('');
+
+      const visible = rows.filter(matches);
+      const q = query.trim();
+      const table = ui.table({
+        columns,
+        rows: visible,
+        empty: q ? 'ما لقيناش حد يطابق بحثك.' :
+          filter === 'pending' ? 'ما فيش حسابات بانتظار الاعتماد — كل شيء تمام.' :
+          filter === 'off' ? 'ما فيش حسابات موقوفة.' : 'ما فيش حسابات في هذه الفئة بعد.',
+      });
+      table.querySelectorAll('tbody tr').forEach((tr, i) => {
+        const r = visible[i];
+        if (!r) return;
+        if (r.role === 'pending') tr.classList.add('row-pending');
+        if (!r.active) tr.classList.add('row-off');
+      });
+      listEl.innerHTML = '';
+      listEl.appendChild(table);
+    }
+
+    // «منذ …» بالعربية للتواريخ القريبة، وإلا التاريخ الكامل
+    function since(iso) {
+      const s = (Date.now() - new Date(iso).getTime()) / 1000;
+      if (!Number.isFinite(s)) return '';
+      if (s < 60) return 'منذ لحظات';
+      const m = Math.floor(s / 60);
+      if (m < 60) return m === 1 ? 'منذ دقيقة' : m === 2 ? 'منذ دقيقتين' : m <= 10 ? `منذ ${m} دقائق` : `منذ ${m} دقيقة`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return h === 1 ? 'منذ ساعة' : h === 2 ? 'منذ ساعتين' : h <= 10 ? `منذ ${h} ساعات` : `منذ ${h} ساعة`;
+      const d = Math.floor(h / 24);
+      if (d === 1) return 'منذ يوم';
+      if (d === 2) return 'منذ يومين';
+      if (d <= 10) return `منذ ${d} أيام`;
+      if (d < 30) return `منذ ${d} يوماً`;
+      const mo = Math.floor(d / 30);
+      if (mo === 1) return 'منذ شهر';
+      if (mo === 2) return 'منذ شهرين';
+      if (mo <= 10) return `منذ ${mo} أشهر`;
+      return 'في ' + db.formatDate(iso);
+    }
+
+    const columns = [
+      { key: 'full_name', label: 'الاسم', render: r =>
+        `<div class="who"><strong>${esc(r.full_name || '—')}${r.id === profile.id ? ' <span class="badge off">أنت</span>' : ''}</strong>
+         ${r.email ? `<a class="email mono" href="mailto:${esc(r.email)}">${esc(r.email)}</a>` : '<span class="email muted">بلا إيميل</span>'}</div>` },
+      { key: 'phone', label: 'الهاتف', render: r =>
+        r.phone ? `<a class="ltr mono" href="tel:${esc(r.phone)}">${esc(r.phone)}</a>` : '<span class="muted">—</span>' },
+      { key: 'city', label: 'المدينة', render: r => esc(r.city || '—') },
+      { key: 'role', label: 'الدور', render: r =>
+        `<span class="badge role-${esc(r.role)}">${esc(db.ROLE_LABELS[r.role] || r.role)}</span>` },
+      { key: 'active', label: 'الحالة', render: r =>
+        r.active ? '<span class="badge on">نشط</span>' : '<span class="badge off">موقوف</span>' },
+      { key: 'openCount', label: 'طلبات جارية', class: 'num', render: r =>
+        r.openCount ? `<a class="pill-count" href="/admin/orders/" title="طلبات جارية مسندة إليه">${r.openCount}</a>` : '<span class="muted">0</span>' },
+      { key: 'created_at', label: 'التسجيل / الاعتماد', render: r => {
+        const reg = `<span class="muted" title="${esc(db.formatDate(r.created_at))}">سجّل ${esc(since(r.created_at))}</span>`;
+        let appr = '';
+        if (r.approved_at) appr = `<span class="ok" title="${esc(db.formatDate(r.approved_at))}"><i class="fas fa-user-check"></i> اعتُمد ${esc(since(r.approved_at))}</span>`;
+        else if (r.role === 'pending') appr = '<span class="warn"><i class="fas fa-hourglass-half"></i> بانتظار الاعتماد</span>';
+        return `<div class="when">${reg}${appr}</div>`;
+      } },
+      { key: 'actions', label: 'إجراءات', class: 'actions', render: r => actionsHtml(r) },
+    ];
+
+    const actBtn = (r, act, cls, icon, label) =>
+      `<button type="button" class="btn btn-sm ${cls}" data-act="${act}" data-id="${esc(r.id)}"><i class="fas ${icon}"></i> ${label}</button>`;
+
+    function actionsHtml(r) {
+      const self = r.id === profile.id; // لا يوقف المدير نفسه ولا ينزّل رتبته — حتى لا يُقفل على نفسه
+      const b = [];
+      if (r.role === 'pending') b.push(actBtn(r, 'approve', 'btn-success', 'fa-user-check', 'اعتماد'));
+      b.push(actBtn(r, 'edit', 'btn-ghost', 'fa-pen', 'تعديل'));
+      if (!self) {
+        b.push(actBtn(r, 'toggle', r.active ? 'btn-ghost' : 'btn-success', r.active ? 'fa-pause' : 'fa-play', r.active ? 'إيقاف' : 'تفعيل'));
+        if (r.role === 'delegate') b.push(actBtn(r, 'promote', 'btn-ghost', 'fa-arrow-up', 'ترقية لمدير'));
+        if (r.role === 'admin') b.push(actBtn(r, 'demote', 'btn-danger', 'fa-arrow-down', 'إرجاع لمندوب'));
+      }
+      return `<div class="row-actions">${b.join('')}</div>`;
+    }
+
+    // ───── التحديثات ─────
+    async function updateProfile(id, patch) {
+      const { data, error } = await sb.from('profiles').update(patch).eq('id', id).select('id');
+      if (error) throw error;
+      // RLS قد يرشّح الصف بصمت بلا خطأ — نتأكد أن صفاً واحداً تعدّل فعلاً
+      if (!data || !data.length) throw new Error('not_allowed');
+    }
+
+    function friendly(msg) { const e = new Error(msg); e.friendly = msg; return e; }
+
+    // last_admin / not_allowed تأتي من حارس القاعدة → friendlyError
+    async function run(fn, okMsg) {
+      try {
+        await fn();
+        ui.toast(okMsg, 'ok');
+        await load({ quiet: true });
+      } catch (e) {
+        ui.toast(db.friendlyError(e), 'err', 4500);
+      }
+    }
+
+    const nameOf = r => r.full_name || 'هذا الحساب';
+
+    const ACTIONS = {
+      async approve(r) {
+        const ok = await ui.confirm(`تعتمد ${nameOf(r)} كمندوب؟ بعدها يقدر يشوف الطلبات المتاحة ويحجز منها.${r.active ? '' : ' (الحساب موقوف حالياً — فعّله بعد الاعتماد.)'}`, { okText: 'اعتماد' });
+        if (!ok) return;
+        // approved_at يختمه محفّز القاعدة عند الانتقال pending → delegate
+        await run(() => updateProfile(r.id, { role: 'delegate' }), `تم اعتماد ${nameOf(r)} ✓`);
+      },
+      async toggle(r) {
+        const next = !r.active;
+        const msg = next
+          ? `تفعّل حساب ${nameOf(r)} من جديد؟`
+          : `توقف حساب ${nameOf(r)}؟ ما يقدرش يدخل البوابة ولا يحجز طلبات لين تفعّله. طلباته الجارية (${r.openCount}) تبقى مسندة إليه.`;
+        const ok = await ui.confirm(msg, { okText: next ? 'تفعيل' : 'إيقاف', danger: !next });
+        if (!ok) return;
+        await run(() => updateProfile(r.id, { active: next }), next ? 'تم تفعيل الحساب' : 'تم إيقاف الحساب');
+      },
+      async promote(r) {
+        const ok = await ui.confirm(`ترقّي ${nameOf(r)} إلى مدير؟ المدير يشوف كل الطلبات والعملاء والإعدادات ويقدر يعتمد مندوبين.`, { okText: 'ترقية لمدير', danger: true });
+        if (!ok) return;
+        await run(() => updateProfile(r.id, { role: 'admin' }), `${nameOf(r)} صار مديراً`);
+      },
+      async demote(r) {
+        const ok = await ui.confirm(`ترجّع ${nameOf(r)} إلى مندوب؟ يفقد صلاحيات الإدارة فوراً.`, { okText: 'إرجاع لمندوب', danger: true });
+        if (!ok) return;
+        await run(() => updateProfile(r.id, { role: 'delegate' }), `${nameOf(r)} رجع مندوباً`);
+      },
+      async edit(r) {
+        const cityOpts = [{ value: '', label: '— بلا مدينة —' }, ...CITIES.map(c => ({ value: c, label: c }))];
+        if (r.city && !CITIES.includes(r.city)) cityOpts.splice(1, 0, { value: r.city, label: r.city });
+        const values = await ui.form({
+          title: `تعديل بيانات ${r.full_name || ''}`.trim(),
+          fields: [
+            { name: 'full_name', label: 'الاسم الكامل', required: true, full: true,
+              hint: r.email ? `الإيميل: ${r.email} — يُزامَن من حساب الدخول ولا يُعدَّل من هنا` : undefined },
+            { name: 'phone', label: 'الهاتف', type: 'tel', placeholder: '09xxxxxxxx', inputmode: 'numeric', hint: '10 أرقام تبدأ بـ 09' },
+            { name: 'city', label: 'المدينة', type: 'select', options: cityOpts },
+          ],
+          values: { full_name: r.full_name || '', phone: r.phone || '', city: r.city || '' },
+          submitText: 'حفظ',
+          onSubmit: async v => {
+            const phone = String(v.phone || '').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/[\s-]/g, '');
+            if (phone && !/^09\d{8}$/.test(phone)) throw friendly('رقم الهاتف لازم يكون ليبي صحيح — 10 أرقام ويبدا بـ 09.');
+            try {
+              await updateProfile(r.id, { full_name: String(v.full_name).slice(0, 120), phone: phone || null, city: v.city || null });
+            } catch (e) { throw friendly(db.friendlyError(e)); }
+          },
+        });
+        if (values) {
+          ui.toast('تم حفظ البيانات ✓', 'ok');
+          await load({ quiet: true });
+        }
+      },
+    };
+
+    // ───── الأحداث ─────
+    listEl.addEventListener('click', async e => {
+      const b = e.target.closest('button[data-act]');
+      if (!b) return;
+      const row = rows.find(r => r.id === b.dataset.id);
+      const fn = ACTIONS[b.dataset.act];
+      if (!row || !fn) return;
+      b.disabled = true;
+      try { await fn(row); } finally { b.disabled = false; }
+    });
+
+    noticeEl.addEventListener('click', e => {
+      if (!e.target.closest('[data-show-pending]')) return;
+      setFilter('pending');
+      listEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    function setFilter(f) {
+      filter = f;
+      chipsEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+      render();
+    }
+    chipsEl.addEventListener('click', e => {
+      const c = e.target.closest('.chip[data-filter]');
+      if (c) setFilter(c.dataset.filter);
+    });
+
+    let searchTimer = null;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { query = searchInput.value; render(); }, 150);
+    });
+
+    refreshBtn.addEventListener('click', () => load({ quiet: true }));
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) load({ quiet: true }); });
+
+    load();
+  }
+</script>

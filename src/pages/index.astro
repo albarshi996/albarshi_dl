@@ -264,6 +264,19 @@ import Layout from '../layouts/Layout.astro';
     }
   }
 
+  /* ── Quick order: inline notice for DB validation errors ─────────── */
+  .quick-order-notice {
+    margin: 0 0 1rem;
+    padding: 0.8rem 1rem;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 12px;
+    color: #fca5a5;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .quick-order-notice[hidden] { display: none; }
+
   /* ── Feature cards: full bleed on very narrow screens ────────────── */
   @media (max-width: 480px) {
     .features-grid {
@@ -393,6 +406,7 @@ import Layout from '../layouts/Layout.astro';
           </div>
         </div>
         <div class="form-submit">
+          <p id="quickOrderNotice" class="quick-order-notice" role="alert" aria-live="polite" hidden></p>
           <button type="submit" class="submit-btn">
             <span data-i18n="quickOrderSubmit">ابعت الطلب على الواتساب</span> <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i>
           </button>

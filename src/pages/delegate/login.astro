@@ -1,0 +1,227 @@
+---
+// دخول المندوبين + تسجيل مندوب جديد (يُنشأ بدور pending حتى تعتمده الإدارة من /admin/delegates/).
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية', 'زليتن', 'البيضاء', 'الخمس', 'سبها', 'درنة', 'سرت', 'جالو', 'أوجلة', 'إجخرة', 'الكفرة', 'أخرى'];
+---
+
+<AdminLayout title="دخول المندوبين" portal="delegate" page="login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <a href="/" class="brand"><img src="/favicon.svg" alt="" width="34" height="34"><span>دورلي</span></a>
+
+      <div class="auth-tabs" role="tablist" aria-label="الدخول أو التسجيل">
+        <button type="button" class="auth-tab active" role="tab" data-tab="login" aria-selected="true" aria-controls="tab-login">تسجيل الدخول</button>
+        <button type="button" class="auth-tab" role="tab" data-tab="register" aria-selected="false" aria-controls="tab-register">حساب مندوب جديد</button>
+      </div>
+
+      <section id="tab-login" class="auth-pane" role="tabpanel">
+        <h1>يا هلا بيك</h1>
+        <p class="sub">سجّل دخولك وشوف الطلبات المتاحة في مدينتك.</p>
+        <form id="loginForm" class="form-grid" novalidate>
+          <label class="field" for="loginEmail">
+            <span class="label">الإيميل</span>
+            <input id="loginEmail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="you@example.com" class="ltr">
+          </label>
+          <label class="field" for="loginPassword">
+            <span class="label">كلمة السر</span>
+            <input id="loginPassword" type="password" name="password" autocomplete="current-password" required minlength="6" placeholder="••••••••" class="ltr">
+          </label>
+          <p class="form-error" data-error hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-right-to-bracket"></i> دخول</button>
+        </form>
+      </section>
+
+      <section id="tab-register" class="auth-pane" role="tabpanel" hidden>
+        <h1>ندوّروا مع بعض</h1>
+        <p class="sub">سجّل كمندوب دورلي — تدوّر، تشتري، وتوصّل، ودورلي يجيبلك الطلبات من مدينتك والمدن القريبة.</p>
+        <form id="registerForm" class="form-grid" novalidate>
+          <label class="field" for="regName">
+            <span class="label">الاسم الكامل <span class="req">*</span></span>
+            <input id="regName" type="text" name="full_name" autocomplete="name" required maxlength="120" placeholder="مثال: سالم عبدالله">
+          </label>
+          <label class="field" for="regPhone">
+            <span class="label">رقم الهاتف <span class="req">*</span></span>
+            <input id="regPhone" type="tel" name="phone" autocomplete="tel-national" inputmode="tel" required maxlength="16" placeholder="09xxxxxxxx" class="ltr">
+            <small class="hint">10 أرقام تبدأ بـ 09 — نكلّمك عليه لاعتماد حسابك</small>
+          </label>
+          <label class="field" for="regCity">
+            <span class="label">مدينتك <span class="req">*</span></span>
+            <select id="regCity" name="city" required>
+              <option value="">اختار مدينتك</option>
+              {CITIES.map(c => <option value={c}>{c}</option>)}
+            </select>
+          </label>
+          <label class="field" for="regEmail">
+            <span class="label">الإيميل <span class="req">*</span></span>
+            <input id="regEmail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="you@example.com" class="ltr">
+          </label>
+          <label class="field" for="regPassword">
+            <span class="label">كلمة السر <span class="req">*</span></span>
+            <input id="regPassword" type="password" name="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف على الأقل" class="ltr">
+          </label>
+          <p class="form-error" data-error hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-user-plus"></i> سجّلني كمندوب</button>
+          <p class="muted small">بعد التسجيل يراجع فريق دورلي بياناتك ويعتمد حسابك، وبعدها تقدر تحجز الطلبات.</p>
+        </form>
+        <div class="form-ok" id="registerOk" hidden>
+          <p><i class="fas fa-circle-check"></i> سجّلنا حسابك يا <span id="registerOkName"></span> — أكّد إيميلك من الرسالة اللي وصلتك ثم سجّل دخولك. وبعد ما يعتمد فريق دورلي حسابك تبدا تحجز الطلبات.</p>
+          <button type="button" class="btn btn-ghost btn-sm" id="goLoginBtn">سجّل دخولك</button>
+        </div>
+      </section>
+
+      <div class="auth-switch">
+        <span id="switchText"></span>
+        <div class="auth-admin-link"><a href="/admin/login/" class="muted"><i class="fas fa-user-shield"></i> دخول الإدارة</a></div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style is:global>
+  body[data-page="login"] .auth-tabs {
+    display: flex; gap: .25rem; background: rgba(255,255,255,.05); border: 1px solid var(--line);
+    border-radius: var(--pill); padding: .25rem; margin-bottom: 1.4rem;
+  }
+  body[data-page="login"] .auth-tab {
+    flex: 1; border: 0; background: transparent; color: var(--muted); padding: .6rem .5rem;
+    border-radius: var(--pill); font-weight: 700; font-size: .9rem; cursor: pointer; transition: background var(--dur), color var(--dur);
+  }
+  body[data-page="login"] .auth-tab:hover { color: var(--text); }
+  body[data-page="login"] .auth-tab.active { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #1a1208; }
+  body[data-page="login"] .auth-card .form-grid { gap: 1rem; }
+  body[data-page="login"] .auth-card .btn-block { min-height: 48px; margin-top: .25rem; }
+  body[data-page="login"] .small { font-size: .82rem; line-height: 1.6; }
+  body[data-page="login"] .form-ok { margin-top: .5rem; display: flex; flex-direction: column; gap: .8rem; }
+  body[data-page="login"] .form-ok i { margin-left: .3rem; }
+  body[data-page="login"] .auth-admin-link { margin-top: .9rem; font-size: .82rem; }
+  body[data-page="login"] .auth-admin-link a { color: var(--muted-2); }
+  body[data-page="login"] .auth-admin-link a:hover { color: var(--text); }
+</style>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb } = await window.dawerliReady;
+
+  // sb = null يعني أن القاعدة غير مهيأة — التخطيط يعرض رسالة الإعداد بدلاً من الصفحة.
+  if (sb) init();
+
+  function init() {
+    const tabs = Array.from(document.querySelectorAll('.auth-tab'));
+    const panes = { login: document.getElementById('tab-login'), register: document.getElementById('tab-register') };
+    const switchText = document.getElementById('switchText');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const registerOk = document.getElementById('registerOk');
+    const goLoginBtn = document.getElementById('goLoginBtn');
+
+    // ───── التبويبات ─────
+    function showTab(name) {
+      if (!panes[name]) name = 'login';
+      tabs.forEach(t => {
+        const on = t.dataset.tab === name;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panes.login.hidden = name !== 'login';
+      panes.register.hidden = name !== 'register';
+      switchText.innerHTML = name === 'login'
+        ? 'لسّا ما عندكش حساب؟ <a href="#register" data-tab-link="register">سجّل كمندوب</a>'
+        : 'عندك حساب؟ <a href="#login" data-tab-link="login">سجّل دخولك</a>';
+      if (history.replaceState) history.replaceState(null, '', '#' + name);
+      const first = panes[name].querySelector('input:not([type=hidden])');
+      if (first && window.innerWidth > 640) setTimeout(() => first.focus(), 30);
+    }
+    tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+    switchText.addEventListener('click', e => {
+      const a = e.target.closest('[data-tab-link]');
+      if (a) { e.preventDefault(); showTab(a.dataset.tabLink); }
+    });
+    window.addEventListener('hashchange', () => showTab(location.hash.replace('#', '')));
+    showTab(location.hash === '#register' ? 'register' : 'login');
+
+    // ───── أدوات ─────
+    function showError(form, msg) {
+      const el = form.querySelector('[data-error]');
+      el.textContent = msg;
+      el.hidden = !msg;
+    }
+    function busy(form, on, text) {
+      const btn = form.querySelector('[data-submit]');
+      btn.disabled = on;
+      if (on) { btn.dataset.html = btn.innerHTML; btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text}`; }
+      else if (btn.dataset.html) btn.innerHTML = btn.dataset.html;
+      form.querySelectorAll('input, select').forEach(i => { i.disabled = on; });
+    }
+    const isEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
+    // أرقام عربية/هندية → لاتينية، وإزالة الفراغات والشرطات، و+218/00218 → 0 (نفس تطبيع القاعدة)
+    const normPhone = s => String(s || '')
+      .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+      .replace(/[\s-]/g, '')
+      .replace(/^(\+?218|00218)/, '0');
+
+    // ───── تسجيل الدخول ─────
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      showError(loginForm, '');
+      const email = loginForm.email.value.trim().toLowerCase();
+      const password = loginForm.password.value;
+      if (!isEmail(email)) return showError(loginForm, 'اكتب إيميلاً صحيحاً.');
+      if (password.length < 6) return showError(loginForm, 'كلمة السر لازم تكون 6 أحرف على الأقل.');
+
+      busy(loginForm, true, 'لحظة…');
+      try {
+        await db.signIn(email, password);
+        location.replace('/delegate/');
+      } catch (err) {
+        busy(loginForm, false);
+        showError(loginForm, db.friendlyError(err));
+      }
+    });
+
+    // ───── حساب مندوب جديد ─────
+    registerForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      showError(registerForm, '');
+      const full_name = registerForm.full_name.value.trim().slice(0, 120);
+      const phone = normPhone(registerForm.phone.value);
+      const city = registerForm.city.value;
+      const email = registerForm.email.value.trim().toLowerCase();
+      const password = registerForm.password.value;
+
+      if (full_name.length < 2) return showError(registerForm, 'اكتب اسمك الكامل من فضلك.');
+      if (!/^09\d{8}$/.test(phone)) return showError(registerForm, 'رقم الهاتف لازم يكون ليبي صحيح — 10 أرقام ويبدا بـ 09.');
+      if (!city) return showError(registerForm, 'اختار مدينتك.');
+      if (!isEmail(email)) return showError(registerForm, 'اكتب إيميلاً صحيحاً — نرسل عليه رسالة التأكيد.');
+      if (password.length < 6) return showError(registerForm, 'كلمة السر لازم تكون 6 أحرف على الأقل.');
+
+      busy(registerForm, true, 'نسجّل حسابك…');
+      try {
+        const data = await db.signUpDelegate({ email, password, full_name, phone, city });
+        // Supabase يرجّع مستخدماً بلا هويات (identities فارغة) عندما يكون الإيميل مسجلاً مسبقاً وتأكيد الإيميل مفعّل
+        if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+          busy(registerForm, false);
+          return showError(registerForm, 'هذا الإيميل مسجّل من قبل — سجّل دخولك.');
+        }
+        if (data && data.session) {
+          // تأكيد الإيميل معطّل في المشروع → جلسة فورية؛ البوابة تعرض «بانتظار الاعتماد» حتى يعتمده المدير
+          ui.toast('تم التسجيل — يا هلا بيك', 'ok');
+          location.replace('/delegate/');
+          return;
+        }
+        // تأكيد الإيميل مطلوب (لا جلسة بعد)
+        busy(registerForm, false);
+        registerForm.hidden = true;
+        document.getElementById('registerOkName').textContent = full_name.split(/\s+/)[0] || '';
+        registerOk.hidden = false;
+        loginForm.email.value = email;
+        registerOk.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        busy(registerForm, false);
+        showError(registerForm, db.friendlyError(err));
+      }
+    });
+
+    goLoginBtn.addEventListener('click', () => showTab('login'));
+  }
+</script>

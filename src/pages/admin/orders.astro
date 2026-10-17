@@ -1,0 +1,757 @@
+---
+// إدارة الطلبات: بحث وتصفية وترقيم، نافذة تفاصيل مع الإجراءات، وإنشاء طلب يدوي.
+// كل تغيير حالة يمرّ عبر RPC set_order_status (حدث واحد مع الملاحظة)، والتعيين عبر assign_order.
+// روابط عميقة: ?id=<uuid> يفتح الطلب، ?new=1 يفتح نموذج طلب جديد، ?q= بحث، ?status=<حالة> و ?unassigned=1 تصفية.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="الطلبات" portal="admin" page="orders">
+  <Fragment slot="actions">
+    <button type="button" class="btn btn-ghost btn-sm" id="refreshBtn" aria-label="تحديث"><i class="fas fa-rotate"></i></button>
+    <button type="button" class="btn btn-primary btn-sm" id="newOrderBtn"><i class="fas fa-plus"></i> طلب جديد</button>
+  </Fragment>
+
+  <div id="toolbarHost"></div>
+  <div class="chips" id="statusChips"></div>
+  <div id="tableHost"></div>
+  <div id="pagerHost"></div>
+</AdminLayout>
+
+<style is:global>
+  /* عناصر تُبنى ديناميكياً من السكربت، لذا الأنماط عامة وبادئة od- لتفادي التعارض */
+  #tableHost.is-loading { opacity: .55; pointer-events: none; transition: opacity var(--dur); }
+  .chip .cnt { opacity: .75; font-weight: 500; margin-right: .3rem; }
+  .chip-sep { width: 1px; background: var(--line-2); margin: 0 .35rem; align-self: stretch; }
+  .cust { display: flex; flex-direction: column; line-height: 1.3; }
+  .cust small { font-size: .78rem; }
+  .nowrap { white-space: nowrap; }
+  .pre { white-space: pre-wrap; }
+
+  .od-head { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .od-head-main { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .od-code { font-size: 1.1rem; font-weight: 800; color: var(--primary-light); }
+  .od-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 1.25rem; align-items: start; }
+  .od-title { font-size: .9rem; font-weight: 800; color: var(--white); margin: 1.1rem 0 .6rem; display: flex; gap: .5rem; align-items: center; }
+  .od-col > .od-title:first-child { margin-top: 0; }
+  .od-title i { color: var(--primary); }
+  .od-form { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r); padding: .9rem; display: flex; flex-direction: column; gap: .7rem; }
+  .od-form .form-grid { gap: .7rem .8rem; }
+  .od-form .btn { align-self: flex-start; }
+  .od-form .hint { color: var(--muted-2); font-size: .78rem; }
+  .od-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .od-form.is-busy { opacity: .6; pointer-events: none; }
+  .od-when { display: flex; flex-direction: column; gap: .7rem; padding: .7rem .8rem; border-radius: var(--r); border: 1px dashed var(--line-2); }
+  .od-when.form-grid { display: grid; }
+  .od-when .od-span { grid-column: 1 / -1; }
+  .od-when[data-when="cancelled"] { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.05); }
+  .od-when[data-when="quoted"] { border-color: rgba(56,189,248,.35); background: rgba(56,189,248,.05); }
+  .od-frozen { color: var(--muted); font-size: .88rem; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r); padding: .8rem .9rem; }
+  .od-dl { display: flex; flex-direction: column; gap: .1rem; }
+  .od-dl small { font-size: .78rem; }
+  .ev-line { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .ev-actor { font-size: .82rem; }
+  .ev-ctx { font-size: .8rem; }
+  .badge.ev-note     { background: rgba(56,189,248,.12); color: #7DD3FC; border-color: rgba(56,189,248,.3); }
+  .badge.ev-assign   { background: rgba(46,194,126,.14); color: #6EE7B7; border-color: rgba(46,194,126,.35); }
+  .badge.ev-unassign { background: rgba(255,255,255,.06); color: var(--muted); border-color: var(--line-2); }
+  .events li.ev-internal { opacity: .62; }
+  .events li.ev-internal::before { background: var(--muted-2); box-shadow: none; }
+  @media (max-width: 767px) {
+    .od-grid { grid-template-columns: 1fr; }
+    .od-form .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb, profile } = await window.dawerliReady;
+  if (sb && profile) init();
+
+  function init() {
+    const esc = db.esc;
+    const PAGE_SIZE = 25;
+    const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية', 'زليتن', 'البيضاء', 'الخمس', 'سبها', 'درنة', 'سرت', 'جالو', 'أوجلة', 'إجخرة', 'الكفرة', 'أخرى'];
+    const CATEGORIES = ['قطع غيار سيارات', 'قطع غيار شاحنات', 'مواد غذائية وحلويات', 'أوراق ومستندات', 'مستلزمات أفراح', 'ملابس وأزياء', 'تجميل ونظافة', 'مواد بناء وصيانة', 'إلكترونيات', 'عقارات', 'بضائع جملة', 'أخرى'];
+    const URGENCIES = ['عادي', 'متوسط', 'عاجل'];                       // مطابقة لقيد CHECK في القاعدة
+    const SPARE_CATS = ['قطع غيار سيارات', 'قطع غيار شاحنات'];
+    const STATUSES = [...db.STATUS_FLOW, 'cancelled'];
+    const FINAL_STATUSES = ['delivered', 'cancelled'];
+    const NEW_ORDER_SOURCES = { admin: 'لوحة التحكم', whatsapp: 'واتساب', phone: 'اتصال هاتفي' };
+    const SOURCE_LABELS = { web: 'الموقع', ...NEW_ORDER_SOURCES };
+    const QUOTE_LABELS = { accepted: 'وافق الزبون ✓', rejected: 'رفض الزبون' };
+    const KIND_LABELS = { note: 'ملاحظة', assign: 'تعيين مندوب', unassign: 'إلغاء تعيين' };
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    // orders له ثلاثة مفاتيح أجنبية نحو profiles (delegate_id, delivered_by, cancelled_by) → التضمين يجب أن يكون صريحاً
+    const LIST_SELECT = 'id,code,customer_name,customer_phone,city,category,urgency,status,total,delegate_id,created_at,delegate:profiles!orders_delegate_id_fkey(full_name,phone,email)';
+    const ORDER_SELECT = '*, delegate:profiles!orders_delegate_id_fkey(id,full_name,phone,email,city), delivered_by_profile:profiles!orders_delivered_by_fkey(full_name), cancelled_by_profile:profiles!orders_cancelled_by_fkey(full_name), supplier:suppliers(name), product:products(name), merchant:merchants(name)';
+    const EVENTS_SELECT = 'id,kind,status,note,visible_to_customer,actor_id,created_at,actor:profiles(full_name)';
+
+    const params = new URLSearchParams(location.search);
+    const state = {
+      q: (params.get('q') || '').trim().slice(0, 60),
+      status: STATUSES.includes(params.get('status')) ? params.get('status') : 'all',
+      unassigned: params.get('unassigned') === '1',
+      page: 1,
+    };
+    let rows = [];
+    let total = 0;
+    let counts = null;        // أعداد الحالات من admin_stats (تحسينية)
+    let loadSeq = 0;          // يتجاهل نتائج الطلبات المتأخرة
+    let lookups = null;       // { delegates, suppliers, products, merchants }
+    let lookupsPromise = null;
+
+    const toolbarHost = document.getElementById('toolbarHost');
+    const chipsEl = document.getElementById('statusChips');
+    const tableHost = document.getElementById('tableHost');
+    const pagerHost = document.getElementById('pagerHost');
+
+    const tb = ui.toolbar({ placeholder: 'ابحث برقم الطلب، اسم الزبون، الهاتف أو التفاصيل…' });
+    tb.input.setAttribute('autocomplete', 'off');
+    tb.input.value = state.q;
+    toolbarHost.appendChild(tb.el);
+    tb.input.addEventListener('input', debounce(() => {
+      state.q = tb.input.value.trim().slice(0, 60);
+      state.page = 1;
+      setUrlParam('q', state.q || null);
+      loadOrders();
+    }, 300));
+
+    document.getElementById('refreshBtn').addEventListener('click', () => { loadOrders(); loadCounts(); });
+    document.getElementById('newOrderBtn').addEventListener('click', newOrder);
+
+    renderChips();
+    loadOrders();
+    loadCounts();
+
+    // رابط عميق: ?id= لازم يكون UUID صحيحاً وإلا يرمي PostgREST خطأ صياغة غير مفهوم للمستخدم
+    const deepId = (params.get('id') || '').trim();
+    if (deepId && UUID_RE.test(deepId)) openOrder(deepId);
+    else if (deepId) { setUrlParam('id', null); ui.toast('رابط الطلب غير صحيح.', 'err'); }
+    else if (params.get('new') === '1') newOrder();
+
+    // ───────────────────────── القائمة ─────────────────────────
+
+    async function loadOrders() {
+      const seq = ++loadSeq;
+      if (!rows.length) tableHost.innerHTML = ui.skeleton(8);
+      tableHost.classList.add('is-loading');
+      try {
+        const from = (state.page - 1) * PAGE_SIZE;
+        let q = sb.from('orders')
+          .select(LIST_SELECT, { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1);
+        if (state.status !== 'all') q = q.eq('status', state.status);
+        if (state.unassigned) q = q.is('delegate_id', null);
+        const term = searchTerm(state.q);
+        if (term) {
+          q = q.or(`code.ilike.%${term}%,customer_name.ilike.%${term}%,customer_phone.ilike.%${term}%,details.ilike.%${term}%`);
+        }
+        const { data, error, count } = await q;
+        if (error) throw error;
+        if (seq !== loadSeq) return;
+        rows = data || [];
+        total = count || 0;
+        // صفحة فارغة بعد حذف أو تصفية → ارجع صفحة للخلف
+        if (!rows.length && state.page > 1 && total > 0) { state.page = Math.max(1, Math.ceil(total / PAGE_SIZE)); return loadOrders(); }
+        renderTable();
+      } catch (e) {
+        if (seq !== loadSeq) return;
+        rows = []; total = 0;
+        tableHost.innerHTML = `<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(db.friendlyError(e))}</div></div>`;
+        pagerHost.innerHTML = '';
+        ui.toast(db.friendlyError(e), 'err');
+      } finally {
+        if (seq === loadSeq) tableHost.classList.remove('is-loading');
+      }
+    }
+
+    // ينظّف نص البحث من رموز صيغة PostgREST (فاصلة/أقواس) ويزيل الفراغات من أرقام الهواتف
+    function searchTerm(raw) {
+      let t = String(raw || '').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/[,()"'\\%*]/g, ' ').trim().slice(0, 60);
+      // هاتف (يبدأ بـ 09 أو + أو 00 أو 218): إزالة الفراغات/الشرطات وتحويل بادئة 218 إلى 0 (مخزّن بصيغة 09xxxxxxxx)
+      // أما أرقام الطلبات مثل 2026-1042 فتُترك كما هي لتطابق DW-2026-1042
+      if (/^(\+|00|218|09)[\d\s+-]*$/.test(t)) t = t.replace(/[\s+-]/g, '').replace(/^(00218|218)(?=9)/, '0');
+      // رقم طلب بلا بادئة (مثل 1042) يطابق DW-2026-1042 عبر ilike تلقائياً
+      return t;
+    }
+
+    function renderTable() {
+      const columns = [
+        { key: 'code', label: 'الرقم', render: r => `<span class="mono ltr">${esc(r.code)}</span>` },
+        { key: 'customer_name', label: 'الزبون', render: r => `<div class="cust"><span>${esc(r.customer_name)}</span><small class="muted ltr">${esc(r.customer_phone)}</small></div>` },
+        { key: 'city', label: 'المدينة' },
+        { key: 'category', label: 'النوع' },
+        { key: 'urgency', label: 'الاستعجال', render: r => `<span class="urg-${esc(r.urgency)}">${esc(r.urgency)}</span>` },
+        { key: 'status', label: 'الحالة', render: r => ui.statusBadge(r.status) },
+        { key: 'delegate', label: 'المندوب', render: r => r.delegate && (r.delegate.full_name || r.delegate.email) ? esc(r.delegate.full_name || r.delegate.email) : '<span class="muted">—</span>' },
+        { key: 'total', label: 'الإجمالي', class: 'num', render: r => esc(db.formatMoney(r.total)) },
+        { key: 'created_at', label: 'التاريخ', render: r => `<span class="muted nowrap">${esc(db.formatDate(r.created_at))}</span>` },
+      ];
+      const emptyText = state.q || state.status !== 'all' || state.unassigned
+        ? 'ما فيش طلبات تطابق البحث أو التصفية.'
+        : 'ما فيش طلبات بعد — أضف طلباً من زر "طلب جديد" أو انتظر أول طلب من الموقع.';
+      tableHost.replaceChildren(ui.table({ columns, rows, empty: emptyText, onRow: r => openOrder(r.id) }));
+      pagerHost.replaceChildren(ui.pager({
+        page: state.page, pageSize: PAGE_SIZE, total,
+        onPage: p => { state.page = p; loadOrders(); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      }));
+    }
+
+    function patchRow(id, patch) {
+      const r = rows.find(x => x.id === id);
+      if (!r) return;
+      for (const [k, v] of Object.entries(patch)) if (v !== undefined) r[k] = v;
+      renderTable();
+    }
+
+    function renderChips() {
+      const cnt = key => {
+        if (!counts) return '';
+        const n = key === 'all' ? Object.values(counts).reduce((a, b) => a + Number(b || 0), 0) : Number(counts[key] || 0);
+        return ` <span class="cnt">${esc(n.toLocaleString('en-US'))}</span>`;
+      };
+      const chip = (key, label) => `<button type="button" class="chip ${state.status === key ? 'active' : ''}" data-status="${esc(key)}">${esc(label)}${cnt(key)}</button>`;
+      chipsEl.innerHTML = chip('all', 'الكل') + STATUSES.map(s => chip(s, db.STATUS_LABELS[s])).join('')
+        + '<span class="chip-sep" aria-hidden="true"></span>'
+        + `<button type="button" class="chip ${state.unassigned ? 'active' : ''}" data-unassigned><i class="fas fa-user-slash"></i> بلا مندوب</button>`;
+
+      chipsEl.querySelectorAll('[data-status]').forEach(b => b.addEventListener('click', () => {
+        state.status = b.dataset.status; state.page = 1;
+        renderChips(); syncUrl(); loadOrders();
+      }));
+      chipsEl.querySelector('[data-unassigned]').addEventListener('click', () => {
+        state.unassigned = !state.unassigned; state.page = 1;
+        renderChips(); syncUrl(); loadOrders();
+      });
+    }
+
+    async function loadCounts() {
+      try {
+        const s = await db.adminStats();
+        counts = (s && s.by_status) || {};
+        renderChips();
+      } catch (e) {
+        ui.toast('تعذّر تحميل أعداد الحالات: ' + db.friendlyError(e), 'err');
+      }
+    }
+
+    // ───────────────────────── القوائم المساعدة ─────────────────────────
+
+    function ensureLookups() {
+      if (lookups) return Promise.resolve(lookups);
+      if (!lookupsPromise) {
+        lookupsPromise = Promise.all([
+          // assign_order يقبل المندوبين والمديرين النشطين فقط
+          sb.from('profiles').select('id,full_name,phone,email,city,role').in('role', ['delegate', 'admin']).eq('active', true).order('role', { ascending: false }).order('full_name'),
+          sb.from('suppliers').select('id,name,city,active').order('name'),
+          sb.from('products').select('id,name,supplier_id,active').order('name').limit(1000),
+          sb.from('merchants').select('id,name,city,active').order('name'),
+        ]).then(([d, s, p, m]) => {
+          for (const r of [d, s, p, m]) if (r.error) throw r.error;
+          lookups = { delegates: d.data || [], suppliers: s.data || [], products: p.data || [], merchants: m.data || [] };
+          return lookups;
+        }).catch(e => { lookupsPromise = null; throw e; });
+      }
+      return lookupsPromise;
+    }
+
+    // خيارات قائمة منسدلة مع ضمان ظهور القيمة الحالية حتى لو لم تعد في القائمة (موقوفة مثلاً)
+    function optionsHtml(list, selectedId, labelOf, currentLabel) {
+      let html = '';
+      let found = false;
+      for (const item of list) {
+        const sel = item.id === selectedId;
+        if (sel) found = true;
+        html += `<option value="${esc(item.id)}" ${sel ? 'selected' : ''}>${esc(labelOf(item))}</option>`;
+      }
+      if (selectedId && !found) html += `<option value="${esc(selectedId)}" selected>${esc(currentLabel || 'غير متاح حالياً')}</option>`;
+      return html;
+    }
+
+    const delegateLabel = d =>
+      (d.full_name || d.email || '—')
+      + (d.role === 'admin' ? ' (مدير)' : '')
+      + (d.city ? ' — ' + d.city : '')
+      + (d.email ? ' · ' + d.email : '');
+
+    // ───────────────────────── نافذة التفاصيل ─────────────────────────
+
+    function openOrder(id) {
+      const m = ui.modal({
+        title: 'تفاصيل الطلب',
+        body: ui.skeleton(6),
+        wide: true,
+        footer: `<button type="button" class="btn btn-ghost" data-close>إغلاق</button>
+                 <button type="button" class="btn btn-danger" data-del><i class="fas fa-trash"></i> حذف الطلب</button>`,
+      });
+      setUrlParam('id', id);
+      m.addEventListener('closed', () => setUrlParam('id', null), { once: true });
+      m.querySelector('[data-del]').addEventListener('click', () => deleteOrder(m, id));
+      renderOrder(m, id);
+    }
+
+    async function renderOrder(m, id) {
+      const body = m.querySelector('.modal-body');
+      try {
+        const [orderRes, eventsRes] = await Promise.all([
+          sb.from('orders').select(ORDER_SELECT).eq('id', id).maybeSingle(),
+          sb.from('order_events').select(EVENTS_SELECT)
+            .eq('order_id', id).order('created_at', { ascending: true }).order('id', { ascending: true }),
+          // فشل القوائم المساعدة لا يمنع عرض الطلب نفسه — تُعرض النماذج بقوائم فارغة مع تنبيه
+          ensureLookups().catch(e => { ui.toast('تعذّر تحميل القوائم المساعدة: ' + db.friendlyError(e), 'err'); return null; }),
+        ]);
+        if (orderRes.error) throw orderRes.error;
+        if (eventsRes.error) throw eventsRes.error;
+        const o = orderRes.data;
+        if (!o) {
+          body.innerHTML = '<div class="empty"><i class="fas fa-box-open"></i>الطلب غير موجود — ربما حُذف.</div>';
+          m.querySelector('[data-del]').hidden = true;
+          return;
+        }
+        m.querySelector('.modal-head h2').textContent = 'الطلب ' + o.code;
+        body.innerHTML = orderHtml(o, eventsRes.data || []);
+        bindOrderActions(m, o);
+      } catch (e) {
+        body.innerHTML = `<div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(db.friendlyError(e))}</div>`;
+        ui.toast(db.friendlyError(e), 'err');
+      }
+    }
+
+    function waLink(phone) {
+      let d = String(phone || '').replace(/\D/g, '');
+      if (!d.startsWith('218')) d = '218' + d.replace(/^0/, '');
+      return 'https://wa.me/' + d;
+    }
+
+    function orderHtml(o, events) {
+      const dash = '<span class="muted">—</span>';
+      const txt = v => (v === null || v === undefined || v === '') ? dash : esc(v);
+      const money = v => esc(db.formatMoney(v));
+      const date = v => v ? esc(db.formatDate(v)) : dash;
+      const isSpare = SPARE_CATS.includes(o.category) || o.car_model || o.part_description;
+      const isFinal = FINAL_STATUSES.includes(o.status);
+      const dl = o.delegate;
+
+      const kv = [
+        ['الزبون', esc(o.customer_name)],
+        ['الهاتف', `<span class="ltr mono">${esc(o.customer_phone)}</span>`],
+        ['المدينة', esc(o.city)],
+        ['النوع', esc(o.category)],
+        ['الكمية', esc(o.quantity)],
+        ['الاستعجال', `<span class="urg-${esc(o.urgency)}">${esc(o.urgency)}</span>`],
+        ['طريقة الدفع', esc(db.PAYMENT_LABELS[o.payment_method] || o.payment_method)],
+        ['المصدر', esc(SOURCE_LABELS[o.source] || o.source)],
+        ['التفاصيل', o.details ? `<span class="pre">${esc(o.details)}</span>` : dash],
+      ];
+      if (isSpare) {
+        kv.push(['موديل السيارة', txt(o.car_model)]);
+        kv.push(['حالة القطعة', txt(o.part_condition)]);
+        kv.push(['وصف القطعة', o.part_description ? `<span class="pre">${esc(o.part_description)}</span>` : dash]);
+      }
+      kv.push(['المندوب', dl
+        ? `<div class="od-dl"><span>${esc(dl.full_name || dl.email || '—')}${dl.city ? ` <span class="muted">— ${esc(dl.city)}</span>` : ''}</span>
+             ${dl.phone ? `<span class="muted ltr mono">${esc(dl.phone)}</span>` : ''}
+             ${dl.email ? `<small class="muted ltr">${esc(dl.email)}</small>` : ''}</div>`
+        : '<span class="muted">بلا مندوب</span>']);
+      if (o.assigned_at) kv.push(['عُيّن في', date(o.assigned_at)]);
+      kv.push(['المورد', txt(o.supplier && o.supplier.name)]);
+      kv.push(['المنتج', txt(o.product && o.product.name)]);
+      kv.push(['التاجر', txt(o.merchant && o.merchant.name)]);
+      kv.push(['السعر المعروض', money(o.quoted_price)]);
+      kv.push(['رسوم الخدمة', money(o.service_fee)]);
+      kv.push(['الإجمالي', `<strong>${money(o.total)}</strong>`]);
+      kv.push(['عمولة المندوب', money(o.delegate_commission)]);
+      if (o.quoted_at) kv.push(['عُرض السعر في', date(o.quoted_at)]);
+      if (o.quote_response) {
+        kv.push(['ردّ الزبون على العرض',
+          `<span class="badge ${o.quote_response === 'accepted' ? 'st-delivered' : 'st-cancelled'}">${esc(QUOTE_LABELS[o.quote_response] || o.quote_response)}</span>
+           <span class="muted nowrap">${date(o.quote_responded_at)}</span>`]);
+      } else if (o.status === 'quoted') {
+        kv.push(['ردّ الزبون على العرض', '<span class="muted">بانتظار ردّ الزبون من صفحة التتبع</span>']);
+      }
+      if (o.delivered_at || o.status === 'delivered') {
+        kv.push(['تم التسليم', `${date(o.delivered_at)}${o.delivered_by_profile && o.delivered_by_profile.full_name ? ` <span class="muted">— سلّمه ${esc(o.delivered_by_profile.full_name)}</span>` : ''}`]);
+      }
+      if (o.cancelled_at || o.status === 'cancelled') {
+        kv.push(['أُلغي', `${date(o.cancelled_at)}${o.cancelled_by_profile && o.cancelled_by_profile.full_name ? ` <span class="muted">— بواسطة ${esc(o.cancelled_by_profile.full_name)}</span>` : ''}`]);
+        kv.push(['سبب الإلغاء', o.cancel_reason ? `<span class="pre">${esc(o.cancel_reason)}</span>` : dash]);
+      }
+      kv.push(['ملاحظات داخلية', o.internal_notes ? `<span class="pre">${esc(o.internal_notes)}</span>` : dash]);
+      kv.push(['أُنشئ', date(o.created_at)]);
+      kv.push(['آخر تغيير حالة', date(o.status_changed_at)]);
+      kv.push(['آخر تحديث', date(o.updated_at)]);
+
+      const L = lookups || { delegates: [], suppliers: [], products: [], merchants: [] };
+      const withCity = x => x.name + (x.city ? ' — ' + x.city : '') + (x.active === false ? ' (موقوف)' : '');
+      const activeFirst = list => list.filter(x => x.active !== false);
+      const n = v => (v === null || v === undefined) ? '' : v;
+      // الحالة المقترحة افتراضياً: التالية في الدورة (أو الحالية إن كان الطلب منتهياً)
+      const flowIdx = db.STATUS_FLOW.indexOf(o.status);
+      const suggested = isFinal || flowIdx < 0 || flowIdx >= db.STATUS_FLOW.length - 1 ? o.status : db.STATUS_FLOW[flowIdx + 1];
+
+      return `
+        <div class="od-head">
+          <div class="od-head-main">
+            <span class="mono ltr od-code">${esc(o.code)}</span>
+            ${ui.statusBadge(o.status)}
+            <span class="muted nowrap">${esc(db.formatDate(o.created_at))}</span>
+          </div>
+          <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${esc(waLink(o.customer_phone))}"><i class="fab fa-whatsapp"></i> واتساب الزبون</a>
+        </div>
+
+        <div class="od-grid">
+          <section class="od-col">
+            <h3 class="od-title"><i class="fas fa-box-open"></i> بيانات الطلب</h3>
+            <dl class="kv">${kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join('')}</dl>
+
+            <h3 class="od-title"><i class="fas fa-clock-rotate-left"></i> سجل الأحداث</h3>
+            ${eventsHtml(events)}
+          </section>
+
+          <section class="od-col">
+            <h3 class="od-title"><i class="fas fa-arrows-rotate"></i> تغيير الحالة</h3>
+            <form class="od-form" data-form="status" novalidate>
+              <label class="field">
+                <span class="label">الحالة الجديدة <small class="muted">(الحالية: ${esc(db.STATUS_LABELS[o.status] || o.status)})</small></span>
+                <select name="status">${STATUSES.map(s => `<option value="${esc(s)}" ${s === suggested ? 'selected' : ''}>${esc(db.STATUS_LABELS[s])}</option>`).join('')}</select>
+              </label>
+              <div class="od-when form-grid" data-when="quoted" hidden>
+                <label class="field"><span class="label">السعر المعروض</span>
+                  <input name="quoted_price" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.quoted_price))}"></label>
+                <label class="field"><span class="label">رسوم الخدمة</span>
+                  <input name="service_fee" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.service_fee))}"></label>
+                <label class="field full"><span class="label">الإجمالي <small class="muted">(يُحسب تلقائياً = السعر + الرسوم)</small></span>
+                  <input name="total" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.total))}"></label>
+                <small class="hint od-span">الزبون يشوف السعر والرسوم والإجمالي في صفحة التتبع ويردّ بالموافقة أو الرفض.</small>
+              </div>
+              <div class="od-when" data-when="cancelled" hidden>
+                <label class="field"><span class="label">سبب الإلغاء <span class="req">*</span></span>
+                  <textarea name="cancel_reason" rows="2" placeholder="مثال: الزبون ألغى بعد عرض السعر / القطعة غير متوفرة في ليبيا">${esc(o.cancel_reason || '')}</textarea></label>
+                <small class="hint">يظهر السبب للزبون في صفحة التتبع.</small>
+              </div>
+              <label class="field">
+                <span class="label">ملاحظة تظهر للزبون في صفحة التتبع (اختياري)</span>
+                <textarea name="note" rows="2" placeholder="مثال: لقينا القطعة عند مورد في طرابلس، السعر النهائي 350 د.ل"></textarea>
+              </label>
+              <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-check"></i> حفظ الحالة</button>
+            </form>
+
+            <h3 class="od-title"><i class="fas fa-comment-dots"></i> ملاحظة للزبون</h3>
+            <form class="od-form" data-form="note" novalidate>
+              <label class="field">
+                <span class="label">تُضاف لسجل الطلب وتظهر للزبون بلا تغيير الحالة</span>
+                <textarea name="note" rows="2" placeholder="مثال: المندوب بيتواصل معاك اليوم بعد العصر"></textarea>
+              </label>
+              <button type="submit" class="btn btn-ghost btn-sm"><i class="fas fa-paper-plane"></i> إضافة الملاحظة</button>
+            </form>
+
+            <h3 class="od-title"><i class="fas fa-id-badge"></i> تعيين مندوب</h3>
+            ${isFinal
+              ? `<p class="od-frozen"><i class="fas fa-lock"></i> الطلب ${esc(db.STATUS_LABELS[o.status])} — تغيير المندوب غير متاح. غيّر الحالة أولاً إن لزم.</p>`
+              : `<form class="od-form" data-form="delegate" novalidate>
+              <label class="field">
+                <span class="label">المندوب</span>
+                <select name="delegate_id">
+                  <option value="">— اختر مندوباً —</option>
+                  ${optionsHtml(L.delegates, o.delegate_id, delegateLabel, dl && (dl.full_name || dl.email))}
+                </select>
+              </label>
+              <label class="field">
+                <span class="label">ملاحظة داخلية مع التعيين (اختياري — لا تظهر للزبون)</span>
+                <input name="note" type="text" maxlength="300" placeholder="مثال: أقرب مندوب لمدينة الزبون">
+              </label>
+              <div class="od-btns">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-user-check"></i> تعيين</button>
+                ${o.delegate_id ? '<button type="button" class="btn btn-ghost btn-sm" data-unassign><i class="fas fa-user-slash"></i> إلغاء التعيين</button>' : ''}
+              </div>
+              ${!lookups ? '<small class="muted">تعذّر تحميل قائمة المندوبين — حدّث الصفحة وجرّب تاني.</small>'
+                : !L.delegates.length ? '<small class="muted">ما فيش مندوبون معتمدون بعد — اعتمدهم من صفحة المندوبين.</small>' : ''}
+              ${o.status === 'received' ? '<small class="hint">تعيين مندوب ينقل الطلب تلقائياً إلى "ندوّروا ونسعّروا".</small>' : ''}
+            </form>`}
+
+            <h3 class="od-title"><i class="fas fa-coins"></i> التسعير والمصادر</h3>
+            <form class="od-form" data-form="pricing" novalidate>
+              <div class="form-grid">
+                <label class="field"><span class="label">السعر المعروض</span>
+                  <input name="quoted_price" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.quoted_price))}"></label>
+                <label class="field"><span class="label">رسوم الخدمة</span>
+                  <input name="service_fee" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.service_fee))}"></label>
+                <label class="field"><span class="label">الإجمالي <small class="muted">(تلقائي)</small></span>
+                  <input name="total" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.total))}"></label>
+                <label class="field"><span class="label">عمولة المندوب</span>
+                  <input name="delegate_commission" type="number" step="0.01" min="0" inputmode="decimal" class="ltr" value="${esc(n(o.delegate_commission))}"></label>
+                <label class="field"><span class="label">المورد</span>
+                  <select name="supplier_id"><option value="">—</option>${optionsHtml(activeFirst(L.suppliers), o.supplier_id, withCity, o.supplier && o.supplier.name)}</select></label>
+                <label class="field"><span class="label">المنتج</span>
+                  <select name="product_id"><option value="">—</option>${optionsHtml(activeFirst(L.products), o.product_id, p => p.name, o.product && o.product.name)}</select></label>
+                <label class="field full"><span class="label">التاجر</span>
+                  <select name="merchant_id"><option value="">—</option>${optionsHtml(activeFirst(L.merchants), o.merchant_id, withCity, o.merchant && o.merchant.name)}</select></label>
+                <label class="field full"><span class="label">ملاحظات داخلية (للإدارة فقط — لا تظهر للزبون ولا للمندوب)</span>
+                  <textarea name="internal_notes" rows="2">${esc(o.internal_notes || '')}</textarea></label>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-floppy-disk"></i> حفظ التسعير</button>
+            </form>
+          </section>
+        </div>`;
+    }
+
+    function eventsHtml(events) {
+      if (!events.length) return '<p class="muted">لا أحداث مسجّلة بعد.</p>';
+      const actorName = ev => {
+        if (ev.actor && ev.actor.full_name) return ev.actor.full_name;
+        return ev.actor_id ? 'مستخدم محذوف' : 'الزبون عبر الموقع';
+      };
+      return `<ul class="events">${events.map(ev => {
+        const internal = ev.visible_to_customer === false;
+        const kindLabel = KIND_LABELS[ev.kind];
+        const label = !kindLabel
+          ? ui.statusBadge(ev.status)
+          : `<span class="badge ev-${esc(ev.kind)}">${esc(kindLabel)}</span><span class="muted ev-ctx">${esc(db.STATUS_LABELS[ev.status] || ev.status)}</span>`;
+        return `<li class="${internal ? 'ev-internal' : ''}"><div>
+          <div class="ev-line">${label}${internal ? '<span class="badge off" title="لا يظهر للزبون">داخلي</span>' : ''}<span class="ev-actor muted"><i class="fas fa-user"></i> ${esc(actorName(ev))}</span></div>
+          <div class="ev-time">${esc(db.formatDate(ev.created_at))}</div>
+          ${ev.note ? `<div class="ev-note">${esc(ev.note)}</div>` : ''}
+        </div></li>`;
+      }).join('')}</ul>`;
+    }
+
+    // يشغّل إجراءً على نموذج مع تعطيله أثناء التنفيذ وإظهار الخطأ إن حدث
+    async function runAction(form, fn) {
+      form.classList.add('is-busy');
+      form.querySelectorAll('button').forEach(b => { b.disabled = true; });
+      try { await fn(); }
+      catch (e) { ui.toast(db.friendlyError(e), 'err'); }
+      finally {
+        form.classList.remove('is-busy');
+        form.querySelectorAll('button').forEach(b => { b.disabled = false; });
+      }
+    }
+
+    // الـ RPC يُرجع صف orders واحداً (كائن) — نحتاط لحالة المصفوفة
+    const rowOf = res => Array.isArray(res) ? res[0] || null : res || null;
+    const num = v => (v === '' || v === null || v === undefined) ? null : Number(v);
+    const badMoney = v => v !== null && (Number.isNaN(v) || v < 0);
+    const bindAutoTotal = form => {
+      const qp = form.elements.quoted_price, sf = form.elements.service_fee, tt = form.elements.total;
+      if (!qp || !sf || !tt) return;
+      const autoTotal = () => {
+        if (qp.value === '' && sf.value === '') return;
+        const sum = Number(qp.value || 0) + Number(sf.value || 0);
+        if (!Number.isNaN(sum)) tt.value = String(Math.round(sum * 100) / 100);
+      };
+      qp.addEventListener('input', autoTotal);
+      sf.addEventListener('input', autoTotal);
+    };
+
+    function bindOrderActions(m, o) {
+      const body = m.querySelector('.modal-body');
+      const afterChange = async (row, okMsg) => {
+        if (row) patchRow(o.id, { status: row.status, total: row.total, delegate_id: row.delegate_id });
+        ui.toast(okMsg, 'ok');
+        loadCounts();
+        await renderOrder(m, o.id);
+      };
+
+      // ── تغيير الحالة (RPC واحد: الحالة + الأسعار + الملاحظة + سبب الإلغاء) ──
+      const fStatus = body.querySelector('[data-form="status"]');
+      const sel = fStatus.elements.status;
+      const syncWhen = () => fStatus.querySelectorAll('[data-when]').forEach(b => { b.hidden = b.dataset.when !== sel.value; });
+      sel.addEventListener('change', syncWhen);
+      syncWhen();
+      bindAutoTotal(fStatus);
+      fStatus.addEventListener('submit', e => {
+        e.preventDefault();
+        const status = sel.value;
+        const note = fStatus.elements.note.value.trim();
+        const changed = status !== o.status;
+        const opts = { note: note || null };
+        if (status === 'quoted') {
+          opts.quoted_price = num(fStatus.elements.quoted_price.value);
+          opts.service_fee = num(fStatus.elements.service_fee.value);
+          opts.total = num(fStatus.elements.total.value);
+          if ([opts.quoted_price, opts.service_fee, opts.total].some(badMoney)) { ui.toast('القيم المالية لازم تكون أرقاماً موجبة.', 'err'); return; }
+        }
+        if (status === 'cancelled') {
+          const reason = fStatus.elements.cancel_reason.value.trim();
+          if (!reason) { ui.toast('اكتب سبب الإلغاء قبل الحفظ.', 'err'); fStatus.elements.cancel_reason.focus(); return; }
+          opts.cancel_reason = reason.slice(0, 500);
+        }
+        if (!changed && !note && status !== 'quoted') { ui.toast('اختر حالة مختلفة أو اكتب ملاحظة.', 'info'); return; }
+        runAction(fStatus, async () => {
+          if (status === 'cancelled' && changed) {
+            const ok = await ui.confirm('إلغاء الطلب؟ الزبون بيشوف الحالة "ملغي" مع السبب في صفحة التتبع.', { okText: 'إلغاء الطلب', danger: true });
+            if (!ok) return;
+          }
+          if (status === 'quoted' && opts.quoted_price === null && o.quoted_price === null) {
+            const ok = await ui.confirm('ما حدّدتش السعر المعروض — الزبون بيشوف "عرض السعر" بلا سعر. تكمّل؟', { okText: 'كمّل بلا سعر' });
+            if (!ok) return;
+          }
+          const row = rowOf(await db.setOrderStatus(o.id, status, opts));
+          await afterChange(row, changed ? 'تم تحديث الحالة' : (note ? 'تمت إضافة الملاحظة' : 'تم الحفظ'));
+        });
+      });
+
+      // ── ملاحظة للزبون بلا تغيير الحالة (نفس الـ RPC بالحالة الحالية → حدث "ملاحظة") ──
+      const fNote = body.querySelector('[data-form="note"]');
+      fNote.addEventListener('submit', e => {
+        e.preventDefault();
+        const note = fNote.elements.note.value.trim();
+        if (!note) { ui.toast('اكتب الملاحظة أولاً.', 'info'); fNote.elements.note.focus(); return; }
+        runAction(fNote, async () => {
+          const row = rowOf(await db.setOrderStatus(o.id, o.status, { note }));
+          await afterChange(row, 'تمت إضافة الملاحظة');
+        });
+      });
+
+      // ── تعيين / إلغاء تعيين مندوب (RPC assign_order — يضبط الحالة ويوثّق الحدث) ──
+      const fDel = body.querySelector('[data-form="delegate"]');
+      if (fDel) {
+        const assign = delegateId => runAction(fDel, async () => {
+          const note = (fDel.elements.note.value || '').trim() || null;
+          const row = rowOf(await db.assignOrder(o.id, delegateId, note));
+          const d = delegateId && lookups ? lookups.delegates.find(x => x.id === delegateId) : null;
+          patchRow(o.id, { delegate: d ? { full_name: d.full_name, phone: d.phone, email: d.email } : null });
+          await afterChange(row, delegateId ? 'تم تعيين المندوب' : 'تم إلغاء التعيين');
+        });
+        fDel.addEventListener('submit', e => {
+          e.preventDefault();
+          const v = fDel.elements.delegate_id.value;
+          if (!v) { ui.toast('اختر مندوباً من القائمة.', 'info'); return; }
+          if (v === o.delegate_id) { ui.toast('هذا المندوب معيّن أصلاً.', 'info'); return; }
+          assign(v);
+        });
+        const unassignBtn = fDel.querySelector('[data-unassign]');
+        if (unassignBtn) unassignBtn.addEventListener('click', async () => {
+          const ok = await ui.confirm('إلغاء تعيين المندوب؟ إن كان الطلب في مرحلة البحث يرجع إلى "استلمنا طلبك" ويظهر للمندوبين من جديد.', { okText: 'إلغاء التعيين' });
+          if (ok) assign(null);
+        });
+      }
+
+      // ── التسعير والمصادر (تحديث مباشر — المدير يعدّل أي عمود) ──
+      const fPr = body.querySelector('[data-form="pricing"]');
+      bindAutoTotal(fPr);
+      fPr.addEventListener('submit', e => {
+        e.preventDefault();
+        runAction(fPr, async () => {
+          const patch = {
+            quoted_price: num(fPr.elements.quoted_price.value),
+            service_fee: num(fPr.elements.service_fee.value),
+            total: num(fPr.elements.total.value),
+            delegate_commission: num(fPr.elements.delegate_commission.value),
+            supplier_id: fPr.elements.supplier_id.value || null,
+            product_id: fPr.elements.product_id.value || null,
+            merchant_id: fPr.elements.merchant_id.value || null,
+            internal_notes: fPr.elements.internal_notes.value.trim().slice(0, 2000) || null,
+          };
+          for (const k of ['quoted_price', 'service_fee', 'total', 'delegate_commission']) {
+            if (badMoney(patch[k])) throw new Error('القيم المالية لازم تكون أرقاماً موجبة.');
+          }
+          const { data, error } = await sb.from('orders').update(patch).eq('id', o.id).select('id,status,total,delegate_id');
+          if (error) throw error;
+          if (!data || !data.length) throw new Error('not_allowed');   // RLS قد يرشّح الصف بصمت
+          await afterChange(data[0], 'تم حفظ التسعير');
+        });
+      });
+    }
+
+    async function deleteOrder(m, id) {
+      const ok = await ui.confirm('حذف الطلب نهائياً مع سجل أحداثه؟ هذا الإجراء لا يمكن التراجع عنه — إن كان القصد إيقاف الطلب فاستخدم حالة "ملغي" مع ذكر السبب.', { okText: 'حذف الطلب', danger: true });
+      if (!ok) return;
+      const btn = m.querySelector('[data-del]');
+      btn.disabled = true;
+      try {
+        const { error } = await sb.from('orders').delete().eq('id', id);
+        if (error) throw error;
+        m.close();
+        rows = rows.filter(r => r.id !== id);
+        total = Math.max(0, total - 1);
+        renderTable();
+        ui.toast('تم حذف الطلب', 'ok');
+        loadCounts();
+        loadOrders();
+      } catch (e) {
+        ui.toast(db.friendlyError(e), 'err');
+        btn.disabled = false;
+      }
+    }
+
+    // ───────────────────────── طلب جديد ─────────────────────────
+
+    async function newOrder() {
+      setUrlParam('new', null);
+      const opt = v => ({ value: v, label: v });
+      const fields = [
+        { name: 'customer_name', label: 'اسم الزبون', required: true, placeholder: 'الاسم الكامل' },
+        { name: 'customer_phone', label: 'هاتف الزبون', type: 'tel', required: true, placeholder: '09xxxxxxxx', pattern: '09[0-9]{8}', inputmode: 'numeric', hint: '10 أرقام تبدأ بـ 09' },
+        { name: 'city', label: 'مدينة التسليم', type: 'select', required: true, options: [{ value: '', label: 'اختر المدينة…' }, ...CITIES.map(opt)] },
+        { name: 'category', label: 'نوع الطلب', type: 'select', required: true, options: [{ value: '', label: 'اختر النوع…' }, ...CATEGORIES.map(opt)] },
+        { name: 'details', label: 'التفاصيل', type: 'textarea', rows: 3, placeholder: 'شن يبي الزبون بالضبط؟ الاسم، الموديل، اللون، الكمية…' },
+        { name: 'quantity', label: 'الكمية', type: 'number', min: 1, value: 1 },
+        { name: 'urgency', label: 'الاستعجال', type: 'select', options: URGENCIES.map(opt), value: 'عادي' },
+        { name: 'payment_method', label: 'طريقة الدفع', type: 'select', options: Object.entries(db.PAYMENT_LABELS).map(([value, label]) => ({ value, label })), value: 'cash' },
+        { name: 'source', label: 'مصدر الطلب', type: 'select', options: Object.entries(NEW_ORDER_SOURCES).map(([value, label]) => ({ value, label })), value: 'admin', hint: 'من وين وصلك الطلب؟' },
+        { name: 'car_model', label: 'موديل السيارة', placeholder: 'تويوتا هايلاكس 2018 — ديزل', hint: 'لطلبات قطع الغيار فقط' },
+        { name: 'part_condition', label: 'حالة القطعة', type: 'select', options: [{ value: '', label: '—' }, { value: 'جديدة', label: 'جديدة (أصلية)' }, { value: 'مستعملة (رابش)', label: 'مستعملة — رابش' }] },
+        { name: 'part_description', label: 'وصف القطعة', type: 'textarea', rows: 2, placeholder: 'مثال: مضخة مياه محرك — القطعة معطوبة ونبي بديل أصلي' },
+      ];
+
+      let created = null;
+      const values = await ui.form({
+        title: 'طلب جديد',
+        fields,
+        submitText: 'إنشاء الطلب',
+        wide: true,
+        onSubmit: async v => {
+          // أرقام عربية → لاتينية، وإزالة الفراغات والشرطات (القاعدة تطبّع أيضاً، لكن التحقق هنا أوضح للمستخدم)
+          const phone = String(v.customer_phone || '').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/[\s-]/g, '');
+          if (!/^09\d{8}$/.test(phone)) throw new Error('رقم الهاتف لازم يكون 10 أرقام ويبدا بـ 09.');
+          const payload = {
+            customer_name: String(v.customer_name).slice(0, 120),
+            customer_phone: phone,
+            city: v.city,
+            category: v.category,
+            details: v.details ? String(v.details).slice(0, 2000) : null,
+            quantity: Math.min(999, Math.max(1, Math.round(Number(v.quantity) || 1))),
+            urgency: URGENCIES.includes(v.urgency) ? v.urgency : 'عادي',
+            payment_method: v.payment_method in db.PAYMENT_LABELS ? v.payment_method : 'cash',
+            car_model: v.car_model ? String(v.car_model).slice(0, 120) : null,
+            part_condition: v.part_condition || null,
+            part_description: v.part_description ? String(v.part_description).slice(0, 500) : null,
+            source: v.source in NEW_ORDER_SOURCES ? v.source : 'admin',
+          };
+          // الرقم يولّده المحفّز في القاعدة، والعميل يُربط بهاتفه تلقائياً، وحدث "استلمنا طلبك" يُسجَّل تلقائياً
+          const { data, error } = await sb.from('orders').insert(payload).select('id,code').single();
+          if (error) throw new Error(db.friendlyError(error));
+          created = data;
+        },
+      });
+      if (!values || !created) return;
+
+      ui.toast(`تم إنشاء الطلب ${created.code}`, 'ok');
+      state.page = 1;
+      await loadOrders();
+      loadCounts();
+      openOrder(created.id);
+    }
+
+    // ───────────────────────── أدوات ─────────────────────────
+
+    function setUrlParam(key, val) {
+      const u = new URL(location.href);
+      if (val === null || val === undefined || val === '') u.searchParams.delete(key);
+      else u.searchParams.set(key, val);
+      history.replaceState(null, '', u.pathname + u.search);
+    }
+
+    function syncUrl() {
+      setUrlParam('status', state.status === 'all' ? null : state.status);
+      setUrlParam('unassigned', state.unassigned ? '1' : null);
+    }
+
+    function debounce(fn, ms) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    }
+  }
+</script>

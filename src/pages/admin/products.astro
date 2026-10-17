@@ -1,0 +1,415 @@
+---
+// لوحة التحكم — المنتجات: بحث، ترقيم، إضافة/تعديل/حذف، صورة المنتج (تخزين Supabase)، ربط بمورد، نطاق سعر، تفعيل/إيقاف.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="المنتجات" portal="admin" page="products">
+  <div slot="actions">
+    <button type="button" class="icon-btn" id="refreshBtn" title="تحديث" aria-label="تحديث"><i class="fas fa-rotate-right"></i></button>
+  </div>
+  <div id="toolbar"></div>
+  <div id="chips" class="chips"></div>
+  <div id="list"></div>
+  <div id="pager"></div>
+</AdminLayout>
+
+<style is:global>
+  /* عام (لا scoped) لأن الصفوف والنوافذ تُبنى بـ innerHTML بعد التحميل */
+  .thumb { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--muted-2); vertical-align: middle; flex-shrink: 0; }
+  .thumb-empty { font-size: 1rem; }
+  .cell-main { min-width: 0; }
+  .cell-sub { display: block; color: var(--muted-2); font-size: .78rem; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-off td { opacity: .6; }
+  .chips.static .chip { cursor: default; }
+  .price-range { white-space: nowrap; }
+  .table td.actions .btn + .btn { margin-right: .35rem; }
+  .img-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .img-preview { width: 96px; height: 96px; border-radius: var(--r); background: var(--bg-2); border: 1px dashed var(--line-2); display: flex; align-items: center; justify-content: center; color: var(--muted-2); font-size: 1.6rem; overflow: hidden; flex-shrink: 0; }
+  .img-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .img-actions { display: flex; flex-direction: column; gap: .5rem; align-items: flex-start; }
+  .img-actions .btn-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+</style>
+
+<script>
+  (async () => {
+    const { db, ui, sb, profile } = await window.dawerliReady;
+    if (!sb || !profile) return; // غير مهيأ أو محجوب — التخطيط عرض الرسالة المناسبة
+
+    const { esc, formatMoney } = db;
+    const PAGE_SIZE = 25;
+    const BUCKET = 'product-images';
+    const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // الحاوية تفرض الحد نفسه
+    const IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+    // فئات المنتجات = فئات الموقع + أخرى
+    const CATEGORIES = [
+      'قطع غيار سيارات', 'قطع غيار شاحنات', 'مواد غذائية وحلويات', 'أوراق ومستندات', 'مستلزمات أفراح',
+      'ملابس وأزياء', 'تجميل ونظافة', 'مواد بناء وصيانة', 'إلكترونيات', 'عقارات', 'بضائع جملة', 'أخرى',
+    ];
+    const FILTERS = [{ k: 'all', label: 'الكل' }, { k: 'on', label: 'نشط' }, { k: 'off', label: 'موقوف' }];
+
+    const state = { page: 1, q: '', active: 'all' };
+    let reqId = 0;
+    let suppliersCache = null;
+
+    const listEl = document.getElementById('list');
+    const pagerEl = document.getElementById('pager');
+    const toolbarEl = document.getElementById('toolbar');
+    const chipsEl = document.getElementById('chips');
+
+    // ───────── أدوات محلية ─────────
+    const cleanTerm = s => String(s || '').replace(/[,()"'\\%]/g, ' ').replace(/\s+/g, ' ').trim();
+    const truncate = (s, n) => { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+    const activeBadge = a => a ? '<span class="badge st-delivered">نشط</span>' : '<span class="badge off">موقوف</span>';
+    const THUMB_EMPTY = '<span class="thumb thumb-empty" aria-hidden="true"><i class="fas fa-image"></i></span>';
+
+    const thumbHtml = r => r.image_url
+      ? `<img class="thumb" src="${esc(r.image_url)}" alt="" loading="lazy" width="44" height="44">`
+      : THUMB_EMPTY;
+
+    function priceHtml(r) {
+      const min = r.price_min == null || r.price_min === '' ? null : Number(r.price_min);
+      const max = r.price_max == null || r.price_max === '' ? null : Number(r.price_max);
+      if (min === null && max === null) return '<span class="muted">—</span>';
+      if (min !== null && max !== null && min !== max) return `<span class="price-range">${esc(formatMoney(min))} – ${esc(formatMoney(max))}</span>`;
+      return `<span class="price-range">${esc(formatMoney(min === null ? max : min))}</span>`;
+    }
+
+    /** رسالة عربية لأخطاء التخزين الشائعة، وإلا رسالة db.friendlyError */
+    function friendly(e) {
+      const msg = String((e && e.message) || e || '');
+      if (/exceeded the maximum allowed size|Payload too large/i.test(msg)) return 'حجم الصورة أكبر من 5 ميغابايت.';
+      if (/mime type .* is not supported|invalid mime/i.test(msg)) return 'نوع الصورة غير مدعوم — استخدم JPG أو PNG أو WebP.';
+      if (/Bucket not found/i.test(msg)) return 'حاوية الصور غير موجودة — نفّذ ملف الـ migration في Supabase.';
+      return db.friendlyError(e);
+    }
+
+    // ───────── التخزين: صور المنتجات ─────────
+    /** مسار الملف داخل الحاوية من رابطه العام (بعد "/product-images/")، أو null */
+    function storagePathFromUrl(url) {
+      const marker = '/' + BUCKET + '/';
+      const s = String(url || '');
+      const i = s.indexOf(marker);
+      if (i < 0) return null;
+      let p = s.slice(i + marker.length).split('?')[0].split('#')[0];
+      try { p = decodeURIComponent(p); } catch (_) { /* نبقيه كما هو */ }
+      return p && p.startsWith('products/') ? p : null;
+    }
+
+    /** حذف صورة قديمة — لا يرمي خطأً (الحذف من السجل أهم من تنظيف التخزين) */
+    async function removeImage(url) {
+      const path = storagePathFromUrl(url);
+      if (!path) return;
+      try {
+        const { error } = await sb.storage.from(BUCKET).remove([path]);
+        if (error) console.warn('storage.remove', error);
+      } catch (e) { console.warn('storage.remove', e); }
+    }
+
+    function newImagePath(file) {
+      const ext = IMAGE_TYPES[file.type] || 'jpg';
+      const id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      return 'products/' + id + '.' + ext;
+    }
+
+    /** يرفع الملف ويُرجع { path, url } */
+    async function uploadImage(file) {
+      const path = newImagePath(file);
+      const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
+      return { path, url: data.publicUrl };
+    }
+
+    /** يتحقق من نوع وحجم الملف قبل الرفع؛ يُرجع رسالة خطأ أو '' */
+    function validateImage(file) {
+      if (!file) return '';
+      if (!IMAGE_TYPES[file.type]) return 'نوع الصورة غير مدعوم — استخدم JPG أو PNG أو WebP.';
+      if (file.size > MAX_IMAGE_BYTES) return 'حجم الصورة أكبر من 5 ميغابايت — صغّرها وجرّب تاني.';
+      return '';
+    }
+
+    // ───────── الموردون (للقائمة المنسدلة) ─────────
+    async function loadSuppliers() {
+      if (suppliersCache) return suppliersCache;
+      const { data, error } = await sb.from('suppliers').select('id,name,active').order('name').limit(1000);
+      if (error) throw error;
+      suppliersCache = data || [];
+      return suppliersCache;
+    }
+
+    // ───────── التحميل والعرض ─────────
+    async function load() {
+      const my = ++reqId;
+      listEl.innerHTML = ui.skeleton(6);
+      pagerEl.innerHTML = '';
+      try {
+        const from = (state.page - 1) * PAGE_SIZE;
+        let query = sb.from('products')
+          .select('*, supplier:suppliers(name)', { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1);
+        const q = cleanTerm(state.q);
+        if (q) query = query.ilike('name', `%${q}%`);
+        if (state.active === 'on') query = query.eq('active', true);
+        if (state.active === 'off') query = query.eq('active', false);
+        const { data, error, count } = await query;
+        if (error) throw error;
+        if (my !== reqId) return;
+        const rows = data || [];
+        const total = count || 0;
+        // لو صارت الصفحة خارج النطاق (بعد حذف أو بحث) ارجع لآخر صفحة
+        if (!rows.length && total > 0 && state.page > 1) {
+          state.page = Math.max(1, Math.ceil(total / PAGE_SIZE));
+          return load();
+        }
+        render(rows, total);
+      } catch (e) {
+        if (my !== reqId) return;
+        const msg = friendly(e);
+        listEl.innerHTML = `<div class="card"><div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(msg)}</div></div>`;
+        ui.toast(msg, 'err');
+      }
+    }
+
+    function render(rows, total) {
+      const q = cleanTerm(state.q);
+      const columns = [
+        { key: 'image', label: 'الصورة', width: '60px', render: r => thumbHtml(r) },
+        { key: 'name', label: 'المنتج', render: r => `<div class="cell-main"><strong>${esc(r.name)}</strong>${r.description ? `<span class="cell-sub" title="${esc(r.description)}">${esc(truncate(r.description, 60))}</span>` : ''}</div>` },
+        { key: 'category', label: 'الفئة', render: r => r.category ? `<span class="chip" style="cursor:default">${esc(r.category)}</span>` : '<span class="muted">—</span>' },
+        { key: 'supplier', label: 'المورد', render: r => r.supplier && r.supplier.name ? esc(r.supplier.name) : '<span class="muted">—</span>' },
+        { key: 'price', label: 'السعر', render: r => priceHtml(r) },
+        { key: 'active', label: 'الحالة', render: r => activeBadge(r.active) },
+        { key: 'actions', label: '', class: 'actions', render: r => `
+          ${r.image_url ? `<a class="btn btn-ghost btn-sm" href="${esc(r.image_url)}" target="_blank" rel="noopener" title="فتح الصورة"><i class="fas fa-up-right-from-square"></i></a>` : ''}
+          <button type="button" class="btn btn-ghost btn-sm" data-edit title="تعديل"><i class="fas fa-pen"></i> تعديل</button>` },
+      ];
+      const table = ui.table({
+        columns, rows,
+        empty: q
+          ? `ما لقيناش منتج يطابق "${q}".`
+          : (state.active !== 'all' ? 'لا توجد منتجات بهذه الحالة.' : 'لا توجد منتجات بعد — أضف أول منتج مع صورته وسعره.'),
+        onRow: row => openForm(row),
+      });
+      // تمييز الموقوفين، وربط أزرار التعديل، واستبدال الصور المكسورة بأيقونة
+      table.querySelectorAll('tbody tr').forEach((tr, i) => {
+        const r = rows[i];
+        if (!r) return;
+        if (!r.active) tr.classList.add('row-off');
+        const editBtn = tr.querySelector('[data-edit]');
+        if (editBtn) editBtn.addEventListener('click', () => openForm(r));
+        const img = tr.querySelector('img.thumb');
+        if (img) img.addEventListener('error', () => { img.outerHTML = THUMB_EMPTY; }, { once: true });
+      });
+      listEl.innerHTML = '';
+      listEl.appendChild(table);
+      pagerEl.innerHTML = '';
+      if (total > 0) pagerEl.appendChild(ui.pager({ page: state.page, pageSize: PAGE_SIZE, total, onPage: p => { state.page = p; load(); } }));
+    }
+
+    function renderChips() {
+      chipsEl.innerHTML = FILTERS.map(f =>
+        `<button type="button" class="chip ${state.active === f.k ? 'active' : ''}" data-k="${esc(f.k)}">${esc(f.label)}</button>`).join('');
+      chipsEl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+        state.active = b.dataset.k; state.page = 1; renderChips(); load();
+      }));
+    }
+
+    // ───────── إضافة / تعديل / حذف ─────────
+    async function openForm(row) {
+      const isEdit = !!row;
+      const v = row || { active: true };
+
+      let suppliers = [];
+      try { suppliers = await loadSuppliers(); }
+      catch (e) { ui.toast('تعذّر تحميل قائمة الموردين: ' + friendly(e), 'err'); }
+      // الموردون النشطون فقط — مع إبقاء مورد المنتج الحالي حتى لو موقوف حتى لا يضيع عند التعديل
+      const supplierOptions = suppliers.filter(s => s.active || (isEdit && s.id === v.supplier_id));
+      const cats = CATEGORIES.slice();
+      if (v.category && !cats.includes(v.category)) cats.unshift(v.category);
+
+      const body = `<form class="form-grid product-form" novalidate>
+        <label class="field full"><span class="label">اسم المنتج<span class="req">*</span></span>
+          <input name="name" type="text" value="${esc(v.name || '')}" placeholder="مثال: فلتر زيت تويوتا كورولا 2015" maxlength="160"></label>
+        <div class="field full img-field">
+          <span class="label">صورة المنتج</span>
+          <div class="img-row">
+            <div class="img-preview" data-preview>${v.image_url ? `<img src="${esc(v.image_url)}" alt="">` : '<i class="fas fa-image"></i>'}</div>
+            <div class="img-actions">
+              <div class="btn-row">
+                <button type="button" class="btn btn-ghost btn-sm" data-pick><i class="fas fa-upload"></i> ${v.image_url ? 'تغيير الصورة' : 'اختيار صورة'}</button>
+                <button type="button" class="btn btn-danger btn-sm" data-remove-img ${v.image_url ? '' : 'hidden'}><i class="fas fa-xmark"></i> إزالة الصورة</button>
+              </div>
+              <small class="hint">JPG أو PNG أو WebP — بحد أقصى 5 ميغابايت</small>
+              <input type="file" name="image" accept="image/jpeg,image/png,image/webp" hidden data-file>
+            </div>
+          </div>
+        </div>
+        <label class="field"><span class="label">الفئة</span>
+          <select name="category"><option value="">— غير محددة —</option>${cats.map(c =>
+            `<option value="${esc(c)}" ${c === v.category ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+        <label class="field"><span class="label">المورد</span>
+          <select name="supplier_id"><option value="">— بدون مورد —</option>${supplierOptions.map(s =>
+            `<option value="${esc(s.id)}" ${s.id === v.supplier_id ? 'selected' : ''}>${esc(s.name)}${s.active ? '' : ' (موقوف)'}</option>`).join('')}</select></label>
+        <label class="field"><span class="label">أقل سعر (د.ل)</span>
+          <input name="price_min" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(v.price_min ?? '')}" placeholder="0"></label>
+        <label class="field"><span class="label">أعلى سعر (د.ل)</span>
+          <input name="price_max" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(v.price_max ?? '')}" placeholder="0"></label>
+        <label class="field full"><span class="label">الوصف</span>
+          <textarea name="description" rows="3" placeholder="مواصفات، مقاسات، ملاحظات تساعد المندوب في البحث…">${esc(v.description || '')}</textarea></label>
+        <label class="field check full"><input type="checkbox" name="active" ${v.active ? 'checked' : ''}> <span>نشط (يظهر للمندوبين في البحث)</span></label>
+        <p class="form-error" data-error hidden></p>
+      </form>`;
+      const footer = `<button type="button" class="btn btn-ghost" data-close>إلغاء</button>
+        <button type="button" class="btn btn-primary" data-submit>${isEdit ? 'حفظ التعديلات' : 'إضافة'}</button>
+        ${isEdit ? '<button type="button" class="btn btn-danger" data-delete style="margin-left:auto"><i class="fas fa-trash"></i> حذف</button>' : ''}`;
+
+      const m = ui.modal({ title: isEdit ? `تعديل المنتج: ${v.name}` : 'إضافة منتج', body, footer, wide: true });
+      const form = m.querySelector('form');
+      const fld = n => form.elements.namedItem(n);
+      const errEl = m.querySelector('[data-error]');
+      const preview = m.querySelector('[data-preview]');
+      const fileInput = m.querySelector('[data-file]');
+      const pickBtn = m.querySelector('[data-pick]');
+      const removeBtn = m.querySelector('[data-remove-img]');
+      const submitBtn = m.querySelector('[data-submit]');
+      const delBtn = m.querySelector('[data-delete]');
+      const showErr = msg => { errEl.textContent = msg; errEl.hidden = false; };
+      const hideErr = () => { errEl.hidden = true; };
+
+      // حالة الصورة داخل النافذة
+      let pendingFile = null;      // ملف جديد اختاره المستخدم
+      let removeExisting = false;  // طلب إزالة الصورة الحالية
+      let objectUrl = null;
+      const revoke = () => { if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; } };
+
+      function setPreview(src) {
+        preview.innerHTML = '';
+        if (src) {
+          const img = document.createElement('img');
+          img.alt = '';
+          img.src = src; // يُضبط كخاصية DOM وليس داخل HTML
+          preview.appendChild(img);
+        } else {
+          preview.innerHTML = '<i class="fas fa-image"></i>';
+        }
+      }
+
+      pickBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const bad = validateImage(file);
+        if (bad) { showErr(bad); fileInput.value = ''; return; }
+        hideErr();
+        revoke();
+        pendingFile = file;
+        removeExisting = false;
+        objectUrl = URL.createObjectURL(file);
+        setPreview(objectUrl);
+        removeBtn.hidden = false;
+      });
+      removeBtn.addEventListener('click', () => {
+        revoke();
+        pendingFile = null;
+        fileInput.value = '';
+        removeExisting = !!v.image_url;
+        setPreview(null);
+        removeBtn.hidden = true;
+        hideErr();
+      });
+
+      const finish = () => m.close();
+      m.addEventListener('closed', revoke, { once: true });
+
+      const toNumber = (el, label) => {
+        const s = String(el.value || '').trim();
+        if (s === '') return null;
+        const n = Number(s);
+        if (!Number.isFinite(n) || n < 0) throw new Error(`"${label}" لازم يكون رقماً موجباً.`);
+        return Math.round(n * 100) / 100;
+      };
+
+      async function submit() {
+        const name = fld('name').value.trim();
+        if (!name) { showErr('حقل "اسم المنتج" مطلوب.'); fld('name').focus(); return; }
+        let price_min, price_max;
+        try {
+          price_min = toNumber(fld('price_min'), 'أقل سعر');
+          price_max = toNumber(fld('price_max'), 'أعلى سعر');
+        } catch (e) { showErr(e.message); return; }
+        if (price_min !== null && price_max !== null && price_min > price_max) {
+          showErr('أقل سعر لا يمكن أن يكون أكبر من أعلى سعر.'); fld('price_max').focus(); return;
+        }
+        const payload = {
+          name,
+          category: fld('category').value || null,
+          description: fld('description').value.trim() || null,
+          supplier_id: fld('supplier_id').value || null,
+          price_min, price_max,
+          active: !!fld('active').checked,
+        };
+        hideErr();
+        submitBtn.disabled = true;
+        let uploaded = null;
+        try {
+          if (pendingFile) {
+            uploaded = await uploadImage(pendingFile);
+            payload.image_url = uploaded.url;
+          } else if (removeExisting) {
+            payload.image_url = null;
+          }
+          const { error } = isEdit
+            ? await sb.from('products').update(payload).eq('id', row.id)
+            : await sb.from('products').insert(payload);
+          if (error) throw error;
+          // بعد نجاح الحفظ: نظّف الصورة القديمة إن استُبدلت أو أُزيلت
+          if (isEdit && row.image_url && (uploaded || removeExisting)) await removeImage(row.image_url);
+          finish();
+          ui.toast(isEdit ? 'تم حفظ التعديلات.' : 'تمت إضافة المنتج.', 'ok');
+          load();
+        } catch (e) {
+          // فشل حفظ السجل بعد رفع الصورة: لا نترك ملفاً يتيماً في التخزين
+          if (uploaded) { try { await sb.storage.from(BUCKET).remove([uploaded.path]); } catch (_) { /* تجاهل */ } }
+          showErr(friendly(e));
+        } finally { submitBtn.disabled = false; }
+      }
+
+      submitBtn.addEventListener('click', submit);
+      form.addEventListener('submit', e => { e.preventDefault(); submit(); });
+
+      if (delBtn) delBtn.addEventListener('click', async () => {
+        const ok = await ui.confirm(`حذف المنتج "${v.name}" نهائياً؟ الطلبات المرتبطة به تبقى لكن بدون ربط، وتُحذف صورته.`, { okText: 'نعم، احذف', danger: true });
+        if (!ok) return;
+        delBtn.disabled = true;
+        try {
+          const { error } = await sb.from('products').delete().eq('id', row.id);
+          if (error) throw error;
+          if (row.image_url) await removeImage(row.image_url);
+          finish();
+          ui.toast('تم حذف المنتج.', 'ok');
+          load();
+        } catch (e) { showErr(friendly(e)); delBtn.disabled = false; }
+      });
+    }
+
+    // ───────── التهيئة ─────────
+    const tb = ui.toolbar({
+      placeholder: 'بحث باسم المنتج…',
+      buttons: '<button type="button" class="btn btn-primary" data-add><i class="fas fa-plus"></i> إضافة منتج</button>',
+    });
+    toolbarEl.appendChild(tb.el);
+    tb.el.querySelector('[data-add]').addEventListener('click', () => openForm(null));
+    let timer = null;
+    tb.input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { state.q = tb.input.value; state.page = 1; load(); }, 300);
+    });
+    document.getElementById('refreshBtn')?.addEventListener('click', () => { suppliersCache = null; load(); });
+
+    renderChips();
+    load();
+  })();
+</script>

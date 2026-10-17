@@ -70,6 +70,11 @@ import Layout from '../layouts/Layout.astro';
     .submit-btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,0.4); }
     .form-note { text-align:center; margin-top:0.8rem; font-size:0.85rem; color:var(--text-muted); }
     .form-note a { color:var(--accent-light); text-decoration:underline; }
+    .submit-btn:disabled { opacity:0.7; cursor:wait; transform:none; box-shadow:none; }
+    /* تنبيه مضمّن لأخطاء التحقق القادمة من قاعدة البيانات */
+    .form-inline-error { display:none; align-items:flex-start; gap:0.6rem; margin:0 0 1rem; padding:0.8rem 1rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.35); border-radius:12px; color:#fca5a5; font-size:0.9rem; line-height:1.6; }
+    .form-inline-error.visible { display:flex; }
+    .form-inline-error i { margin-top:0.2rem; flex-shrink:0; }
 
     /* ── Image upload zone ──────────────────────────────────────────── */
     .image-upload-zone {
@@ -232,7 +237,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="wn-icon"><i class="fab fa-whatsapp"></i></div>
     <div class="wn-text">
       <strong><span data-i18n="noticeTitle">هذا نموذج طلب توصيل — مش صفحة تسجيل دخول</span></strong>
-      <span data-i18n="noticeDesc">عند الإرسال سيتم تحويلك مباشرة لمحادثة <strong style="display:inline">واتساب</strong> مع فريق دورلي. لا نطلب كلمات مرور أو بيانات بنكية.</span>
+      <span data-i18n="noticeDesc">كان ضغطت إرسال، طلبك يتسجّل بأمان عندنا باش ننفّذوه ونتابعوه، وتتحوّل طوالي لمحادثة واتساب مع فريق دورلي للتأكيد — بلا حسابات، بلا كلمات سر، بلا بيانات بنكية.</span>
       <small><span data-i18n="noticeLinks">للاطلاع على معلومات الخصوصية: <a href="/privacy/">سياسة الخصوصية</a> | <a href="/terms/">الشروط</a></span></small>
     </div>
   </div>
@@ -253,12 +258,12 @@ import Layout from '../layouts/Layout.astro';
           <p><span data-i18n="orderDetailsDesc">عبّي البيانات وتتفتحلك محادثة واتساب جاهزة</span></p>
         </div>
 
-        <form id="orderForm" class="request-form" method="GET" data-wa-form role="form" aria-label="نموذج طلب توصيل عبر واتساب — لا يتم تخزين بيانات أو تسجيل دخول">
+        <form id="orderForm" class="request-form" method="GET" data-wa-form role="form" aria-label="نموذج طلب توصيل — يُحفظ الطلب لتنفيذه ويُؤكَّد عبر واتساب، بلا تسجيل دخول">
           <div class="form-row">
             <div class="form-group">
               <label for="name"><i class="fas fa-user"></i> <span data-i18n="labelName">اسمك</span> <span class="badge-required" data-i18n="required">مطلوب</span></label>
               <input type="text" id="name" name="customer_name" autocomplete="name" placeholder="اكتب اسمك" data-i18n-placeholder="placeholderName" required aria-describedby="name-help">
-              <span id="name-help" class="visually-hidden">اسمك سيُستخدم في رسالة الواتساب فقط</span>
+              <span id="name-help" class="visually-hidden">اسمك يُستخدم في طلبك ورسالة الواتساب فقط</span>
             </div>
             <div class="form-group">
               <label for="phone"><i class="fas fa-phone"></i> <span data-i18n="labelPhone">رقم الواتساب</span> <span class="badge-required" data-i18n="required">مطلوب</span></label>
@@ -300,11 +305,11 @@ import Layout from '../layouts/Layout.astro';
                 <option value="مواد غذائية وحلويات" data-i18n="catFood">🍔 مواد غذائية وحلويات</option>
                 <option value="أوراق ومستندات" data-i18n="catDocs">📄 أوراق ومستندات</option>
                 <option value="مستلزمات أفراح" data-i18n="catWedding">💍 مستلزمات أفراح</option>
-                <option value="ملابس وأزياء" data-i18n="catCustom">👗 ملابس وأزياء</option>
+                <option value="ملابس وأزياء" data-i18n="catClothes">👗 ملابس وأزياء</option>
                 <option value="تجميل ونظافة" data-i18n="catBeauty">💄 تجميل ونظافة</option>
                 <option value="مواد بناء وصيانة" data-i18n="catConstruction">🏗️ مواد بناء وصيانة</option>
-                <option value="إلكترونيات" data-i18n="catCustom">📱 إلكترونيات</option>
-                <option value="أخرى" data-i18n="city_other">📦 أخرى</option>
+                <option value="إلكترونيات" data-i18n="catElectronics">📱 إلكترونيات</option>
+                <option value="أخرى" data-i18n="catOther">📦 أخرى</option>
               </select>
             </div>
           </div>
@@ -468,11 +473,14 @@ import Layout from '../layouts/Layout.astro';
           </div>
 
           <div class="form-submit">
-            <button type="submit" class="submit-btn" aria-label="فتح محادثة واتساب لإرسال الطلب">
+            <p id="formInlineError" class="form-inline-error" role="alert" aria-live="polite">
+              <i class="fas fa-exclamation-circle"></i><span id="formInlineErrorMsg"></span>
+            </p>
+            <button type="submit" class="submit-btn" id="orderSubmitBtn" aria-label="فتح محادثة واتساب لإرسال الطلب">
               <i class="fab fa-whatsapp" style="font-size:1.4rem;"></i> <span data-i18n="submitSendWhatsapp">افتح الواتساب وابعت الطلب</span>
             </button>
             <p class="form-note">
-              <i class="fas fa-shield-alt"></i> <span data-i18n="formNote">بياناتك تمشي عبر تطبيق واتساب الرسمي وبس — لا تخزين، لا حسابات، لا كلمات سر.</span>
+              <i class="fas fa-shield-alt"></i> <span data-i18n="formNote">تفاصيل طلبك تتخزن بأمان في قاعدة بيانات دورلي بس باش ننفّذوه ونتابعوه، والتأكيد على الواتساب — بلا حسابات، بلا كلمات سر، بلا بيانات بنكية.</span>
               <br>
               <a href="/privacy/" data-i18n="linkPrivacy">اقرأ سياسة الخصوصية</a> · <a href="/terms/" data-i18n="linkTerms">الشروط والأحكام</a>
             </p>
@@ -592,9 +600,40 @@ import Layout from '../layouts/Layout.astro';
       if (el) { el.addEventListener('input', updateSteps); }
     });
 
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
+    /* ── تنبيه مضمّن + حالة انتظار زر الإرسال ─────────────────── */
+    var inlineErrorEl  = document.getElementById('formInlineError');
+    var inlineErrorMsg = document.getElementById('formInlineErrorMsg');
+    function showInlineError(text) {
+      if (!inlineErrorEl) { alert(text); return; }
+      inlineErrorMsg.textContent = text;
+      inlineErrorEl.classList.add('visible');
+      try { inlineErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+    }
+    function hideInlineError() { if (inlineErrorEl) inlineErrorEl.classList.remove('visible'); }
+
+    var submitBtnEl = document.getElementById('orderSubmitBtn');
+    var submitBtnHtml = '';
+    function setSubmitBusy(busy) {
+      if (!submitBtnEl) return;
+      if (busy) {
+        // نحفظ النص الحالي (قد تكون اللغة اتبدّلت بعد التحميل) ونرجّعه بعد الانتهاء
+        submitBtnHtml = submitBtnEl.innerHTML;
+        submitBtnEl.disabled = true;
+        submitBtnEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size:1.2rem;"></i> ثواني… قاعدين نسجّلوا طلبك';
+      } else {
+        submitBtnEl.disabled = false;
+        if (submitBtnHtml) submitBtnEl.innerHTML = submitBtnHtml;
+      }
+    }
+
+    // أخطاء التحقق التي يجب أن يصلحها المستخدم — أي خطأ آخر يُتجاهل ونرجع لواتساب فقط
+    var USER_FIXABLE = /invalid_phone|invalid_name|missing_fields|rate_limited/;
+
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+      hideInlineError();
+      if (submitBtnEl && submitBtnEl.disabled) return; // طلب قيد الإرسال
+
       const name     = document.getElementById('name').value.trim();
       const phone    = document.getElementById('phone').value.trim();
       const city     = document.getElementById('city').value;
@@ -633,7 +672,9 @@ import Layout from '../layouts/Layout.astro';
         return;
       }
 
-      const orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
+      // رقم احتياطي يُستبدل برقم قاعدة البيانات إن نجح التسجيل
+      let orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
+      let trackLine = '';
 
       // Spare parts extra fields (Task 14-B)
       const isCarPart = ['قطع غيار سيارات','قطع غيار شاحنات'].indexOf(category) !== -1;
@@ -655,10 +696,42 @@ import Layout from '../layouts/Layout.astro';
         }
       }
 
+      /* ── تسجيل الطلب في قاعدة البيانات (إن كانت مهيأة) — واتساب يبقى يعمل دائماً ── */
+      const dbApi = window.dawerliDB;
+      if (dbApi && dbApi.isConfigured()) {
+        setSubmitBusy(true);
+        try {
+          const saved = await dbApi.submitOrder({
+            name, phone, city, category,
+            details: product,
+            quantity,
+            urgency,
+            payment_method: payMeth,
+            car_model: isCarPart ? carModel : null,
+            part_condition: isCarPart ? partCond : null,
+            part_description: isCarPart ? partDesc : null
+          });
+          if (saved && saved.code) {
+            orderNum = saved.code;
+            trackLine = `🔎 تابع طلبك: https://dawerli.org.ly/track/?id=${orderNum}\n`;
+          }
+        } catch (err) {
+          const errText = String((err && err.message) || err || '');
+          if (USER_FIXABLE.test(errText)) {
+            setSubmitBusy(false);
+            showInlineError(dbApi.friendlyError(err));
+            return;
+          }
+          // أي فشل آخر (شبكة/خادم): نكمل بواتساب بالرقم الاحتياطي بصمت
+        }
+        setSubmitBusy(false);
+      }
+
       const header = isCarPart ? '*🔧 طلب قطع غيار جديد — دورلي*' : '*📦 طلب توصيل جديد — دورلي*';
 
       let message = `${header}\n\n`;
       message += `🔖 رقم الطلب: ${orderNum}\n`;
+      message += trackLine;
       message += `👤 الاسم: ${name}\n`;
       message += `📞 الهاتف: ${phone}\n`;
       message += `📍 مدينة التسليم: ${city}\n`;

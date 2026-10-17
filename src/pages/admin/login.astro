@@ -1,0 +1,77 @@
+---
+// صفحة دخول الإدارة — بلا حارس (page="login")؛ التخطيط يخفي القائمة الجانبية والشريط العلوي.
+// عند عدم تهيئة Supabase يعرض التخطيط ui.setupNoticeHtml() في البوابة (#gate) ويحلّ dawerliReady بـ sb=null،
+// ونعرض الإشعار نفسه داخل البطاقة احتياطاً.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="تسجيل الدخول" portal="admin" page="login">
+  <div class="auth-wrap">
+    <div class="auth-card" id="authCard">
+      <a href="/" class="brand">
+        <img src="/favicon.svg" alt="" width="34" height="34">
+        <span>دورلي</span>
+      </a>
+      <h1>لوحة تحكم دورلي</h1>
+      <p class="sub">سجّل دخولك بحساب الإدارة.</p>
+
+      <form id="loginForm" class="form-grid" novalidate>
+        <label class="field" for="email">
+          <span class="label">الإيميل</span>
+          <input id="email" name="email" type="email" class="ltr" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+        </label>
+        <label class="field" for="password">
+          <span class="label">كلمة السر</span>
+          <input id="password" name="password" type="password" class="ltr" autocomplete="current-password" required>
+        </label>
+        <p class="form-error" id="loginError" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+          <i class="fas fa-right-to-bracket"></i> دخول
+        </button>
+      </form>
+
+      <p class="auth-switch">مندوب؟ <a href="/delegate/login/">بوابتك هنا</a></p>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb } = await window.dawerliReady;
+  const card = document.getElementById('authCard');
+
+  if (!sb) {
+    // القاعدة غير مهيأة: التخطيط أظهر الإشعار في البوابة وأخفى محتوى الصفحة؛ نضعه هنا أيضاً احتياطاً
+    card.innerHTML = ui.setupNoticeHtml();
+  } else {
+    init();
+  }
+
+  function init() {
+    const form = document.getElementById('loginForm');
+    const errEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+
+    const showError = (msg) => { errEl.textContent = msg; errEl.hidden = false; };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.hidden = true;
+      const email = form.elements.email.value.trim();
+      const password = form.elements.password.value;
+      if (!email || !password) { showError('اكتب الإيميل وكلمة السر.'); return; }
+
+      btn.disabled = true;
+      try {
+        await db.signIn(email, password);
+        let profile = null;
+        try { profile = await db.getProfile(); } catch (_) { /* الحارس في /admin/ يتكفّل بالباقي */ }
+        // حساب غير إداري (مندوب أو بانتظار الاعتماد) يُحوَّل لبوابة المندوبين بدل الاصطدام بحارس الإدارة
+        location.replace(profile && profile.role !== 'admin' ? '/delegate/' : '/admin/');
+      } catch (err) {
+        showError(db.friendlyError(err));
+        btn.disabled = false;
+        form.elements.password.focus();
+      }
+    });
+  }
+</script>

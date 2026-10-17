@@ -6,8 +6,8 @@ import Layout from '../layouts/Layout.astro';
 <Layout
   title="دورلي - وين طلبي؟"
   description="تتبع حالة طلبك في دورلي — حط رقم طلبك واستعلم عن مراحل معالجته."
+  noindex={true}
 >
-  <meta name="robots" content="noindex,nofollow" slot="head" />
   <script is:inline>document.documentElement.dataset.page = 'track';</script>
 
 <style>
@@ -373,11 +373,256 @@ import Layout from '../layouts/Layout.astro';
     border-color: rgba(217,91,67,0.2);
   }
 
+  /* ══════════════════════════════════════════════════════════════
+     LIVE RESULT (Supabase) — بطاقة النتيجة + سجل التحديثات
+  ══════════════════════════════════════════════════════════════ */
+  .track-btn:disabled { opacity: 0.7; cursor: wait; transform: none; box-shadow: none; }
+  .track-result {
+    margin-top: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 1.25rem 1.4rem;
+    animation: trFade 0.3s ease;
+  }
+  @keyframes trFade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .track-result[hidden] { display: none; }
+  .track-result.is-error { border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.06); }
+  .tr-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+  .tr-code {
+    font-family: 'Space Grotesk', monospace;
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+  .tr-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    background: rgba(245,165,36,0.15);
+    color: var(--primary-light);
+    border: 1px solid rgba(245,165,36,0.3);
+  }
+  .tr-status.st-delivered { background: rgba(34,197,94,0.15); color: #4ade80; border-color: rgba(34,197,94,0.3); }
+  .tr-status.st-cancelled { background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+  .tr-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  .tr-meta div { display: flex; flex-direction: column; gap: 0.1rem; }
+  .tr-meta dt { color: var(--text-muted); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; }
+  .tr-meta dd { margin: 0; color: var(--text-main); font-weight: 600; }
+  .tr-qty { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; }
+
+  /* بطاقة الطلب الملغي (بدون مرحلة وهمية على الخط الزمني) */
+  .tr-cancel-card {
+    margin-top: 0.9rem;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  .tr-cancel-title { display: flex; align-items: center; gap: 0.4rem; font-weight: 800; color: #f87171; margin-bottom: 0.3rem; }
+  .tr-cancel-reason { color: #fca5a5; margin-bottom: 0.3rem; overflow-wrap: anywhere; }
+  .tr-cancel-reason span { color: var(--text-muted); font-weight: 700; }
+  .tr-cancel-card p { margin: 0; color: var(--text-muted); }
+  .tr-cancel-card a { color: var(--primary-light); text-decoration: underline; }
+
+  /* صندوق عرض السعر (يظهر فقط عندما تكون الحالة quoted) */
+  .tr-quote {
+    margin-top: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    background: rgba(245,165,36,0.07);
+    border: 1px solid rgba(245,165,36,0.3);
+  }
+  .tr-quote-title { display: flex; align-items: center; gap: 0.45rem; font-weight: 800; color: var(--primary-light); margin-bottom: 0.5rem; }
+  .tr-quote-hint  { margin: 0 0 0.6rem; color: var(--text-main); font-size: 0.88rem; line-height: 1.6; }
+  .tr-quote-row   { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tr-quote-input {
+    flex: 1;
+    min-width: 160px;
+    direction: ltr;
+    text-align: left;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--glass-border);
+    color: var(--white);
+    outline: none;
+    transition: var(--transition);
+  }
+  .tr-quote-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(245,165,36,0.15); }
+  .tr-prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem 1rem; margin: 0 0 0.8rem; }
+  .tr-prices div { display: flex; flex-direction: column; gap: 0.1rem; }
+  .tr-prices dt { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
+  .tr-prices dd { margin: 0; font-weight: 800; color: var(--white); font-size: 1rem; }
+  .tr-prices .tr-total dd { color: var(--primary-light); font-size: 1.15rem; }
+  .tr-quote-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .tr-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+  .tr-btn-accept { flex: 1; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #14100B; }
+  .tr-btn-accept:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,165,36,0.3); }
+  .tr-btn-reject { background: rgba(255,255,255,0.05); border-color: var(--glass-border); color: var(--text-main); }
+  .tr-btn-reject:hover:not(:disabled) { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+  .tr-quote-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-top: 0.7rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+  }
+  .tr-quote-msg.ok  { background: rgba(34,197,94,0.1);  border-color: rgba(34,197,94,0.3);  color: #4ade80; }
+  .tr-quote-msg.err { background: rgba(239,68,68,0.1);  border-color: rgba(239,68,68,0.3);  color: #fca5a5; }
+  .tr-quote-msg[hidden] { display: none; }
+  .tr-error-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    color: #fca5a5;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .tr-error-msg i { color: #f87171; margin-top: 0.15rem; }
+  .tr-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.75rem 1.1rem;
+    border-radius: var(--border-radius);
+    background: rgba(37,211,102,0.12);
+    border: 1px solid rgba(37,211,102,0.4);
+    color: #4ade80;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: var(--transition);
+  }
+  .tr-wa-btn:hover { background: rgba(37,211,102,0.2); transform: translateY(-1px); }
+  .tr-skeleton { display: grid; gap: 0.6rem; }
+  .tr-skeleton span {
+    display: block;
+    height: 14px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+    background-size: 200% 100%;
+    animation: trShimmer 1.2s infinite;
+  }
+  .tr-skeleton span:nth-child(1) { width: 45%; height: 20px; }
+  .tr-skeleton span:nth-child(3) { width: 70%; }
+  @keyframes trShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+  /* عند عرض بيانات حية: نخفي أزرار المعاينة، وعند الإلغاء نخفي الخط الزمني كله */
+  .demo-selector[hidden], .timeline[hidden] { display: none !important; }
+
+  /* التسمية الفرعية للمرحلة الجارية (status_label من القاعدة — تفرّق الشراء عن الشحن مثلاً) */
+  .tl-sublabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0 0 0.4rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    background: rgba(245,165,36,0.1);
+    border: 1px solid rgba(245,165,36,0.25);
+  }
+
+  /* سجل التحديثات تحت الخط الزمني */
+  .track-events { margin-top: 2rem; }
+  .track-events[hidden] { display: none; }
+  .track-events h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .track-events h3 i { color: var(--accent-light); }
+  .ev-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .ev-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+  }
+  .ev-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--primary);
+    flex-shrink: 0;
+    margin-top: 0.4rem;
+    box-shadow: 0 0 0 3px rgba(245,165,36,0.15);
+  }
+  .ev-item.ev-cancelled .ev-dot { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+  .ev-item.ev-delivered .ev-dot { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+  .ev-item.ev-note-item .ev-dot { background: var(--accent-light); box-shadow: 0 0 0 3px rgba(217,91,67,0.15); }
+  .ev-body { flex: 1; min-width: 0; }
+  .ev-status { font-weight: 800; color: var(--white); font-size: 0.9rem; }
+  .ev-kind { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); border-radius: 50px; padding: 0.1rem 0.5rem; margin-inline-start: 0.4rem; vertical-align: middle; }
+  .ev-note { color: var(--text-main); font-size: 0.85rem; line-height: 1.6; margin-top: 0.2rem; overflow-wrap: anywhere; }
+  .ev-note-main { font-size: 0.9rem; margin-top: 0; }
+  /* التاريخ يأتي بصيغة ar-LY (أرقام لاتينية داخل نص عربي) — plaintext يحدد الاتجاه من أول حرف قوي بدل فرض LTR يقلب ترتيب الكلمات */
+  .ev-time { color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; unicode-bidi: plaintext; display: inline-block; }
+  .ev-last { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.8rem; text-align: center; }
+
   /* responsive */
   @media (max-width: 600px) {
     .track-input-row { flex-direction: column; }
     .track-btn { justify-content: center; }
     .track-card { padding: 1.5rem; }
+    .track-result { padding: 1rem 1.1rem; }
     .timeline::before,
     .timeline-progress-spine { right: 23px; }
     html[dir="ltr"] .timeline::before,
@@ -394,7 +639,7 @@ import Layout from '../layouts/Layout.astro';
         <span data-i18n="trackOrder">وين طلبي؟</span>
       </div>
       <h1><span data-i18n="trackHeroTitle">وين طلبي؟</span></h1>
-      <p><span data-i18n="trackHeroDesc">حط رقم طلبك، ونردوا عليك على الواتساب بآخر تحديث على شحنتك.</span></p>
+      <p><span data-i18n="trackHeroDesc">حط رقم طلبك باش تعرف وين وصل — وفريقنا على الواتساب لأي سؤال.</span></p>
     </div>
   </section>
 
@@ -431,11 +676,14 @@ import Layout from '../layouts/Layout.astro';
         <span data-i18n="trackFormatHint">الصيغة الصحيحة:</span>
         <code>DW-2026-XXXX</code>
       </p>
+
+      <!-- نتيجة الاستعلام الحي من قاعدة البيانات (تظهر فقط عند التهيئة) -->
+      <div id="trackResult" class="track-result" hidden aria-live="polite"></div>
     </div>
 
     <div class="track-notice">
       <i class="fas fa-shield-alt"></i>
-      <span data-i18n="trackPrivacyNote">رقم طلبك يمشي عبر الواتساب وبس — لا تخزين، لا حسابات، لا كلمات سر.</span>
+      <span data-i18n="trackPrivacyNote">رقم طلبك نستعملوه بس باش نجيبولك حالته من قاعدة بيانات دورلي — بلا حسابات، بلا كلمات سر، بلا بيانات بنكية. وتقدر تسأل على الواتساب في أي وقت.</span>
     </div>
   </div>
 
@@ -445,10 +693,10 @@ import Layout from '../layouts/Layout.astro';
   <div class="timeline-wrapper reveal">
     <div class="timeline-header">
       <h2><i class="fas fa-route" style="color:var(--accent-light);margin-left:0.5rem;"></i> مراحل معالجة طلبك</h2>
-      <p>اضغط على أي مرحلة لمعاينة الحالة البصرية</p>
+      <p id="tlHint">اضغط على أي مرحلة لمعاينة الحالة البصرية</p>
     </div>
 
-    <!-- Demo stage selector (mock data — يُستبدل بـ Firebase لاحقاً) -->
+    <!-- Demo stage selector (معاينة فقط — يُخفى تلقائياً عند عرض طلب حقيقي من قاعدة البيانات) -->
     <div class="demo-selector" id="demoSelector" role="group" aria-label="اختر مرحلة للمعاينة">
       <button class="demo-btn" data-stage="0">استلمنا طلبك</button>
       <button class="demo-btn active" data-stage="1">التدوير والبحث</button>
@@ -496,7 +744,7 @@ import Layout from '../layouts/Layout.astro';
             <span data-tl-ar="بانتظار موافقة عرض السعر" data-tl-en="Awaiting Quotation Approval">بانتظار موافقة عرض السعر</span>
             <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="بانتظارك" data-badge-pending="قادم"></span>
           </div>
-          <p class="tl-desc" data-tl-ar="وجدنا المنتج! سيتواصل معك فريقنا عبر واتساب لتأكيد السعر والكمية قبل المتابعة." data-tl-en="We found the item! Our team will contact you via WhatsApp to confirm the price before proceeding.">وجدنا المنتج! سيتواصل معك فريقنا عبر واتساب لتأكيد السعر والكمية قبل المتابعة.</p>
+          <p class="tl-desc" data-tl-ar="لقينا المنتج! تقدر تشوف السعر وتوافق عليه من هذه الصفحة برقم هاتفك، أو عبر واتساب مع الفريق قبل المتابعة." data-tl-en="We found the item! You can view and approve the price on this page with your phone number, or via WhatsApp with our team before we proceed.">لقينا المنتج! تقدر تشوف السعر وتوافق عليه من هذه الصفحة برقم هاتفك، أو عبر واتساب مع الفريق قبل المتابعة.</p>
           <div class="tl-time"><i class="fas fa-clock"></i> ينتظر ردك</div>
         </div>
       </li>
@@ -506,7 +754,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="tl-icon"><i class="fas fa-truck"></i></div>
         <div class="tl-body">
           <div class="tl-title">
-            <span data-tl-ar="جاري الشحن والتوصيل" data-tl-en="In Transit">جاري الشحن والتوصيل</span>
+            <span data-tl-ar="الشراء والشحن والتوصيل" data-tl-en="Purchase &amp; Delivery">الشراء والشحن والتوصيل</span>
             <span class="tl-badge" data-badge-done="مكتمل" data-badge-active="في الطريق" data-badge-pending="قادم"></span>
           </div>
           <p class="tl-desc" data-tl-ar="تم شراء المنتج وهو الآن في طريقه إليك عبر شركة الشحن المختارة." data-tl-en="Your item has been purchased and is now on its way to you via the shipping company.">تم شراء المنتج وهو الآن في طريقه إليك عبر شركة الشحن المختارة.</p>
@@ -527,6 +775,13 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </li>
     </ol>
+
+    <!-- سجل تحديثات الطلب (من قاعدة البيانات) -->
+    <div id="trackEvents" class="track-events" hidden>
+      <h3><i class="fas fa-history"></i> سجل تحديثات طلبك</h3>
+      <ul id="trackEventsList" class="ev-list"></ul>
+      <p id="trackLastUpdate" class="ev-last"></p>
+    </div>
   </div>
 
   <script is:inline>
@@ -550,12 +805,326 @@ import Layout from '../layouts/Layout.astro';
       return fallback || key;
     }
 
-    /* ── WhatsApp lookup ──────────────────────────────────────── */
-    function doTrack() {
+    /* ── أدوات محلية ──────────────────────────────────────────── */
+    // تهريب أي نص قادم من قاعدة البيانات قبل إدراجه في innerHTML
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function dbApi() {
+      var d = window.dawerliDB;
+      return (d && typeof d.isConfigured === 'function' && d.isConfigured()) ? d : null;
+    }
+    function waUrl(code) {
+      var msg = getLang() === 'ar'
+        ? 'السلام عليكم، أريد الاستعلام عن حالة طلبي رقم: ' + code
+        : 'Hello, I would like to inquire about my order status. Order ID: ' + code;
+      return 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg);
+    }
+    function waButtonHtml(code) {
+      return '<a class="tr-wa-btn" target="_blank" rel="noopener noreferrer" href="' + esc(waUrl(code)) + '">' +
+             '<i class="fab fa-whatsapp"></i> اسأل الفريق على الواتساب</a>';
+    }
+    function fmtDate(iso) {
+      var d = window.dawerliDB;
+      if (d && typeof d.formatDate === 'function') return d.formatDate(iso);
+      try { return new Date(iso).toLocaleString('ar-LY'); } catch (e) { return String(iso || ''); }
+    }
+    function statusLabel(status) {
+      var d = window.dawerliDB;
+      var labels = (d && d.STATUS_LABELS) || {};
+      return labels[status] || status || '';
+    }
+    function fmtMoney(n) {
+      var d = window.dawerliDB;
+      if (d && typeof d.formatMoney === 'function') return d.formatMoney(n);
+      return (n == null || n === '') ? '—' : String(n) + ' د.ل';
+    }
+    // أرقام عربية (٠-٩) وفارسية (۰-۹) → لاتينية (لوحات المفاتيح العربية تكتبها هكذا)
+    function latinDigits(s) {
+      return String(s == null ? '' : s)
+        .replace(/[٠-٩]/g, function (ch) { return String.fromCharCode(ch.charCodeAt(0) - 0x0660 + 48); })
+        .replace(/[۰-۹]/g, function (ch) { return String.fromCharCode(ch.charCodeAt(0) - 0x06F0 + 48); });
+    }
+    // هاتف: إزالة غير الأرقام، وتحويل 218… إلى 09…
+    function normalizePhone(s) {
+      var out = latinDigits(s).replace(/\D/g, '');
+      if (out.length === 12 && out.indexOf('218') === 0) out = '0' + out.slice(3);
+      return out;
+    }
+    // رقم الطلب: أرقام لاتينية، بلا فراغات، أحرف كبيرة (نفس التطبيع الذي تجريه get_order_status)
+    function normalizeCode(s) {
+      return latinDigits(s).replace(/\s/g, '').toUpperCase();
+    }
+    var PHONE_RE = /^09[0-9]{8}$/;
+
+    /* ── عناصر النتيجة الحية ──────────────────────────────────── */
+    var resultEl   = document.getElementById('trackResult');
+    var eventsWrap = document.getElementById('trackEvents');
+    var eventsList = document.getElementById('trackEventsList');
+    var lastUpdate = document.getElementById('trackLastUpdate');
+    var tlHint     = document.getElementById('tlHint');
+    var tlHintDefault = tlHint ? tlHint.textContent : '';
+    var demoSel    = document.getElementById('demoSelector');
+    var timelineEl = document.getElementById('orderTimeline');
+    var liveOrder  = null; // آخر طلب معروض من قاعدة البيانات (لإعادة الرسم عند تغيير اللغة)
+    var livePhone  = '';   // هاتف الزبون المتحقق منه لعرض السعر — في الذاكرة فقط، لا يُخزن
+    var quoteFlash = null; // رسالة تُعرض مرة واحدة داخل صندوق عرض السعر بعد إعادة التحميل
+
+    function setTrackBusy(busy) {
+      var btn = document.getElementById('trackBtn');
+      if (!btn) return;
+      btn.disabled = busy;
+      if (busy) {
+        btn.dataset.html = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ثواني…';
+      } else if (btn.dataset.html) {
+        btn.innerHTML = btn.dataset.html;
+        delete btn.dataset.html;
+      }
+    }
+    function showSkeleton() {
+      if (!resultEl) return;
+      resultEl.classList.remove('is-error');
+      resultEl.innerHTML = '<div class="tr-skeleton"><span></span><span></span><span></span></div>';
+      resultEl.hidden = false;
+    }
+    // يرجّع الخط الزمني لوضع المعاينة (بدون بيانات حية)
+    function resetTimeline() {
+      if (demoSel) demoSel.hidden = false;
+      if (timelineEl) timelineEl.hidden = false;
+      if (tlHint) tlHint.textContent = tlHintDefault;
+      clearSublabel();
+      applyTimeline(1);
+    }
+    function showNotFound(code, customMsg) {
+      if (!resultEl) return;
+      var hadLive = !!liveOrder;
+      liveOrder = null; livePhone = ''; quoteFlash = null;
+      resultEl.classList.add('is-error');
+      resultEl.innerHTML =
+        '<p class="tr-error-msg"><i class="fas fa-search-minus"></i><span>' +
+        esc(customMsg || 'ما لقيناش طلب بهذا الرقم — تأكد منه أو اسألنا على الواتساب') +
+        '</span></p>' + waButtonHtml(code);
+      resultEl.hidden = false;
+      if (eventsWrap) eventsWrap.hidden = true;
+      if (hadLive) resetTimeline();
+    }
+    function clearSublabel() {
+      document.querySelectorAll('.tl-sublabel').forEach(function (el) { el.parentNode.removeChild(el); });
+    }
+    // يعرض status_label القادم من القاعدة تحت عنوان المرحلة الجارية (يفرّق "الشراء" عن "في الطريق" مثلاً)
+    function setSublabel(stage, text) {
+      clearSublabel();
+      if (!text) return;
+      var body = document.querySelector('.tl-item[data-stage-idx="' + stage + '"] .tl-body');
+      if (!body) return;
+      var el = document.createElement('div');
+      el.className = 'tl-sublabel';
+      el.innerHTML = '<i class="fas fa-location-arrow"></i> ';
+      el.appendChild(document.createTextNode(text)); // نص من القاعدة → عقدة نصية (آمن)
+      var title = body.querySelector('.tl-title');
+      if (title && title.nextSibling) body.insertBefore(el, title.nextSibling); else body.appendChild(el);
+    }
+
+    /* صندوق عرض السعر: هاتف للتحقق → الأسعار → موافق / مش موافق */
+    function quoteBoxHtml(order) {
+      var h = '<div class="tr-quote" id="trQuote"><div class="tr-quote-title"><i class="fas fa-file-invoice-dollar"></i> عرض السعر</div>';
+      if (order.verified) {
+        h += '<dl class="tr-prices">' +
+          '<div><dt>سعر الطلب</dt><dd>' + esc(fmtMoney(order.quoted_price)) + '</dd></div>' +
+          '<div><dt>رسوم الخدمة</dt><dd>' + esc(fmtMoney(order.service_fee)) + '</dd></div>' +
+          '<div class="tr-total"><dt>الإجمالي</dt><dd>' + esc(fmtMoney(order.total)) + '</dd></div>' +
+        '</dl>';
+        if (order.quote_response === 'accepted') {
+          h += '<p class="tr-quote-hint"><i class="fas fa-check-circle" style="color:#4ade80"></i> وافقت على العرض ✓ — فريقنا يكمّل الشراء ويكلمك على الواتساب.</p>';
+        } else if (order.quote_response === 'rejected') {
+          h += '<p class="tr-quote-hint"><i class="fas fa-info-circle"></i> سجّلنا إنك مش موافق على العرض. كان تبي تعيد النظر أو تعدّل الطلب، كلمنا على الواتساب.</p>';
+        } else {
+          h += '<p class="tr-quote-hint">موافق على السعر؟ قولنا باش نكمّلوا الشراء.</p>' +
+            '<div class="tr-quote-actions">' +
+              '<button type="button" class="tr-btn tr-btn-accept" data-quote="accept"><i class="fas fa-check"></i> موافق — كمّلوا</button>' +
+              '<button type="button" class="tr-btn tr-btn-reject" data-quote="reject"><i class="fas fa-times"></i> مش موافق</button>' +
+            '</div>';
+        }
+      } else {
+        h += '<p class="tr-quote-hint">حط رقمك اللي طلبت بيه باش تشوف السعر</p>' +
+          '<div class="tr-quote-row">' +
+            '<input type="tel" id="trQuotePhone" class="tr-quote-input" inputmode="numeric" maxlength="14" autocomplete="tel-national" placeholder="09XXXXXXXX" aria-label="رقم الهاتف اللي طلبت بيه">' +
+            '<button type="button" class="tr-btn tr-btn-accept" id="trQuoteCheck"><i class="fas fa-eye"></i> شوف السعر</button>' +
+          '</div>';
+      }
+      var flash = quoteFlash; quoteFlash = null;
+      h += '<div class="tr-quote-msg' + (flash ? (flash.ok ? ' ok' : ' err') : '') + '" id="trQuoteMsg" role="status"' + (flash ? '' : ' hidden') + '>' + (flash ? esc(flash.text) : '') + '</div>';
+      return h + '</div>';
+    }
+    function bindQuoteBox(order) {
+      var box = document.getElementById('trQuote');
+      if (!box) return;
+      var msgEl = document.getElementById('trQuoteMsg');
+      function say(text, ok) {
+        if (!msgEl) return;
+        msgEl.textContent = text;
+        msgEl.classList.toggle('ok', !!ok);
+        msgEl.classList.toggle('err', !ok);
+        msgEl.hidden = false;
+      }
+      function busy(btns, on) { btns.forEach(function (b) { b.disabled = on; }); }
+
+      /* التحقق بالهاتف */
+      var checkBtn = document.getElementById('trQuoteCheck');
+      var phoneIn  = document.getElementById('trQuotePhone');
+      if (checkBtn && phoneIn) {
+        var check = async function () {
+          var phone = normalizePhone(phoneIn.value);
+          if (!PHONE_RE.test(phone)) {
+            say('رقم الهاتف لازم يكون ليبي صحيح — 10 أرقام ويبدا بـ 09.');
+            phoneIn.focus();
+            return;
+          }
+          var db = dbApi();
+          if (!db) return;
+          busy([checkBtn], true);
+          try {
+            var fresh = await db.getOrderStatus(order.code, phone);
+            if (!fresh) { showNotFound(order.code); return; }
+            if (!fresh.verified) { say('الرقم ما يطابقش الرقم اللي طلبت بيه — تأكد منه أو كلمنا على الواتساب.'); return; }
+            livePhone = phone;
+            renderOrder(fresh);
+          } catch (err) {
+            say(db.friendlyError(err));
+          } finally {
+            busy([checkBtn], false);
+          }
+        };
+        checkBtn.addEventListener('click', check);
+        phoneIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+        phoneIn.addEventListener('input', function () { if (msgEl) msgEl.hidden = true; });
+      }
+
+      /* الرد على العرض */
+      var actionBtns = Array.prototype.slice.call(box.querySelectorAll('[data-quote]'));
+      actionBtns.forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+          var accept = btn.getAttribute('data-quote') === 'accept';
+          var db = dbApi();
+          if (!db || !livePhone) return;
+          busy(actionBtns, true);
+          try {
+            var ok = await db.respondToQuote(order.code, livePhone, accept);
+            quoteFlash = ok
+              ? { ok: true, text: accept ? 'تم ✓ وصلنا ردك — فريقنا يكمّل الشراء ويكلمك على الواتساب.' : 'تم — سجّلنا إنك مش موافق. كان تبي تعدّل الطلب كلمنا على الواتساب.' }
+              : { ok: false, text: 'ما قدرناش نسجّل ردك — يمكن حالة الطلب اتغيّرت. جرّب تاني أو كلمنا على الواتساب.' };
+            await refreshOrder(order.code, livePhone);
+          } catch (err) {
+            say(db.friendlyError(err));
+            busy(actionBtns, false);
+          }
+        });
+      });
+    }
+    async function refreshOrder(code, phone) {
+      var db = dbApi();
+      if (!db) return;
+      try {
+        var fresh = await db.getOrderStatus(code, phone || '');
+        if (fresh) renderOrder(fresh); else showNotFound(code);
+      } catch (err) {
+        showNotFound(code, db.friendlyError(err));
+      }
+    }
+
+    /* سجل التحديثات: status → status_label، note → نص الملاحظة */
+    function eventsHtml(events) {
+      return events.slice().reverse().map(function (ev) {
+        var isNote = ev.kind === 'note';
+        var cls = 'ev-item' + (isNote ? ' ev-note-item' : ev.status === 'cancelled' ? ' ev-cancelled' : ev.status === 'delivered' ? ' ev-delivered' : '');
+        var body;
+        if (isNote) {
+          body = '<div class="ev-note ev-note-main">' + esc(ev.note || '') + ' <span class="ev-kind">ملاحظة من الفريق</span></div>';
+        } else {
+          body = '<div class="ev-status">' + esc(ev.status_label || statusLabel(ev.status)) + '</div>' +
+                 (ev.note ? '<div class="ev-note">' + esc(ev.note) + '</div>' : '');
+        }
+        body += '<span class="ev-time">' + esc(fmtDate(ev.at)) + '</span>';
+        return '<li class="' + cls + '"><span class="ev-dot"></span><div class="ev-body">' + body + '</div></li>';
+      }).join('');
+    }
+
+    function renderOrder(order) {
+      liveOrder = order;
+      var cancelled = order.status === 'cancelled' || parseInt(order.stage_idx, 10) === -1;
+      var delivered = order.status === 'delivered';
+      var label  = order.status_label || statusLabel(order.status);
+      var lastAt = order.status_changed_at || order.updated_at || order.created_at;
+      var qty    = parseInt(order.quantity, 10);
+
+      /* بطاقة الملخص */
+      var statusCls = 'tr-status' + (cancelled ? ' st-cancelled' : delivered ? ' st-delivered' : '');
+      var icon = cancelled ? 'fa-times-circle' : delivered ? 'fa-check-circle' : 'fa-circle-notch';
+      var lastLabel = cancelled ? 'تاريخ الإلغاء' : delivered ? 'تاريخ التسليم' : 'آخر تحديث';
+      var lastVal   = cancelled ? (order.cancelled_at || lastAt) : delivered ? (order.delivered_at || lastAt) : lastAt;
+      var html =
+        '<div class="tr-head">' +
+          '<span class="tr-code">' + esc(order.code) + '</span>' +
+          '<span class="' + statusCls + '"><i class="fas ' + icon + '"></i> ' + esc(label) + '</span>' +
+        '</div>' +
+        '<dl class="tr-meta">' +
+          '<div><dt>مدينة التسليم</dt><dd>' + esc(order.city || '—') + '</dd></div>' +
+          '<div><dt>نوع الطلب</dt><dd>' + esc(order.category || '—') + (qty > 1 ? ' <span class="tr-qty">× ' + esc(qty) + '</span>' : '') + '</dd></div>' +
+          '<div><dt>تاريخ الطلب</dt><dd class="ev-time">' + esc(fmtDate(order.created_at)) + '</dd></div>' +
+          '<div><dt>' + lastLabel + '</dt><dd class="ev-time">' + esc(fmtDate(lastVal)) + '</dd></div>' +
+        '</dl>';
+      if (cancelled) {
+        // بطاقة إلغاء مخصصة — ما نمثّلوش مرحلة وهمية على الخط الزمني
+        html += '<div class="tr-cancel-card">' +
+          '<div class="tr-cancel-title"><i class="fas fa-ban"></i> هذا الطلب ملغي</div>' +
+          (order.cancel_reason ? '<div class="tr-cancel-reason"><span>السبب:</span> ' + esc(order.cancel_reason) + '</div>' : '') +
+          '<p>كان عندك استفسار أو تبي تعيد الطلب، كلمنا على الواتساب أو <a href="/request/">اطلب من جديد</a>.</p>' +
+        '</div>';
+      } else if (order.status === 'quoted') {
+        html += quoteBoxHtml(order);
+      }
+      html += waButtonHtml(order.code);
+      quoteFlash = null; // استُهلكت داخل صندوق العرض إن وُجد — لا تتسرب لعرض لاحق إن تغيّرت الحالة أثناء الرد
+      resultEl.classList.remove('is-error');
+      resultEl.innerHTML = html;
+      resultEl.hidden = false;
+      if (!cancelled && order.status === 'quoted') bindQuoteBox(order);
+
+      /* الخط الزمني: إخفاء أزرار المعاينة التجريبية وتطبيق المرحلة الحقيقية */
+      if (demoSel) demoSel.hidden = true;
+      if (cancelled) {
+        if (timelineEl) timelineEl.hidden = true;
+        clearSublabel();
+        if (tlHint) tlHint.textContent = 'الطلب ' + order.code + ' ملغي — ما فيش مراحل جارية.';
+      } else {
+        if (timelineEl) timelineEl.hidden = false;
+        var stage = Math.max(0, Math.min(TOTAL_STAGES - 1, parseInt(order.stage_idx, 10) || 0));
+        if (tlHint) tlHint.textContent = 'حالة طلبك ' + order.code + ' — تتحدّث تلقائياً مع كل خطوة';
+        applyTimeline(stage);
+        setSublabel(stage, label);
+      }
+
+      /* سجل التحديثات */
+      var events = Array.isArray(order.events) ? order.events : [];
+      if (eventsWrap && eventsList) {
+        eventsList.innerHTML = events.length
+          ? eventsHtml(events)
+          : '<li class="ev-item"><span class="ev-dot"></span><div class="ev-body"><div class="ev-note">ما فيش تحديثات لسا — أول ما يتحرك طلبك تشوفه هني.</div></div></li>';
+        if (lastUpdate) lastUpdate.textContent = 'آخر تحديث: ' + fmtDate(lastAt);
+        eventsWrap.hidden = false;
+      }
+    }
+
+    /* ── الاستعلام: قاعدة البيانات إن كانت مهيأة، وإلا واتساب ── */
+    var tracking = false;
+    async function doTrack() {
       var input = document.getElementById('trackInput');
       var errorEl = document.getElementById('trackError');
       var errorMsg = document.getElementById('trackErrorMsg');
-      var val = (input.value || '').trim().toUpperCase();
+      var val = normalizeCode(input.value);
       if (!val || !ORDER_REGEX.test(val)) {
         input.classList.add('error');
         errorMsg.textContent = getStr('trackInvalidId', 'رقم الطلب مش صحيح — الصيغة: DW-YYYY-XXXX');
@@ -565,11 +1134,29 @@ import Layout from '../layouts/Layout.astro';
       }
       input.classList.remove('error');
       errorEl.classList.remove('visible');
-      var lang = getLang();
-      var msg = lang === 'ar'
-        ? 'السلام عليكم، أريد الاستعلام عن حالة طلبي رقم: ' + val
-        : 'Hello, I would like to inquire about my order status. Order ID: ' + val;
-      window.open('https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg), '_blank');
+
+      var db = dbApi();
+      if (!db) {
+        // غير مهيأ: السلوك القديم — افتح واتساب
+        window.open(waUrl(val), '_blank');
+        return;
+      }
+      if (tracking) return;
+      tracking = true;
+      setTrackBusy(true);
+      showSkeleton();
+      // نعيد استعمال الهاتف المتحقق منه فقط لنفس الطلب
+      if (!(liveOrder && liveOrder.code === val)) livePhone = '';
+      try {
+        var order = await db.getOrderStatus(val, livePhone || '');
+        if (order) renderOrder(order);
+        else showNotFound(val);
+      } catch (err) {
+        showNotFound(val, db.friendlyError(err));
+      } finally {
+        tracking = false;
+        setTrackBusy(false);
+      }
     }
 
     /* ══════════════════════════════════════════════════════════
@@ -650,15 +1237,28 @@ import Layout from '../layouts/Layout.astro';
           input.classList.remove('error');
           if (errorEl) errorEl.classList.remove('visible');
           var pos = input.selectionStart;
-          input.value = input.value.toUpperCase().replace(/\s/g, '');
+          input.value = normalizeCode(input.value);
           try { input.setSelectionRange(pos, pos); } catch(e) {}
         });
       }
+      /* عند التهيئة: الزر الأساسي يستعلم من القاعدة بدل فتح واتساب */
+      var live = !!dbApi();
+      if (live && btn) {
+        var icon = btn.querySelector('i');
+        var label = btn.querySelector('[data-i18n]');
+        if (icon) icon.className = 'fas fa-search';
+        if (label) {
+          label.setAttribute('data-i18n', 'trackBtn');
+          label.textContent = getStr('trackBtn', 'تتبع');
+        }
+      }
+
       /* Pre-fill from URL param */
+      var idParam = null;
       try {
         var params = new URLSearchParams(window.location.search);
-        var idParam = params.get('id') || params.get('order');
-        if (idParam && input) input.value = idParam.toUpperCase();
+        idParam = params.get('id') || params.get('order');
+        if (idParam && input) input.value = normalizeCode(idParam);
         /* Allow URL param ?stage=N for Firebase integration later */
         var stageParam = params.get('stage');
         if (stageParam !== null) {
@@ -676,11 +1276,15 @@ import Layout from '../layouts/Layout.astro';
 
       /* Re-apply on lang change */
       document.addEventListener('dawerli:langChanged', function() {
+        if (liveOrder) { renderOrder(liveOrder); return; }
         applyTimeline(activeStage);
       });
 
       /* Initial render */
       applyTimeline(activeStage);
+
+      /* استعلام تلقائي عند وجود ?id= والقاعدة مهيأة (لا نفتح واتساب تلقائياً أبداً) */
+      if (live && idParam && input && ORDER_REGEX.test(input.value)) doTrack();
     });
 
   })();
