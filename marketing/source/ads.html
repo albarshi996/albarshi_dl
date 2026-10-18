@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="brand.css">
+<style>
+  body { display: flex; flex-direction: column; gap: 40px; padding: 40px; align-items: flex-start; }
+  .post { width: 1080px; height: 1350px; }
+  .story { width: 1080px; height: 1920px; }
+  .pad { position: absolute; inset: 0; padding: 80px 70px; }
+  .kicker { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; font-size: 30px; color: var(--amber-l);
+    padding: 12px 26px; border-radius: 999px; background: rgba(245,165,36,.12); border: 2px solid rgba(245,165,36,.3); }
+  h1 { font-weight: 900; font-size: 104px; line-height: 1.12; letter-spacing: -1px; }
+  h2 { font-weight: 900; font-size: 84px; line-height: 1.15; letter-spacing: -.5px; }
+  .lead { font-weight: 500; font-size: 38px; line-height: 1.6; color: var(--muted); }
+  .lead b { color: var(--text); font-weight: 700; }
+
+  /* 1) Hero */
+  #hero .text { position: absolute; top: 90px; right: 70px; left: 70px; }
+  #hero h1 { margin-top: 34px; }
+  #hero .lead { margin-top: 26px; max-width: 560px; }
+  #hero .phone { position: absolute; left: 50px; top: 600px; transform: rotate(-7deg); width: 390px; height: 820px; }
+  #hero .chips { position: absolute; right: 70px; top: 640px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  #hero .footer { left: 520px; }
+  #hero .chip { display: inline-flex; align-items: center; gap: 14px; font-weight: 700; font-size: 32px; padding: 16px 28px; border-radius: 999px;
+    background: rgba(255,255,255,.05); border: 2px solid var(--line2); }
+  #hero .chip i { color: var(--amber); }
+  #hero .cta { position: absolute; right: 70px; top: 1030px; }
+
+  /* 2) How */
+  #how .steps { margin-top: 60px; display: flex; flex-direction: column; gap: 30px; }
+  #how .step { display: flex; align-items: center; gap: 34px; padding: 36px 40px; }
+  #how .num { width: 92px; height: 92px; border-radius: 50%; background: var(--grad); color: #1a1208; font-weight: 900; font-size: 50px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 10px 40px rgba(245,165,36,.35); }
+  #how .step h3 { font-weight: 900; font-size: 46px; margin-bottom: 8px; }
+  #how .step p { font-weight: 500; font-size: 30px; color: var(--muted); line-height: 1.5; }
+  #how .step .icon-tile { margin-inline-start: auto; width: 96px; height: 96px; font-size: 42px; }
+
+  /* 3) Services */
+  #services .grid { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  #services .grid { margin-top: 48px; gap: 22px; }
+  #services .svc { padding: 30px 28px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  #services .svc .icon-tile { width: 82px; height: 82px; font-size: 36px; border-radius: 24px; }
+  #services .svc h3 { font-weight: 900; font-size: 36px; line-height: 1.25; }
+  #services .svc p { font-weight: 500; font-size: 25px; color: var(--muted); }
+  #services .svc.hl { border-color: rgba(245,165,36,.5); background: linear-gradient(160deg, rgba(245,165,36,.18), rgba(217,91,67,.08)); }
+
+  /* 4) Track */
+  #track .text { position: absolute; top: 90px; right: 70px; width: 520px; }
+  #track h2 { margin-top: 30px; }
+  #track .lead { margin-top: 24px; }
+  #track .phone { position: absolute; left: 70px; top: 120px; width: 420px; height: 880px; }
+  .tk { padding: 70px 26px 26px; display: flex; flex-direction: column; gap: 18px; height: 100%; }
+  .tk .title { font-weight: 900; font-size: 34px; text-align: center; }
+  .tk .code { text-align: center; font-weight: 700; font-size: 26px; color: var(--amber-l); background: rgba(245,165,36,.1); border: 2px solid rgba(245,165,36,.3); border-radius: 18px; padding: 12px; }
+  .tk .meta { display: flex; justify-content: space-between; font-size: 20px; color: var(--muted); padding: 0 6px; }
+  .tk .meta b { color: var(--text); }
+  .tl { list-style: none; display: flex; flex-direction: column; gap: 0; margin-top: 8px; position: relative; }
+  .tl li { display: grid; grid-template-columns: 52px 1fr; gap: 14px; align-items: start; padding-bottom: 22px; position: relative; }
+  .tl li::before { content: ''; position: absolute; right: 25px; top: 46px; bottom: -2px; width: 3px; background: var(--line2); }
+  .tl li:last-child::before { display: none; }
+  .tl li.done::before { background: var(--amber); }
+  .tl .dot { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px;
+    background: var(--panel2); border: 2px solid var(--line2); color: var(--muted); z-index: 1; }
+  .tl li.done .dot { background: var(--grad); color: #1a1208; border-color: transparent; }
+  .tl li.active .dot { background: #1B1610; border: 3px solid var(--amber); color: var(--amber); box-shadow: 0 0 0 8px rgba(245,165,36,.15); }
+  .tl .lbl { font-weight: 700; font-size: 25px; padding-top: 10px; }
+  .tl .sub { font-weight: 500; font-size: 19px; color: var(--muted); margin-top: 4px; }
+  .tl li.active .lbl { color: var(--amber-l); }
+  .tl li.pending .lbl { color: var(--muted); }
+  .qt { margin-top: auto; border-radius: 22px; padding: 18px 20px; background: rgba(245,165,36,.08); border: 2px solid rgba(245,165,36,.28); display: flex; flex-direction: column; gap: 8px; }
+  .qt-h { font-weight: 900; font-size: 22px; color: var(--amber-l); display: flex; gap: 10px; align-items: center; }
+  .qt-r { display: flex; justify-content: space-between; font-size: 20px; color: var(--muted); }
+  .qt-r b { color: var(--text); }
+  .qt-r.tot { border-top: 1px solid var(--line2); padding-top: 8px; font-size: 22px; }
+  .qt-r.tot b { color: var(--amber-l); }
+  #track .feats { position: absolute; right: 70px; top: 640px; display: flex; flex-direction: column; gap: 26px; width: 500px; }
+  #track .feat { display: flex; gap: 22px; align-items: center; font-weight: 700; font-size: 32px; }
+  #track .feat .icon-tile { width: 80px; height: 80px; font-size: 34px; border-radius: 22px; }
+
+  /* 5) Trust */
+  #trust .grid { margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  #trust .grid { margin-top: 48px; gap: 24px; }
+  #trust .b { padding: 34px 32px; display: flex; flex-direction: column; gap: 18px; }
+  #trust .b .icon-tile { width: 88px; height: 88px; font-size: 40px; border-radius: 26px; }
+  #trust .b h3 { font-weight: 900; font-size: 38px; line-height: 1.25; }
+  #trust .b p { font-weight: 500; font-size: 26px; color: var(--muted); line-height: 1.5; }
+
+  /* 6) Pricing */
+  #pricing .plans { margin-top: 48px; display: flex; flex-direction: column; gap: 24px; }
+  #pricing .plan { display: flex; align-items: center; gap: 30px; padding: 24px 40px; position: relative; }
+  #pricing .plan h3 { font-weight: 900; font-size: 50px; }
+  #pricing .plan p { font-weight: 500; font-size: 28px; color: var(--muted); margin-top: 6px; }
+  #pricing .price { margin-inline-start: auto; text-align: center; }
+  #pricing .price .from { font-size: 24px; color: var(--muted); font-weight: 500; }
+  #pricing .price .v { font-weight: 900; font-size: 66px; line-height: 1; }
+  #pricing .price .cur { font-size: 30px; font-weight: 700; color: var(--muted); }
+  #pricing .plan.hot { border-color: rgba(245,165,36,.6); background: linear-gradient(160deg, rgba(245,165,36,.2), rgba(217,91,67,.08)); }
+  #pricing .badge { position: absolute; top: -20px; right: 42px; background: var(--grad); color: #1a1208; font-weight: 900; font-size: 24px; padding: 8px 22px; border-radius: 999px; }
+  #pricing .note { margin-top: 30px; font-weight: 500; font-size: 28px; color: var(--muted); text-align: center; }
+  #pricing .note b { color: var(--text); }
+
+  /* 7) Delegates */
+  #delegates .steps { margin-top: 46px; display: flex; flex-direction: column; gap: 20px; }
+  #delegates .s { display: flex; align-items: center; gap: 28px; padding: 24px 32px; }
+  #delegates .s .icon-tile { width: 92px; height: 92px; font-size: 40px; border-radius: 26px; }
+  #delegates .s h3 { font-weight: 900; font-size: 40px; }
+  #delegates .s p { font-weight: 500; font-size: 27px; color: var(--muted); margin-top: 6px; }
+  #delegates .link { margin-top: 36px; display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+  #delegates .url { font-weight: 700; font-size: 32px; color: var(--amber-l); }
+
+  /* Stories */
+  .story .pad { padding: 120px 80px; }
+  #story-hero .phone { position: absolute; left: 50%; top: 720px; transform: translateX(-50%) rotate(-4deg); width: 420px; height: 800px; }
+  #story-hero .bottom { position: absolute; left: 80px; right: 80px; bottom: 100px; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  #story-hero .bottom .url { font-weight: 900; font-size: 52px; }
+  #story-del .bottom { position: absolute; left: 80px; right: 80px; bottom: 130px; display: flex; flex-direction: column; align-items: center; gap: 26px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- ═════════ 1) الرئيسية ═════════ -->
+<section class="canvas post" id="hero">
+  <div class="text">
+    <span class="kicker"><i class="fas fa-location-dot"></i> من أي مدينة في ليبيا</span>
+    <h1>تدوّر على حاجة؟<br><span class="grad-text">دورلي يجيبهالك</span></h1>
+    <p class="lead">اكتبلنا شن تبي، واحنا <b>ندوّروا، نشروا، ونوصّلوا</b> لين باب الحوش.</p>
+  </div>
+  <div class="phone"><div class="notch"></div><div class="screen shot"><img src="shots/home.png"></div></div>
+  <div class="chips">
+    <span class="chip"><i class="fas fa-car-side"></i> قطع غيار ورابش</span>
+    <span class="chip"><i class="fas fa-bag-shopping"></i> تسوق وتجميل</span>
+    <span class="chip"><i class="fas fa-capsules"></i> أدوية ناقصة</span>
+    <span class="chip"><i class="fas fa-boxes-stacked"></i> بضائع جملة</span>
+  </div>
+  <div class="cta"><span class="pill solid"><i class="fas fa-paper-plane"></i> اطلب توا</span></div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</section>
+
+<!-- ═════════ 2) شن الطريقة ═════════ -->
+<section class="canvas post" id="how"><div class="pad">
+  <span class="kicker"><i class="fas fa-route"></i> شن الطريقة؟</span>
+  <h2 style="margin-top:30px">ثلاث خطوات وبس…<br><span class="grad-text">وطلبك في الطريق</span></h2>
+  <div class="steps">
+    <div class="card step"><div class="num">١</div><div><h3>ابعت طلبك</h3><p>من الموقع ولا الواتساب، وزيد صورة إن قدرت</p></div><div class="icon-tile"><i class="fas fa-paper-plane"></i></div></div>
+    <div class="card step"><div class="num">٢</div><div><h3>ندوّروا ونسعّروا</h3><p>أحسن سعر وجودة، وعرض السعر خلال ساعات</p></div><div class="icon-tile"><i class="fas fa-magnifying-glass"></i></div></div>
+    <div class="card step"><div class="num">٣</div><div><h3>نشروا ونوصّلوا لبابك</h3><p>وتدفع بس لما يوصلك طلبك في يدك</p></div><div class="icon-tile"><i class="fas fa-truck-fast"></i></div></div>
+  </div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</div></section>
+
+<!-- ═════════ 3) الخدمات ═════════ -->
+<section class="canvas post" id="services"><div class="pad">
+  <span class="kicker"><i class="fas fa-layer-group"></i> خدماتنا</span>
+  <h2 style="margin-top:30px">شن <span class="grad-text">نجيبولك؟</span></h2>
+  <div class="grid">
+    <div class="card svc"><div class="icon-tile"><i class="fas fa-car-side"></i></div><h3>قطع غيار ورابش</h3><p>سيارات وشاحنات — جديدة ولا مستعملة</p></div>
+    <div class="card svc"><div class="icon-tile"><i class="fas fa-bag-shopping"></i></div><h3>تسوق، صحة، وتجميل</h3><p>فساتين، ميك أب، أدوية ناقصة</p></div>
+    <div class="card svc"><div class="icon-tile"><i class="fas fa-boxes-stacked"></i></div><h3>بضائع جملة</h3><p>وتجهيز محلات</p></div>
+    <div class="card svc"><div class="icon-tile"><i class="fas fa-file-lines"></i></div><h3>أوراق ومستندات</h3><p>نوصّلوها وين تبي</p></div>
+    <div class="card svc"><div class="icon-tile"><i class="fas fa-building"></i></div><h3>عقارات ومقرات</h3><p>ندوّرولك على المكان المناسب</p></div>
+    <div class="card svc hl"><div class="icon-tile"><i class="fas fa-wand-magic-sparkles"></i></div><h3>وأي حاجة ثانية!</h3><p>ندوّرلك على أي شي</p></div>
+  </div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</div></section>
+
+<!-- ═════════ 4) وين طلبي ═════════ -->
+<section class="canvas post" id="track">
+  <div class="text">
+    <span class="kicker"><i class="fas fa-location-crosshairs"></i> تتبّع حي</span>
+    <h2>وين <span class="grad-text">طلبي؟</span></h2>
+    <p class="lead">كل طلب ياخذ <b>رقم تتبع</b>، وتشوف وين وصل أول بأول — بلا حسابات ولا كلمات سر.</p>
+  </div>
+  <div class="feats">
+    <div class="feat"><div class="icon-tile"><i class="fas fa-hashtag"></i></div>رقم لكل طلب</div>
+    <div class="feat"><div class="icon-tile"><i class="fas fa-receipt"></i></div>عرض السعر يوصلك قبل الشراء</div>
+    <div class="feat"><div class="icon-tile"><i class="fas fa-circle-check"></i></div>توافق ولا ترفض بضغطة</div>
+  </div>
+  <div class="phone"><div class="notch"></div><div class="screen">
+    <div class="tk">
+      <div class="title">وين طلبي؟</div>
+      <div class="code"><bdi class="ltr">DW-2026-1234</bdi></div>
+      <div class="meta"><span>المدينة: <b>جالو</b></span><span>قطع غيار سيارات</span></div>
+      <ul class="tl">
+        <li class="done"><div class="dot"><i class="fas fa-check"></i></div><div><div class="lbl">استلمنا طلبك</div></div></li>
+        <li class="done"><div class="dot"><i class="fas fa-check"></i></div><div><div class="lbl">ندوّروا ونسعّروا</div></div></li>
+        <li class="done"><div class="dot"><i class="fas fa-check"></i></div><div><div class="lbl">عرض السعر</div><div class="sub">وافقت على العرض ✓</div></div></li>
+        <li class="active"><div class="dot"><i class="fas fa-box"></i></div><div><div class="lbl">الشراء والتجهيز</div><div class="sub">نجهّزوا في طلبك توا</div></div></li>
+        <li class="pending"><div class="dot"><i class="fas fa-house"></i></div><div><div class="lbl">وصل لبابك</div></div></li>
+      </ul>
+      <div class="qt"><div class="qt-h"><i class="fas fa-receipt"></i> عرض السعر</div>
+        <div class="qt-r"><span>سعر القطعة</span><b>420 د.ل</b></div>
+        <div class="qt-r"><span>رسوم الخدمة</span><b>30 د.ل</b></div>
+        <div class="qt-r tot"><span>الإجمالي</span><b>450 د.ل</b></div></div>
+    </div>
+  </div></div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly/track</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</section>
+
+<!-- ═════════ 5) ليش دورلي ═════════ -->
+<section class="canvas post" id="trust"><div class="pad">
+  <span class="kicker"><i class="fas fa-shield-heart"></i> ضماناتنا ليك</span>
+  <h2 style="margin-top:30px">ليش <span class="grad-text">دورلي؟</span></h2>
+  <div class="grid">
+    <div class="card b"><div class="icon-tile"><i class="fas fa-hand-holding-dollar"></i></div><h3>ادفع عند الاستلام</h3><p>ما تدفع شي مقدّم — بس لما يوصلك طلبك في يدك</p></div>
+    <div class="card b"><div class="icon-tile"><i class="fas fa-rotate-left"></i></div><h3>ضمان الاسترداد</h3><p>كان المنتج ما جاش مطابق للوصف، نرجّعولك رسوم الخدمة</p></div>
+    <div class="card b"><div class="icon-tile"><i class="fas fa-magnifying-glass-dollar"></i></div><h3>سعر واضح قبل الشراء</h3><p>نكلموك بالتكلفة الكاملة — بلا مفاجآت</p></div>
+    <div class="card b"><div class="icon-tile"><i class="fas fa-map-location-dot"></i></div><h3>كل مدن ليبيا</h3><p>من طرابلس لبنغازي لجالو وأوجلة — نوصّلولك</p></div>
+  </div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</div></section>
+
+<!-- ═════════ 6) الباقات ═════════ -->
+<section class="canvas post" id="pricing"><div class="pad">
+  <span class="kicker"><i class="fas fa-tags"></i> الباقات</span>
+  <h2 style="margin-top:30px">اختار الباقة<br><span class="grad-text">اللي تناسبك</span></h2>
+  <div class="plans">
+    <div class="card plan"><div class="icon-tile"><i class="fas fa-box"></i></div><div><h3>عادي</h3><p>للطلبات اللي ما فيهاش عجلة</p></div>
+      <div class="price"><div class="from">تبدأ من</div><div class="v">20</div><div class="cur">د.ل</div></div></div>
+    <div class="card plan hot"><span class="badge">الأكثر طلباً</span><div class="icon-tile"><i class="fas fa-bolt"></i></div><div><h3>سريع</h3><p>للطلبات اللي تبيها بسرعة</p></div>
+      <div class="price"><div class="from">تبدأ من</div><div class="v grad-text">40</div><div class="cur">د.ل</div></div></div>
+    <div class="card plan"><div class="icon-tile"><i class="fas fa-crown"></i></div><div><h3>VIP</h3><p>خدمة فورية ما فيهاش حدود</p></div>
+      <div class="price"><div class="from">تبدأ من</div><div class="v">70</div><div class="cur">د.ل</div></div></div>
+  </div>
+  <p class="note">الرسوم <b>+ سعر المنتج والشحن الفعلي</b> — وتعرف المبلغ كامل قبل الشراء</p>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly/pricing</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</div></section>
+
+<!-- ═════════ 7) المندوبون ═════════ -->
+<section class="canvas post" id="delegates"><div class="pad">
+  <span class="kicker"><i class="fas fa-id-badge"></i> انضم لفريق دورلي</span>
+  <h2 style="margin-top:30px">تعرف أسواق مدينتك؟<br><span class="grad-text">اخدم معانا كمندوب</span></h2>
+  <div class="steps">
+    <div class="card s"><div class="icon-tile"><i class="fas fa-user-plus"></i></div><div><h3>سجّل من جوالك</h3><p>اسمك، رقمك، ومدينتك — دقيقة وحدة</p></div></div>
+    <div class="card s"><div class="icon-tile"><i class="fas fa-user-check"></i></div><div><h3>نعتمدوك</h3><p>نراجعوا بياناتك ونفعّلوا حسابك</p></div></div>
+    <div class="card s"><div class="icon-tile"><i class="fas fa-hand-pointer"></i></div><div><h3>احجز الطلبات اللي تقدر عليها</h3><p>دوّر، سعّر، وحدّث حالة الطلب من جوالك</p></div></div>
+  </div>
+  <div class="link"><span class="pill solid"><i class="fas fa-arrow-left"></i> سجّل كمندوب</span><bdi class="url ltr">dawerli.org.ly/delegate/login</bdi></div>
+  <div class="footer">
+    <div class="logo"><img src="logo.svg"><span>دورلي</span></div>
+    <div class="contact"><bdi class="site ltr">dawerli.org.ly</bdi><span class="wa"><i class="fab fa-whatsapp"></i><bdi class="ltr">094 650 7954</bdi></span></div>
+  </div>
+</div></section>
+
+<!-- ═════════ 8) ستوري — الرئيسية ═════════ -->
+<section class="canvas story" id="story-hero"><div class="pad" style="text-align:center">
+  <div class="logo" style="justify-content:center;width:100%"><img src="logo.svg"><span>دورلي</span></div>
+  <h1 style="margin-top:60px;font-size:116px">تدوّر على حاجة؟<br><span class="grad-text">دورلي يجيبهالك</span></h1>
+  <p class="lead" style="margin-top:30px;font-size:42px">ندوّروا · نشروا · نوصّلوا لبابك</p>
+</div>
+  <div class="phone"><div class="notch"></div><div class="screen shot"><img src="shots/home.png"></div></div>
+  <div class="bottom">
+    <span class="pill solid" style="font-size:42px;padding:24px 48px"><i class="fas fa-paper-plane"></i> اطلب توا</span>
+    <bdi class="url ltr grad-text">dawerli.org.ly</bdi>
+  </div>
+</section>
+
+<!-- ═════════ 9) ستوري — المندوبون ═════════ -->
+<section class="canvas story" id="story-del"><div class="pad" style="text-align:center">
+  <div class="logo" style="justify-content:center;width:100%"><img src="logo.svg"><span>دورلي</span></div>
+  <span class="kicker" style="margin-top:70px"><i class="fas fa-id-badge"></i> مطلوب مندوبين في كل المدن</span>
+  <h1 style="margin-top:40px;font-size:110px">تعرف أسواق<br>مدينتك؟</h1>
+  <h2 class="grad-text" style="margin-top:20px;font-size:92px">اخدم مع دورلي</h2>
+  <div style="margin-top:80px;display:flex;flex-direction:column;gap:26px;text-align:right">
+    <div class="card" style="display:flex;gap:28px;align-items:center;padding:34px 40px"><div class="icon-tile"><i class="fas fa-user-plus"></i></div><div style="font-weight:900;font-size:44px">سجّل من جوالك</div></div>
+    <div class="card" style="display:flex;gap:28px;align-items:center;padding:34px 40px"><div class="icon-tile"><i class="fas fa-hand-pointer"></i></div><div style="font-weight:900;font-size:44px">احجز الطلبات في مدينتك</div></div>
+    <div class="card" style="display:flex;gap:28px;align-items:center;padding:34px 40px"><div class="icon-tile"><i class="fas fa-truck-fast"></i></div><div style="font-weight:900;font-size:44px">دوّر، سعّر، وصّل</div></div>
+  </div>
+</div>
+  <div class="bottom">
+    <span class="pill solid" style="font-size:42px;padding:24px 48px"><i class="fas fa-arrow-left"></i> سجّل توا</span>
+    <bdi class="ltr grad-text" style="font-weight:900;font-size:46px">dawerli.org.ly/delegate/login</bdi>
+  </div>
+</section>
+
+</body>
+</html>

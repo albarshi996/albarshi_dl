@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="brand.css">
+<style>
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  .glow { position: absolute; border-radius: 50%; filter: blur(120px); opacity: .55; will-change: transform; }
+  #g1 { width: 900px; height: 900px; background: radial-gradient(circle, rgba(245,165,36,.75), transparent 65%); top: -300px; right: -300px; }
+  #g2 { width: 800px; height: 800px; background: radial-gradient(circle, rgba(217,91,67,.65), transparent 65%); bottom: -260px; left: -260px; }
+  #dots { position: absolute; inset: 0; opacity: .35; background-image: radial-gradient(rgba(255,255,255,.07) 2px, transparent 2px); background-size: 44px 44px;
+    -webkit-mask-image: linear-gradient(180deg, #000, transparent 55%); mask-image: linear-gradient(180deg, #000, transparent 55%); }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .center { position: absolute; left: 0; right: 0; text-align: center; }
+  .a { will-change: transform, opacity; }
+
+  .big { font-weight: 900; font-size: 112px; line-height: 1.12; letter-spacing: -1px; }
+  .mid { font-weight: 900; font-size: 84px; line-height: 1.15; }
+  .sub { font-weight: 500; font-size: 46px; color: var(--muted); line-height: 1.5; }
+
+  /* شارة الخطوات */
+  .stepbar { position: absolute; top: 120px; left: 0; right: 0; display: flex; justify-content: center; gap: 22px; }
+  .stepbar span { width: 74px; height: 74px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 38px;
+    background: var(--panel2); border: 3px solid var(--line2); color: var(--muted); }
+  .stepbar span.on { background: var(--grad); color: #1a1208; border-color: transparent; box-shadow: 0 10px 40px rgba(245,165,36,.45); }
+  .stepbar i { width: 70px; height: 3px; background: var(--line2); align-self: center; }
+  .stephead { position: absolute; top: 250px; left: 80px; right: 80px; text-align: center; }
+
+  /* S1 */
+  #s1 .logoBig { position: absolute; top: 470px; left: 50%; margin-left: -130px; width: 260px; height: 260px; border-radius: 68px; box-shadow: 0 30px 120px rgba(245,165,36,.5); }
+  #s1 .word { top: 770px; font-weight: 900; font-size: 150px; }
+  #s1 .t1 { top: 1090px; }
+  #s1 .t2 { top: 1220px; }
+
+  /* S2 */
+  #s2 .rows { position: absolute; top: 380px; left: 80px; right: 80px; display: flex; flex-direction: column; gap: 34px; }
+  #s2 .row { display: flex; align-items: center; gap: 34px; padding: 40px 44px; }
+  #s2 .row .icon-tile { width: 128px; height: 128px; font-size: 58px; border-radius: 36px; }
+  #s2 .row span { font-weight: 900; font-size: 58px; line-height: 1.25; }
+  #s2 .q1 { top: 1180px; }
+  #s2 .q2 { top: 1300px; }
+
+  /* S3 */
+  #s3 .phone { position: absolute; top: 600px; left: 50%; margin-left: -265px; width: 530px; height: 1100px; }
+  #s3 .screen img { will-change: transform; }
+  #s3 .toast { position: absolute; left: 110px; right: 110px; top: 1560px; padding: 30px 36px; border-radius: 30px; display: flex; align-items: center; gap: 24px;
+    background: #1d2a1f; border: 3px solid rgba(46,194,126,.6); box-shadow: 0 24px 80px rgba(0,0,0,.6); }
+  #s3 .toast i { font-size: 58px; color: var(--green); }
+  #s3 .toast b { display: block; font-weight: 900; font-size: 44px; }
+  #s3 .toast span { font-weight: 700; font-size: 34px; color: var(--amber-l); }
+
+  /* S4 */
+  #s4 .offers { position: absolute; top: 640px; left: 80px; right: 80px; display: flex; flex-direction: column; gap: 26px; }
+  #s4 .offer { display: flex; align-items: center; gap: 28px; padding: 30px 38px; position: relative; }
+  #s4 .offer .icon-tile { width: 100px; height: 100px; font-size: 44px; border-radius: 28px; }
+  #s4 .offer .nm { font-weight: 900; font-size: 46px; }
+  #s4 .offer .ct { font-weight: 500; font-size: 32px; color: var(--muted); margin-top: 4px; }
+  #s4 .offer .pr { margin-inline-start: auto; font-weight: 900; font-size: 56px; }
+  #s4 .offer.best { border-color: rgba(46,194,126,.7); background: linear-gradient(160deg, rgba(46,194,126,.16), rgba(46,194,126,.04)); }
+  #s4 .bestTag { position: absolute; top: -22px; right: 40px; background: var(--green); color: #06180e; font-weight: 900; font-size: 28px; padding: 8px 22px; border-radius: 999px; }
+  #s4 .lens { position: absolute; top: 0; left: 0; width: 170px; height: 170px; border-radius: 50%; border: 10px solid var(--amber); box-shadow: 0 0 0 8px rgba(245,165,36,.2), inset 0 0 40px rgba(245,165,36,.25); }
+  #s4 .lens::after { content: ''; position: absolute; width: 90px; height: 20px; background: var(--amber); border-radius: 10px; bottom: -48px; left: -40px; transform: rotate(-45deg); }
+  #s4 .quote { position: absolute; left: 80px; right: 80px; top: 1220px; padding: 40px 44px; border-radius: 40px; background: var(--panel2); border: 3px solid rgba(245,165,36,.45); box-shadow: 0 30px 100px rgba(0,0,0,.55); }
+  #s4 .quote h4 { font-weight: 900; font-size: 48px; color: var(--amber-l); display: flex; gap: 16px; align-items: center; }
+  #s4 .quote .r { display: flex; justify-content: space-between; font-size: 38px; color: var(--muted); margin-top: 18px; font-weight: 500; }
+  #s4 .quote .r b { color: var(--text); font-weight: 700; }
+  #s4 .quote .r.tot { border-top: 2px solid var(--line2); padding-top: 18px; font-size: 44px; }
+  #s4 .quote .r.tot b { color: var(--amber-l); font-weight: 900; }
+  #s4 .quote .btns { display: flex; gap: 22px; margin-top: 30px; }
+  #s4 .quote .btns div { flex: 1; text-align: center; padding: 24px; border-radius: 999px; font-weight: 900; font-size: 40px; }
+  #s4 .quote .ok { background: var(--grad); color: #1a1208; }
+  #s4 .quote .no { border: 3px solid var(--line2); color: var(--muted); }
+
+  /* S5 */
+  #s5 .trk { position: absolute; top: 600px; left: 90px; right: 90px; padding: 44px; border-radius: 44px; }
+  #s5 .code { text-align: center; font-weight: 700; font-size: 40px; color: var(--amber-l); background: rgba(245,165,36,.1); border: 2px solid rgba(245,165,36,.3); border-radius: 24px; padding: 16px; margin-bottom: 30px; }
+  #s5 ul { list-style: none; }
+  #s5 li { display: grid; grid-template-columns: 84px 1fr; gap: 26px; align-items: center; padding-bottom: 34px; position: relative; }
+  #s5 li:last-child { padding-bottom: 0; }
+  #s5 li .ln { position: absolute; right: 39px; top: 84px; width: 6px; height: 34px; background: var(--line2); border-radius: 3px; overflow: hidden; }
+  #s5 li .ln b { display: block; width: 100%; height: 0%; background: var(--amber); }
+  #s5 li .dot { width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; background: var(--panel2); border: 3px solid var(--line2); color: var(--muted); }
+  #s5 li .lb { font-weight: 900; font-size: 46px; color: var(--muted); }
+  #s5 li.done .dot { background: var(--grad); color: #1a1208; border-color: transparent; }
+  #s5 li.done .lb { color: var(--text); }
+  #s5 li.act .dot { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 0 12px rgba(245,165,36,.16); }
+  #s5 li.act .lb { color: var(--amber-l); }
+  #s5 .route { position: absolute; left: 90px; right: 90px; top: 1490px; height: 120px; }
+  #s5 .road { position: absolute; left: 60px; right: 60px; top: 56px; height: 8px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--line2) 0 26px, transparent 26px 44px); }
+  #s5 .road b { position: absolute; right: 0; top: 0; height: 100%; width: 0%; background: var(--grad); border-radius: 4px; }
+  #s5 .city { position: absolute; top: 76px; font-weight: 700; font-size: 32px; color: var(--muted); }
+  #s5 .truck { position: absolute; top: 4px; right: 30px; font-size: 64px; color: var(--amber); transform-origin: center; }
+  #s5 .pay { position: absolute; left: 0; right: 0; top: 1660px; text-align: center; }
+
+  #s5 .stephead .big { font-size: 94px; }
+  /* S6 */
+  #s6 .grid { position: absolute; top: 560px; left: 80px; right: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  #s6 .b { padding: 46px 38px; display: flex; flex-direction: column; gap: 26px; min-height: 420px; }
+  #s6 .b .icon-tile { width: 120px; height: 120px; font-size: 54px; }
+  #s6 .b h3 { font-weight: 900; font-size: 50px; line-height: 1.25; }
+  #s6 .b p { font-weight: 500; font-size: 33px; color: var(--muted); line-height: 1.5; }
+
+  /* S7 */
+  #s7 .chips { position: absolute; top: 1010px; left: 90px; right: 90px; display: flex; flex-direction: column; gap: 26px; }
+  #s7 .chip { display: flex; align-items: center; gap: 28px; padding: 30px 38px; }
+  #s7 .chip .icon-tile { width: 100px; height: 100px; font-size: 44px; border-radius: 28px; }
+  #s7 .chip span { font-weight: 900; font-size: 50px; }
+  #s7 .url { top: 1600px; font-weight: 900; font-size: 50px; }
+
+  /* S8 */
+  #s8 .logoBig { position: absolute; top: 330px; left: 50%; margin-left: -110px; width: 220px; height: 220px; border-radius: 58px; box-shadow: 0 30px 120px rgba(245,165,36,.5); }
+  #s8 .t1 { top: 640px; } #s8 .t2 { top: 770px; }
+  #s8 .btn { position: absolute; top: 1050px; left: 50%; margin-left: -260px; width: 520px; text-align: center; padding: 40px 0; border-radius: 999px; font-weight: 900; font-size: 64px;
+    background: var(--grad); color: #1a1208; box-shadow: 0 30px 100px rgba(245,165,36,.45); }
+  #s8 .site { top: 1260px; font-weight: 900; font-size: 76px; }
+  #s8 .wa { top: 1400px; font-weight: 700; font-size: 52px; color: #8DE8B3; }
+  #s8 .fb { top: 1500px; font-weight: 500; font-size: 36px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow" id="g1"></div><div class="glow" id="g2"></div><div id="dots"></div>
+
+  <!-- S1: الشعار -->
+  <section class="scene" id="s1">
+    <img class="logoBig a" src="logo.svg">
+    <div class="center word a">دورلي</div>
+    <div class="center big t1 a">تدوّر على حاجة؟</div>
+    <div class="center big t2 a"><span class="grad-text">دورلي يجيبهالك</span></div>
+  </section>
+
+  <!-- S2: المشكلة -->
+  <section class="scene" id="s2">
+    <div class="rows">
+      <div class="card row a"><div class="icon-tile"><i class="fas fa-car-side"></i></div><span>قطعة غيار مش موجودة في مدينتك؟</span></div>
+      <div class="card row a"><div class="icon-tile"><i class="fas fa-capsules"></i></div><span>دواء ناقص؟</span></div>
+      <div class="card row a"><div class="icon-tile"><i class="fas fa-boxes-stacked"></i></div><span>بضاعة لمحلّك؟</span></div>
+    </div>
+    <div class="center sub q1 a" style="font-size:56px">ما تتعبش روحك…</div>
+    <div class="center big q2 a"><span class="grad-text">دورلي يدوّرلك</span></div>
+  </section>
+
+  <!-- S3: ابعت طلبك -->
+  <section class="scene" id="s3">
+    <div class="stepbar a"><span class="on">١</span><i></i><span>٢</span><i></i><span>٣</span></div>
+    <div class="stephead a"><div class="big">ابعت طلبك</div><div class="sub" style="margin-top:14px">من الموقع ولا الواتساب، وزيد صورة إن قدرت</div></div>
+    <div class="phone a"><div class="notch"></div><div class="screen shot"><img src="shots/request.png"></div></div>
+    <div class="toast a"><i class="fas fa-circle-check"></i><div><b>وصلنا طلبك!</b><span>رقم التتبع: <bdi class="ltr">DW-2026-1234</bdi></span></div></div>
+  </section>
+
+  <!-- S4: ندوّروا ونسعّروا -->
+  <section class="scene" id="s4">
+    <div class="stepbar a"><span class="on">١</span><i></i><span class="on">٢</span><i></i><span>٣</span></div>
+    <div class="stephead a"><div class="big">ندوّروا ونسعّروا</div><div class="sub" style="margin-top:14px">نقارنوا الأسعار ونتأكدوا من الجودة</div></div>
+    <div class="offers">
+      <div class="card offer a"><div class="icon-tile"><i class="fas fa-store"></i></div><div><div class="nm">محل قطع غيار</div><div class="ct">بنغازي</div></div><div class="pr">480</div></div>
+      <div class="card offer best a"><span class="bestTag a">أحسن سعر ✓</span><div class="icon-tile"><i class="fas fa-store"></i></div><div><div class="nm">مورد معتمد</div><div class="ct">طرابلس</div></div><div class="pr">420</div></div>
+      <div class="card offer a"><div class="icon-tile"><i class="fas fa-store"></i></div><div><div class="nm">رابش</div><div class="ct">مصراتة</div></div><div class="pr">455</div></div>
+    </div>
+    <div class="lens a"></div>
+    <div class="quote a">
+      <h4><i class="fas fa-receipt"></i> عرض السعر يوصلك</h4>
+      <div class="r"><span>سعر القطعة</span><b>420 د.ل</b></div>
+      <div class="r"><span>رسوم الخدمة</span><b>30 د.ل</b></div>
+      <div class="r tot"><span>الإجمالي</span><b>450 د.ل</b></div>
+      <div class="btns"><div class="ok a">موافق ✓</div><div class="no">مش موافق</div></div>
+    </div>
+  </section>
+
+  <!-- S5: نوصّلوا + تتبّع -->
+  <section class="scene" id="s5">
+    <div class="stepbar a"><span class="on">١</span><i></i><span class="on">٢</span><i></i><span class="on">٣</span></div>
+    <div class="stephead a"><div class="big">نشروا ونوصّلوا لبابك</div><div class="sub" style="margin-top:14px">وتتابع طلبك أول بأول من «وين طلبي؟»</div></div>
+    <div class="card trk a">
+      <div class="code"><bdi class="ltr">DW-2026-1234</bdi></div>
+      <ul>
+        <li data-at="0"><div class="dot"><i class="fas fa-inbox"></i></div><div class="lb">استلمنا طلبك</div><div class="ln"><b></b></div></li>
+        <li data-at="1"><div class="dot"><i class="fas fa-magnifying-glass"></i></div><div class="lb">ندوّروا ونسعّروا</div><div class="ln"><b></b></div></li>
+        <li data-at="2"><div class="dot"><i class="fas fa-receipt"></i></div><div class="lb">وافقت على السعر</div><div class="ln"><b></b></div></li>
+        <li data-at="3"><div class="dot"><i class="fas fa-truck-fast"></i></div><div class="lb">في الطريق ليك</div><div class="ln"><b></b></div></li>
+        <li data-at="4"><div class="dot"><i class="fas fa-house"></i></div><div class="lb">وصل لبابك ✓</div></li>
+      </ul>
+    </div>
+    <div class="route a">
+      <div class="road"><b></b></div>
+      <i class="fas fa-truck-fast truck"></i>
+      <div class="city" style="right:20px">طرابلس</div><div class="city" style="left:20px">باب حوشك</div>
+    </div>
+    <div class="pay a"><span class="pill solid" style="font-size:44px;padding:24px 46px"><i class="fas fa-hand-holding-dollar"></i> وتدفع عند الاستلام</span></div>
+  </section>
+
+  <!-- S6: الضمانات -->
+  <section class="scene" id="s6">
+    <div class="stephead a" style="top:250px"><div class="big">ليش <span class="grad-text">دورلي؟</span></div></div>
+    <div class="grid">
+      <div class="card b a"><div class="icon-tile"><i class="fas fa-hand-holding-dollar"></i></div><h3>ادفع عند الاستلام</h3><p>ما تدفع شي مقدّم</p></div>
+      <div class="card b a"><div class="icon-tile"><i class="fas fa-rotate-left"></i></div><h3>ضمان الاسترداد</h3><p>نرجّعولك رسوم الخدمة كان ما جاش مطابق</p></div>
+      <div class="card b a"><div class="icon-tile"><i class="fas fa-magnifying-glass-dollar"></i></div><h3>سعر واضح</h3><p>تعرف المبلغ كامل قبل الشراء</p></div>
+      <div class="card b a"><div class="icon-tile"><i class="fas fa-map-location-dot"></i></div><h3>كل مدن ليبيا</h3><p>وين ما كنت نوصّلولك</p></div>
+    </div>
+  </section>
+
+  <!-- S7: المندوبين -->
+  <section class="scene" id="s7">
+    <div class="center a" style="top:330px"><span class="kicker" style="display:inline-flex;align-items:center;gap:14px;font-weight:700;font-size:38px;color:var(--amber-l);padding:16px 34px;border-radius:999px;background:rgba(245,165,36,.12);border:2px solid rgba(245,165,36,.3)"><i class="fas fa-id-badge"></i> مطلوب مندوبين</span></div>
+    <div class="center big a" style="top:480px">تعرف أسواق<br>مدينتك؟</div>
+    <div class="center mid a" style="top:780px"><span class="grad-text">اخدم مع دورلي</span></div>
+    <div class="chips">
+      <div class="card chip a"><div class="icon-tile"><i class="fas fa-user-plus"></i></div><span>سجّل من جوالك</span></div>
+      <div class="card chip a"><div class="icon-tile"><i class="fas fa-hand-pointer"></i></div><span>احجز طلبات مدينتك</span></div>
+      <div class="card chip a"><div class="icon-tile"><i class="fas fa-truck-fast"></i></div><span>دوّر، سعّر، وصّل</span></div>
+    </div>
+    <div class="center url a"><bdi class="ltr grad-text">dawerli.org.ly/delegate/login</bdi></div>
+  </section>
+
+  <!-- S8: الخاتمة -->
+  <section class="scene" id="s8">
+    <img class="logoBig a" src="logo.svg">
+    <div class="center big t1 a">تدوّر على حاجة؟</div>
+    <div class="center big t2 a"><span class="grad-text">دورلي يجيبهالك</span></div>
+    <div class="btn a"><i class="fas fa-paper-plane"></i> اطلب توا</div>
+    <div class="center site a"><bdi class="ltr">dawerli.org.ly</bdi></div>
+    <div class="center wa a"><i class="fab fa-whatsapp"></i> <bdi class="ltr">094 650 7954</bdi></div>
+    <div class="center fb a">ندوّروا · نشروا · نوصّلوا — في كل ليبيا</div>
+  </section>
+</div>
+
+<script>
+// ═══ محرك حركة حتمي: renderAt(t) يرسم الإطار عند الثانية t ═══
+const E = {
+  lin: x => x,
+  out: x => 1 - Math.pow(1 - x, 3),
+  inOut: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  back: x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+const DEF = { o: 1, x: 0, y: 0, s: 1, r: 0 };
+const tracks = [], hooks = [];
+function K(sel, keys, root) {
+  const els = typeof sel === 'string' ? (root || document).querySelectorAll(sel) : [sel];
+  let prev = { ...DEF };
+  const norm = keys.map(([t, p, ez]) => { prev = { ...prev, ...p }; return [t, { ...prev }, ez || 'out']; });
+  els.forEach(el => tracks.push({ el, keys: norm }));
+}
+function sample(keys, t) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [t0, p0] = keys[i], [t1, p1, ez] = keys[i + 1];
+    if (t <= t1) { const e = E[ez]((t - t0) / Math.max(1e-6, t1 - t0)); const r = {}; for (const k in p1) r[k] = p0[k] + (p1[k] - p0[k]) * e; return r; }
+  }
+  return keys[keys.length - 1][1];
+}
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => [...(r || document).querySelectorAll(s)];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const prog = (t, a, d, ez = 'out') => E[ez](clamp((t - a) / d, 0, 1));
+
+// نافذة مشهد: ظهور ثم اختفاء
+function scene(id, a, b) { K('#' + id, [[a - .01, { o: 0 }], [a + .35, { o: 1 }, 'inOut'], [b - .4, { o: 1 }], [b, { o: 0 }, 'inOut']]); }
+// عنصر يدخل: من أسفل/جانب مع شفافية
+function enter(sel, t, { y = 60, x = 0, s = 1, d = .7, ez = 'out', root } = {}) { K(sel, [[t, { o: 0, y, x, s }], [t + d, { o: 1, y: 0, x: 0, s: 1 }, ez]], root); }
+
+const T = { s1: [0, 4.6], s2: [4.4, 10.2], s3: [10, 16.6], s4: [16.4, 23.6], s5: [23.4, 30.2], s6: [30, 34.6], s7: [34.4, 38.8], s8: [38.6, 45] };
+const DURATION = 45;
+for (const k in T) scene(k, T[k][0], T[k][1]);
+// المشهد الأخير لا يختفي
+K('#s8', [[T.s8[0] - .01, { o: 0 }], [T.s8[0] + .4, { o: 1 }, 'inOut']]);
+
+// S1
+K('#s1 .logoBig', [[.1, { o: 0, s: .4, r: -20 }], [1.0, { o: 1, s: 1, r: 0 }, 'back']]);
+enter('#s1 .word', .7, { y: 40 });
+enter('#s1 .t1', 1.5, { y: 50 });
+enter('#s1 .t2', 2.2, { y: 50, s: .92 });
+// S2
+const s2 = T.s2[0];
+$$('#s2 .row').forEach((el, i) => enter(el, s2 + .3 + i * .7, { x: -90, y: 0 }));
+enter('#s2 .q1', s2 + 2.9, { y: 30 });
+enter('#s2 .q2', s2 + 3.4, { y: 40, s: .9, ez: 'back' });
+// S3
+const s3 = T.s3[0];
+enter('#s3 .stepbar', s3 + .1, { y: -30 });
+enter('#s3 .stephead', s3 + .3, { y: 40 });
+K('#s3 .phone', [[s3 + .4, { o: 0, y: 500 }], [s3 + 1.4, { o: 1, y: 0 }]]);
+K('#s3 .screen img', [[s3 + 1.8, { y: 0 }], [s3 + 4.2, { y: -130 }, 'inOut']]);
+K('#s3 .toast', [[s3 + 4.4, { o: 0, y: 60, s: .9 }], [s3 + 5.0, { o: 1, y: 0, s: 1 }, 'back']]);
+// S4
+const s4 = T.s4[0];
+enter('#s4 .stepbar', s4 + .1, { y: -30 });
+enter('#s4 .stephead', s4 + .3, { y: 40 });
+$$('#s4 .offer').forEach((el, i) => enter(el, s4 + .6 + i * .25, { x: -80, y: 0 }));
+K('#s4 .bestTag', [[s4 + 3.2, { o: 0, s: .5 }], [s4 + 3.6, { o: 1, s: 1 }, 'back']]);
+// العدسة تمر على العروض ثم تستقر على الأفضل
+const lensPath = [[s4 + 1.4, { o: 0, x: 780, y: 650 }], [s4 + 1.7, { o: 1, x: 780, y: 650 }], [s4 + 2.2, { x: 120, y: 650 }, 'inOut'],
+  [s4 + 2.6, { x: 120, y: 850 }, 'inOut'], [s4 + 3.0, { x: 130, y: 830 }, 'inOut'], [s4 + 3.8, { o: 0, x: 130, y: 830, s: 1.3 }]];
+K('#s4 .lens', lensPath);
+K('#s4 .offers .offer:not(.best)', [[s4 + 3.6, { o: 1 }], [s4 + 4.1, { o: .35 }]]);
+K('#s4 .quote', [[s4 + 4.0, { o: 0, y: 260 }], [s4 + 4.7, { o: 1, y: 0 }, 'back']]);
+K('#s4 .quote .ok', [[s4 + 5.6, { s: 1 }], [s4 + 5.75, { s: .9 }], [s4 + 6.0, { s: 1.04 }, 'back'], [s4 + 6.2, { s: 1 }]]);
+// S5
+const s5 = T.s5[0];
+enter('#s5 .stepbar', s5 + .1, { y: -30 });
+enter('#s5 .stephead', s5 + .3, { y: 40 });
+enter('#s5 .trk', s5 + .5, { y: 80 });
+enter('#s5 .route', s5 + .9, { y: 40 });
+K('#s5 .pay', [[s5 + 5.0, { o: 0, s: .7 }], [s5 + 5.5, { o: 1, s: 1 }, 'back']]);
+hooks.push(t => {
+  const p = clamp((t - (s5 + 1.0)) / 3.6, 0, 1);       // تقدم الرحلة 0..1
+  const stage = p * 4;
+  $$('#s5 li').forEach((li, i) => {
+    li.classList.toggle('done', stage >= i + .02 || (i === 4 && p >= 1));
+    li.classList.toggle('act', stage < i + .02 && stage > i - 1 && !(i === 4 && p >= 1));
+    const bar = $('.ln b', li); if (bar) bar.style.height = (clamp(stage - i, 0, 1) * 100) + '%';
+  });
+  const road = $('#s5 .road b'); road.style.width = (p * 100) + '%';
+  const truck = $('#s5 .truck'); const w = 900 - 160; truck.style.transform = `translateX(${-p * w}px) scaleX(-1) translateY(${Math.sin(t * 18) * 2}px)`;
+});
+// S6
+const s6 = T.s6[0];
+enter('#s6 .stephead', s6 + .2, { y: 40 });
+$$('#s6 .b').forEach((el, i) => K(el, [[s6 + .6 + i * .3, { o: 0, s: .8 }], [s6 + 1.1 + i * .3, { o: 1, s: 1 }, 'back']]));
+// S7
+const s7 = T.s7[0];
+$$('#s7 > .center').forEach((el, i) => enter(el, s7 + .2 + i * .35, { y: 40 }));
+$$('#s7 .chip').forEach((el, i) => enter(el, s7 + 1.4 + i * .3, { x: -80, y: 0 }));
+// S8
+const s8 = T.s8[0];
+K('#s8 .logoBig', [[s8 + .2, { o: 0, s: .4, r: 20 }], [s8 + 1.1, { o: 1, s: 1, r: 0 }, 'back']]);
+enter('#s8 .t1', s8 + .8);
+enter('#s8 .t2', s8 + 1.2, { s: .92 });
+K('#s8 .btn', [[s8 + 1.8, { o: 0, s: .6 }], [s8 + 2.3, { o: 1, s: 1 }, 'back']]);
+enter('#s8 .site', s8 + 2.4);
+enter('#s8 .wa', s8 + 2.7);
+enter('#s8 .fb', s8 + 3.0);
+hooks.push(t => { if (t > s8 + 2.6) { const k = 1 + Math.sin((t - s8 - 2.6) * 4) * .035; $('#s8 .btn').style.transform = `scale(${k})`; } });
+
+// خلفية حية
+hooks.push(t => {
+  $('#g1').style.transform = `translate(${Math.sin(t * .35) * 80}px, ${Math.cos(t * .3) * 60}px)`;
+  $('#g2').style.transform = `translate(${Math.cos(t * .28) * 90}px, ${Math.sin(t * .33) * 70}px)`;
+});
+
+window.DURATION = DURATION;
+window.renderAt = function (t) {
+  for (const { el, keys } of tracks) {
+    const p = sample(keys, t);
+    el.style.opacity = p.o;
+    if (el.classList.contains('scene')) { el.style.visibility = p.o <= 0.001 ? 'hidden' : 'visible'; continue; }
+    el.style.transform = `translate(${p.x}px, ${p.y}px) scale(${p.s}) rotate(${p.r}deg)`;
+  }
+  for (const h of hooks) h(t);
+};
+window.renderAt(0);
+</script>
+</body>
+</html>
