@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="brand.css">
+<style>
+  body { display: flex; flex-direction: column; gap: 40px; padding: 40px; align-items: flex-start; }
+
+  /* ── غلاف فيسبوك 1640×624 ──
+     الجوال يقص ~265px من كل جانب؛ صورة الملف تغطي أسفل المنتصف (~380px عرض). */
+  #cover { width: 1640px; height: 624px; }
+  #cover .head { position: absolute; top: 46px; left: 0; right: 0; text-align: center; }
+  #cover h1 { font-weight: 900; font-size: 84px; line-height: 1.12; letter-spacing: -1px; }
+  #cover .sub { margin-top: 34px; font-weight: 700; font-size: 34px; color: var(--muted); }
+  #cover .sub b { color: var(--amber-l); }
+  #cover .pills { position: absolute; top: 370px; left: 0; right: 0; display: flex; justify-content: center; gap: 26px; }
+  #cover .pill { font-size: 30px; padding: 14px 28px; }
+  #cover .side { position: absolute; top: 0; bottom: 0; width: 240px; display: flex; flex-direction: column; justify-content: center; gap: 26px; align-items: center; }
+  #cover .side.r { right: 18px; } #cover .side.l { left: 18px; }
+  #cover .side .icon-tile { width: 96px; height: 96px; font-size: 42px; border-radius: 28px; opacity: .9; }
+  #cover .side .icon-tile:nth-child(2) { transform: translateX(-40px); }
+  #cover .side.l .icon-tile:nth-child(2) { transform: translateX(40px); }
+
+  /* ── صورة الملف 1080×1080 (تُعرض دائرة) ── */
+  #avatar { width: 1080px; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; }
+  #avatar::before { background:
+      radial-gradient(70% 60% at 50% 30%, rgba(245,165,36,.35), transparent 70%),
+      radial-gradient(60% 50% at 50% 100%, rgba(217,91,67,.30), transparent 70%); }
+  #avatar { gap: 6px; padding-bottom: 40px; }
+  #avatar img { width: 540px; height: 540px; border-radius: 140px; box-shadow: 0 30px 120px rgba(245,165,36,.45); }
+  #avatar .w { font-weight: 900; font-size: 170px; line-height: 1.25; }
+</style>
+</head>
+<body>
+
+<section class="canvas" id="cover">
+  <div class="side r"><div class="icon-tile"><i class="fas fa-car-side"></i></div><div class="icon-tile"><i class="fas fa-bag-shopping"></i></div><div class="icon-tile"><i class="fas fa-capsules"></i></div></div>
+  <div class="side l"><div class="icon-tile"><i class="fas fa-boxes-stacked"></i></div><div class="icon-tile"><i class="fas fa-file-lines"></i></div><div class="icon-tile"><i class="fas fa-truck-fast"></i></div></div>
+  <div class="head">
+    <h1>تدوّر على حاجة؟<br><span class="grad-text">دورلي يجيبهالك</span></h1>
+    <p class="sub"><b>ندوّروا · نشروا · نوصّلوا لبابك</b> — في كل ليبيا، وتدفع عند الاستلام</p>
+  </div>
+  <div class="pills">
+    <span class="pill solid"><i class="fas fa-globe"></i> <bdi class="ltr">dawerli.org.ly</bdi></span>
+    <span class="pill wa"><i class="fab fa-whatsapp"></i> <bdi class="ltr">094 650 7954</bdi></span>
+  </div>
+</section>
+
+<section class="canvas" id="avatar">
+  <img src="logo.svg">
+  <div class="w">دورلي</div>
+</section>
+
+</body>
+</html>
