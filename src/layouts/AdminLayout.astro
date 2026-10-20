@@ -46,6 +46,8 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
   <script is:inline>
     // وعد الجاهزية: تُحلّه طبقة المصادقة أدناه بـ { db, ui, sb, profile }. سكربتات الصفحات تنتظره.
     window.dawerliReady = new Promise(function (resolve) { window.__dawerliResolveReady = resolve; });
+    // نحفظ ذيل الرابط (#error=… من روابط الإيميل) قبل أن تمسحه مكتبة Supabase
+    window.__dawerliAuthHash = location.hash;
   </script>
 </head>
 <body data-portal={portal} data-page={page}>
@@ -117,6 +119,11 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
         return;
       }
       const sb = await db.getClient();
+      if (page === 'reset') {
+        // صفحة كلمة السر الجديدة: جلسة الاستعادة تُقرأ من الرابط، وما فيش تحويل تلقائي
+        window.__dawerliResolveReady({ db, ui, sb, profile: null });
+        return;
+      }
       if (isLogin) {
         const session = await db.getSession();
         if (session) {

@@ -98,16 +98,48 @@ export async function signIn(email, password) {
   return data;
 }
 
+// روابط الإيميلات (تأكيد/استعادة) ترجع للموقع نفسه — لازم يكون النطاق في Redirect URLs بإعدادات Supabase
+const siteUrl = path => (typeof location !== 'undefined' ? location.origin : 'https://dawerli.org.ly') + path;
+
 /** تسجيل مندوب جديد — يُنشأ ملفه بدور pending حتى تعتمده الإدارة. */
 export async function signUpDelegate({ email, password, full_name, phone, city }) {
   const sb = await getClient();
   if (!sb) throw new Error('not_configured');
   const { data, error } = await sb.auth.signUp({
     email, password,
-    options: { data: { full_name, phone, city } },
+    options: { data: { full_name, phone, city }, emailRedirectTo: siteUrl('/delegate/login/') },
   });
   if (error) throw error;
   return data;
+}
+
+/** إعادة إرسال رسالة تأكيد الإيميل. */
+export async function resendConfirmation(email) {
+  const sb = await getClient();
+  if (!sb) throw new Error('not_configured');
+  const { error } = await sb.auth.resend({ type: 'signup', email, options: { emailRedirectTo: siteUrl('/delegate/login/') } });
+  if (error) throw error;
+}
+
+/** رابط تغيير كلمة السر على الإيميل — يفتح /delegate/reset/. */
+export async function requestPasswordReset(email) {
+  const sb = await getClient();
+  if (!sb) throw new Error('not_configured');
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: siteUrl('/delegate/reset/') });
+  if (error) throw error;
+}
+
+/** تعيين كلمة سر جديدة للجلسة الحالية (بعد فتح رابط الاستعادة). */
+export async function updatePassword(password) {
+  const sb = await getClient();
+  if (!sb) throw new Error('not_configured');
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) throw error;
+}
+
+/** هل الخطأ «الإيميل غير مؤكد»؟ */
+export function isEmailNotConfirmed(err) {
+  return !!err && (err.code === 'email_not_confirmed' || /Email not confirmed/i.test(String(err.message || '')));
 }
 
 export async function signOut() {
@@ -181,7 +213,15 @@ export async function respondToQuote(code, phone, accept) {
 /** رسالة عربية مفهومة من خطأ Supabase/Postgres. */
 export function friendlyError(err) {
   const msg = String((err && (err.message || err.error_description || err.msg)) || err || '');
+  const hay = msg + ' ' + ((err && err.code) || '');
   const map = [
+    ['over_email_send_rate_limit',  'وصلنا الحد المسموح لإرسال الإيميلات في هالساعة — جرّب بعد ساعة، أو كلمنا على الواتساب 094 650 7954 ونساعدوك.'],
+    ['email rate limit exceeded',   'وصلنا الحد المسموح لإرسال الإيميلات في هالساعة — جرّب بعد ساعة، أو كلمنا على الواتساب 094 650 7954 ونساعدوك.'],
+    ['over_request_rate_limit',     'محاولات كثيرة في وقت قصير — استنى شوية وجرّب تاني.'],
+    ['you can only request this after', 'استنى دقيقة قبل ما تطلب رسالة جديدة.'],
+    ['New password should be different', 'كلمة السر الجديدة لازم تكون مختلفة عن القديمة.'],
+    ['Auth session missing',        'رابط تغيير كلمة السر انتهى — اطلب رابط جديد.'],
+    ['Email link is invalid or has expired', 'الرابط انتهى أو استُخدم قبل — اطلب رابط جديد.'],
     ['invalid_phone',               'رقم الهاتف لازم يكون ليبي صحيح — 10 أرقام ويبدا بـ 09.'],
     ['invalid_name',                'اكتب اسمك من فضلك.'],
     ['missing_fields',              'باقي خانات مطلوبة ما عبّيتهاش.'],
@@ -191,16 +231,17 @@ export function friendlyError(err) {
     ['last_admin',                  'ما ينفعش — هذا آخر مدير نشط في المنصة.'],
     ['invalid_delegate',            'المندوب المختار غير نشط أو غير معتمد.'],
     ['not_found',                   'الطلب غير موجود أو ما عندكش صلاحية عليه.'],
-    ['Invalid login credentials',   'الإيميل أو كلمة السر غير صحيحة.'],
-    ['Email not confirmed',         'أكّد إيميلك من الرسالة اللي وصلتك أولاً.'],
+    ['Invalid login credentials',   'الإيميل أو كلمة السر غير صحيحة — تأكد إن الكيبورد على الإنجليزي، ولو نسيتها اضغط «نسيت كلمة السر؟».'],
+    ['Email not confirmed',         'إيميلك مش مؤكد — افتح رسالة التأكيد (شوف الـSpam كمان) أو اطلب رسالة جديدة.'],
     ['User already registered',     'هذا الإيميل مسجّل من قبل — سجّل دخولك.'],
     ['Password should be',          'كلمة السر لازم تكون 6 أحرف على الأقل.'],
     ['Failed to fetch',             'تعذّر الاتصال بالخادم — تأكد من الإنترنت وجرّب تاني.'],
+    ['Database error',              'صار خلل مؤقت في الخادم — جرّب بعد دقيقة، ولو تكرر كلمنا على الواتساب 094 650 7954.'],
     ['not_configured',              'قاعدة البيانات غير مهيأة بعد.'],
     ['row-level security',          'ما عندكش صلاحية لهذا الإجراء.'],
     ['duplicate key',               'هذا السجل موجود من قبل.'],
   ];
-  for (const [needle, text] of map) if (msg.includes(needle)) return text;
+  for (const [needle, text] of map) if (hay.includes(needle)) return text;
   return msg || 'صار خطأ غير متوقع — جرّب تاني.';
 }
 

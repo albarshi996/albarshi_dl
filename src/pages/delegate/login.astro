@@ -27,9 +27,29 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
             <span class="label">كلمة السر</span>
             <input id="loginPassword" type="password" name="password" autocomplete="current-password" required minlength="6" placeholder="••••••••" class="ltr">
           </label>
+          <div class="forgot-row"><a href="#forgot" data-tab-link="forgot">نسيت كلمة السر؟</a></div>
           <p class="form-error" data-error hidden></p>
+          <div class="resend-row" id="resendRow" hidden>
+            <button type="button" class="btn btn-ghost btn-sm" id="resendBtn"><i class="fas fa-envelope"></i> ابعتلي رسالة التأكيد من جديد</button>
+          </div>
           <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-right-to-bracket"></i> دخول</button>
         </form>
+      </section>
+
+      <section id="tab-forgot" class="auth-pane" role="tabpanel" hidden>
+        <h1>نسيت كلمة السر؟</h1>
+        <p class="sub">اكتب إيميلك ونبعتولك رابط تختار منه كلمة سر جديدة.</p>
+        <form id="forgotForm" class="form-grid" novalidate>
+          <label class="field" for="forgotEmail">
+            <span class="label">الإيميل</span>
+            <input id="forgotEmail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="you@example.com" class="ltr">
+          </label>
+          <p class="form-error" data-error hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-paper-plane"></i> ابعتلي الرابط</button>
+        </form>
+        <div class="form-ok" id="forgotOk" hidden>
+          <p><i class="fas fa-circle-check"></i> لو الإيميل مسجّل عندنا، بيوصلك رابط خلال دقايق — شوف الـSpam كمان، وافتحه من نفس الجوال.</p>
+        </div>
       </section>
 
       <section id="tab-register" class="auth-pane" role="tabpanel" hidden>
@@ -65,7 +85,7 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
           <p class="muted small">بعد التسجيل يراجع فريق دورلي بياناتك ويعتمد حسابك، وبعدها تقدر تحجز الطلبات.</p>
         </form>
         <div class="form-ok" id="registerOk" hidden>
-          <p><i class="fas fa-circle-check"></i> سجّلنا حسابك يا <span id="registerOkName"></span> — أكّد إيميلك من الرسالة اللي وصلتك ثم سجّل دخولك. وبعد ما يعتمد فريق دورلي حسابك تبدا تحجز الطلبات.</p>
+          <p><i class="fas fa-circle-check"></i> سجّلنا حسابك يا <span id="registerOkName"></span> — أكّد إيميلك من الرسالة اللي وصلتك (شوف الـSpam كمان) ثم سجّل دخولك. وبعد ما يعتمد فريق دورلي حسابك تبدا تحجز الطلبات.</p>
           <button type="button" class="btn btn-ghost btn-sm" id="goLoginBtn">سجّل دخولك</button>
         </div>
       </section>
@@ -97,6 +117,9 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
   body[data-page="login"] .auth-admin-link { margin-top: .9rem; font-size: .82rem; }
   body[data-page="login"] .auth-admin-link a { color: var(--muted-2); }
   body[data-page="login"] .auth-admin-link a:hover { color: var(--text); }
+  body[data-page="login"] .forgot-row { margin-top: -.4rem; font-size: .85rem; }
+  body[data-page="login"] .forgot-row a { color: var(--primary-light, var(--primary)); }
+  body[data-page="login"] .resend-row { display: flex; justify-content: center; }
 </style>
 
 <script>
@@ -108,12 +131,16 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
 
   function init() {
     const tabs = Array.from(document.querySelectorAll('.auth-tab'));
-    const panes = { login: document.getElementById('tab-login'), register: document.getElementById('tab-register') };
+    const panes = { login: document.getElementById('tab-login'), register: document.getElementById('tab-register'), forgot: document.getElementById('tab-forgot') };
     const switchText = document.getElementById('switchText');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
+    const forgotForm = document.getElementById('forgotForm');
     const registerOk = document.getElementById('registerOk');
+    const forgotOk = document.getElementById('forgotOk');
     const goLoginBtn = document.getElementById('goLoginBtn');
+    const resendRow = document.getElementById('resendRow');
+    const resendBtn = document.getElementById('resendBtn');
 
     // ───── التبويبات ─────
     function showTab(name) {
@@ -123,22 +150,25 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
         t.classList.toggle('active', on);
         t.setAttribute('aria-selected', on ? 'true' : 'false');
       });
-      panes.login.hidden = name !== 'login';
-      panes.register.hidden = name !== 'register';
-      switchText.innerHTML = name === 'login'
-        ? 'لسّا ما عندكش حساب؟ <a href="#register" data-tab-link="register">سجّل كمندوب</a>'
-        : 'عندك حساب؟ <a href="#login" data-tab-link="login">سجّل دخولك</a>';
+      Object.keys(panes).forEach(k => { panes[k].hidden = k !== name; });
+      switchText.innerHTML = name === 'register'
+        ? 'عندك حساب؟ <a href="#login" data-tab-link="login">سجّل دخولك</a>'
+        : name === 'forgot'
+          ? 'تذكّرتها؟ <a href="#login" data-tab-link="login">ارجع لتسجيل الدخول</a>'
+          : 'لسّا ما عندكش حساب؟ <a href="#register" data-tab-link="register">سجّل كمندوب</a>';
+      if (name === 'forgot' && !forgotForm.email.value) forgotForm.email.value = loginForm.email.value.trim();
       if (history.replaceState) history.replaceState(null, '', '#' + name);
       const first = panes[name].querySelector('input:not([type=hidden])');
       if (first && window.innerWidth > 640) setTimeout(() => first.focus(), 30);
     }
     tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
-    switchText.addEventListener('click', e => {
+    document.querySelector('.auth-card').addEventListener('click', e => {
       const a = e.target.closest('[data-tab-link]');
       if (a) { e.preventDefault(); showTab(a.dataset.tabLink); }
     });
     window.addEventListener('hashchange', () => showTab(location.hash.replace('#', '')));
-    showTab(location.hash === '#register' ? 'register' : 'login');
+    const startTab = (location.hash || '').replace('#', '');
+    showTab(panes[startTab] ? startTab : 'login');
 
     // ───── أدوات ─────
     function showError(form, msg) {
@@ -160,10 +190,20 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
       .replace(/[\s-]/g, '')
       .replace(/^(\+?218|00218)/, '0');
 
+    // رابط إيميل منتهي أو مستخدم (#error_code=otp_expired …) — التخطيط حفظ الذيل قبل ما تمسحه المكتبة
+    const authHash = new URLSearchParams(String(window.__dawerliAuthHash || '').replace(/^#/, ''));
+    if (authHash.get('error_code') || authHash.get('error')) {
+      showTab('login');
+      showError(loginForm, authHash.get('error_code') === 'otp_expired'
+        ? 'الرابط انتهى أو استُخدم قبل — سجّل دخولك عادي، ولو قالك إيميلك مش مؤكد اطلب رسالة جديدة.'
+        : 'الرابط ما نفعش — سجّل دخولك، أو اطلب رابط جديد.');
+    }
+
     // ───── تسجيل الدخول ─────
     loginForm.addEventListener('submit', async e => {
       e.preventDefault();
       showError(loginForm, '');
+      resendRow.hidden = true;
       const email = loginForm.email.value.trim().toLowerCase();
       const password = loginForm.password.value;
       if (!isEmail(email)) return showError(loginForm, 'اكتب إيميلاً صحيحاً.');
@@ -176,6 +216,40 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
       } catch (err) {
         busy(loginForm, false);
         showError(loginForm, db.friendlyError(err));
+        resendRow.hidden = !db.isEmailNotConfirmed(err);
+      }
+    });
+
+    // ───── إعادة إرسال رسالة التأكيد ─────
+    resendBtn.addEventListener('click', async () => {
+      const email = loginForm.email.value.trim().toLowerCase();
+      if (!isEmail(email)) return showError(loginForm, 'اكتب إيميلك أولاً.');
+      resendBtn.disabled = true;
+      try {
+        await db.resendConfirmation(email);
+        ui.toast('بعتنالك رسالة تأكيد جديدة — شوف الـSpam كمان', 'ok', 5000);
+      } catch (err) {
+        ui.toast(db.friendlyError(err), 'err', 6000);
+      } finally {
+        resendBtn.disabled = false;
+      }
+    });
+
+    // ───── نسيت كلمة السر ─────
+    forgotForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      showError(forgotForm, '');
+      const email = forgotForm.email.value.trim().toLowerCase();
+      if (!isEmail(email)) return showError(forgotForm, 'اكتب إيميلاً صحيحاً.');
+      busy(forgotForm, true, 'نبعتوا…');
+      try {
+        await db.requestPasswordReset(email);
+        busy(forgotForm, false);
+        forgotForm.hidden = true;
+        forgotOk.hidden = false;
+      } catch (err) {
+        busy(forgotForm, false);
+        showError(forgotForm, db.friendlyError(err));
       }
     });
 

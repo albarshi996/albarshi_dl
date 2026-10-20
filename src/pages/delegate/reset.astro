@@ -1,0 +1,87 @@
+---
+// كلمة سر جديدة — يفتحها رابط «نسيت كلمة السر» من الإيميل (جلسة استعادة في ذيل الرابط).
+// page="reset": بلا حارس وبلا تحويل تلقائي (التخطيط يخفي القائمة والشريط العلوي).
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="كلمة سر جديدة" portal="delegate" page="reset">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <a href="/" class="brand"><img src="/favicon.svg" alt="" width="34" height="34"><span>دورلي</span></a>
+
+      <section id="resetPane" hidden>
+        <h1>اختار كلمة سر جديدة</h1>
+        <p class="sub">اكتبها مرتين، وبعدها تدخل على طول.</p>
+        <form id="resetForm" class="form-grid" novalidate>
+          <label class="field" for="newPassword">
+            <span class="label">كلمة السر الجديدة</span>
+            <input id="newPassword" type="password" name="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف على الأقل" class="ltr">
+          </label>
+          <label class="field" for="newPassword2">
+            <span class="label">عاودها مرة ثانية</span>
+            <input id="newPassword2" type="password" name="password2" autocomplete="new-password" required minlength="6" class="ltr">
+            <small class="hint">تأكد إن الكيبورد على الإنجليزي</small>
+          </label>
+          <p class="form-error" data-error hidden></p>
+          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-key"></i> احفظ كلمة السر</button>
+        </form>
+      </section>
+
+      <section id="expiredPane" hidden>
+        <h1>الرابط انتهى</h1>
+        <p class="sub">رابط تغيير كلمة السر انتهى أو استُخدم قبل. اطلب رابط جديد وافتحه من نفس الجوال.</p>
+        <a href="/delegate/login/#forgot" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> اطلب رابط جديد</a>
+      </section>
+
+      <div class="auth-switch"><a href="/delegate/login/">ارجع لتسجيل الدخول</a></div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style is:global>
+  body[data-page="reset"] .auth-card .btn-block { min-height: 48px; margin-top: .25rem; }
+</style>
+
+<script>
+  // @ts-nocheck
+  const { db, ui, sb } = await window.dawerliReady;
+  if (sb) init();
+
+  async function init() {
+    const resetPane = document.getElementById('resetPane');
+    const expiredPane = document.getElementById('expiredPane');
+    const form = document.getElementById('resetForm');
+    const errEl = form.querySelector('[data-error]');
+    const btn = form.querySelector('[data-submit]');
+    const showError = msg => { errEl.textContent = msg; errEl.hidden = !msg; };
+
+    const hash = new URLSearchParams(String(window.__dawerliAuthHash || '').replace(/^#/, ''));
+    const session = await db.getSession();
+    if (!session || hash.get('error_code') || hash.get('error')) {
+      expiredPane.hidden = false;
+      return;
+    }
+    resetPane.hidden = false;
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      showError('');
+      const p1 = form.password.value;
+      const p2 = form.password2.value;
+      if (p1.length < 6) return showError('كلمة السر لازم تكون 6 أحرف على الأقل.');
+      if (p1 !== p2) return showError('الكلمتين مش متطابقتين — اكتبها نفسها مرتين.');
+
+      btn.disabled = true;
+      try {
+        await db.updatePassword(p1);
+        ui.toast('تم تغيير كلمة السر', 'ok');
+        let profile = null;
+        try { profile = await db.getProfile(); } catch (_) { /* الحارس في البوابة يتكفّل */ }
+        location.replace(profile && profile.role === 'admin' ? '/admin/' : '/delegate/');
+      } catch (err) {
+        btn.disabled = false;
+        showError(db.friendlyError(err));
+      }
+    });
+  }
+</script>

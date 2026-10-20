@@ -117,7 +117,8 @@ npx supabase db push                   # يطبّق ملفات supabase/migratio
 - **Site URL:** `https://dawerli.org.ly`
 - **Redirect URLs:** أضف `https://dawerli.org.ly/**` و (للتطوير) `http://localhost:4321/**`
 
-هذه تُستخدم في روابط تأكيد الإيميل واستعادة كلمة السر إن فعّلتها.
+هذه تُستخدم في روابط تأكيد الإيميل (ترجع لـ `/delegate/login/`) واستعادة كلمة السر (ترجع لـ `/delegate/reset/` — زر «نسيت كلمة السر؟» في صفحة الدخول).
+**مهم:** لو بقي Site URL على القيمة الافتراضية `http://localhost:3000` فكل رابط في الإيميل يفتح على `localhost` في جوال المستخدم ويفشل.
 
 ### تأكد أن التسجيل مفتوح
 

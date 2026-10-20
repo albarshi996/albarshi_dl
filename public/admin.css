@@ -183,7 +183,8 @@ body.modal-open { overflow: hidden; }
 .pill-count { background: var(--accent); color: #fff; border-radius: var(--pill); font-size: .72rem; padding: .05rem .5rem; margin-right: .3rem; }
 
 /* ───────── صفحة الدخول ───────── */
-body[data-page="login"] .sidebar, body[data-page="login"] .topbar { display: none; }
+body[data-page="login"] .sidebar, body[data-page="login"] .topbar,
+body[data-page="reset"] .sidebar, body[data-page="reset"] .topbar { display: none; }
 .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: radial-gradient(ellipse at 20% 10%, rgba(245,165,36,.12), transparent 50%), radial-gradient(ellipse at 90% 90%, rgba(217,91,67,.12), transparent 50%); }
 .auth-card { width: min(420px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 2rem; }
 .auth-card .brand { padding: 0 0 1.2rem; border: 0; justify-content: center; font-size: 1.1rem; }
