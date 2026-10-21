@@ -55,6 +55,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   .badge.ev-unassign { background: rgba(255,255,255,.06); color: var(--muted); border-color: var(--line-2); }
   .events li.ev-internal { opacity: .62; }
   .events li.ev-internal::before { background: var(--muted-2); box-shadow: none; }
+  .od-title-link { margin-inline-start: auto; font-size: .78rem; font-weight: 600; color: var(--muted); }
+  .od-title-link:hover { color: var(--text); }
+  .od-wa { transition: border-color var(--dur), box-shadow var(--dur); }
+  .od-wa.is-flash { border-color: rgba(37,211,102,.55); box-shadow: 0 0 0 3px rgba(37,211,102,.15); }
+  .od-wa-hint { color: #86EFAC; font-weight: 700; font-size: .86rem; }
+  .od-wa-sep { border-top: 1px dashed var(--line-2); }
+  .od-wa textarea { font-size: .88rem; line-height: 1.6; }
   @media (max-width: 767px) {
     .od-grid { grid-template-columns: 1fr; }
     .od-form .form-grid { grid-template-columns: 1fr; }
@@ -63,6 +70,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
 <script>
   // @ts-nocheck
+  import * as wa from '../../lib/wa-templates.js';
   const { db, ui, sb, profile } = await window.dawerliReady;
   if (sb && profile) init();
 
@@ -99,6 +107,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     let loadSeq = 0;          // يتجاهل نتائج الطلبات المتأخرة
     let lookups = null;       // { delegates, suppliers, products, merchants }
     let lookupsPromise = null;
+    let tpls = null;          // الرسائل الجاهزة (الأصل + تعديلات الإدارة)
+    let waFlash = null;       // بعد تغيير الحالة/التعيين: نلفت النظر لقسم واتساب ('customer' | 'delegate')
 
     const toolbarHost = document.getElementById('toolbarHost');
     const chipsEl = document.getElementById('statusChips');
@@ -300,6 +310,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             .eq('order_id', id).order('created_at', { ascending: true }).order('id', { ascending: true }),
           // فشل القوائم المساعدة لا يمنع عرض الطلب نفسه — تُعرض النماذج بقوائم فارغة مع تنبيه
           ensureLookups().catch(e => { ui.toast('تعذّر تحميل القوائم المساعدة: ' + db.friendlyError(e), 'err'); return null; }),
+          wa.loadTemplates(sb).then(t => { tpls = t; }).catch(() => null),
         ]);
         if (orderRes.error) throw orderRes.error;
         if (eventsRes.error) throw eventsRes.error;
@@ -312,16 +323,75 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         m.querySelector('.modal-head h2').textContent = 'الطلب ' + o.code;
         body.innerHTML = orderHtml(o, eventsRes.data || []);
         bindOrderActions(m, o);
+        if (waFlash) {
+          const box = body.querySelector('[data-wa]');
+          const hint = box && box.querySelector('[data-wa-hint]');
+          if (box && hint) {
+            hint.textContent = waFlash === 'delegate'
+              ? 'تعيّن المندوب ✓ — ابعتله تفاصيل الطلب على واتساب 👇'
+              : 'تغيّرت الحالة ✓ — بلّغ الزبون بالرسالة الجاهزة 👇';
+            hint.hidden = false;
+            box.classList.add('is-flash');
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          waFlash = null;
+        }
       } catch (e) {
         body.innerHTML = `<div class="empty"><i class="fas fa-triangle-exclamation"></i>${esc(db.friendlyError(e))}</div>`;
         ui.toast(db.friendlyError(e), 'err');
       }
     }
 
-    function waLink(phone) {
-      let d = String(phone || '').replace(/\D/g, '');
-      if (!d.startsWith('218')) d = '218' + d.replace(/^0/, '');
-      return 'https://wa.me/' + d;
+    // قسم واتساب: رد موحد للزبون حسب الحالة (قابل للتعديل قبل الإرسال) + إرسال الطلب للمندوبين
+    function waHtml(o) {
+      const curKey = wa.statusKey(o.status);
+      const dl = o.delegate;
+      const dlName = dl ? String(dl.full_name || dl.email || '').trim().split(/\s+/)[0] : '';
+      const dlHint = !dl ? 'عيّن مندوباً باش يطلع زر «للمندوب».'
+        : !dl.phone ? 'المندوب المعيّن ما عندهش رقم هاتف مسجّل.'
+        : 'المندوب: كل التفاصيل مع اسم ورقم الزبون.';
+      return `
+        <h3 class="od-title"><i class="fab fa-whatsapp"></i> رسائل واتساب <a class="od-title-link" href="/admin/messages/"><i class="fas fa-pen"></i> تعديل النصوص</a></h3>
+        <div class="od-form od-wa" data-wa>
+          <p class="od-wa-hint" data-wa-hint hidden></p>
+          <label class="field">
+            <span class="label">رد موحد للزبون</span>
+            <select name="tpl">${wa.TEMPLATES.filter(t => t.audience === 'customer')
+              .map(t => `<option value="${esc(t.key)}" ${t.key === curKey ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}</select>
+          </label>
+          <textarea name="text" rows="7" dir="auto" aria-label="نص الرسالة"></textarea>
+          <small class="hint">تقدر تعدّل الرسالة هنا قبل الإرسال — واتساب يفتح والرسالة مكتوبة، وأنت تضغط «إرسال».</small>
+          <a class="btn btn-wa btn-sm" data-wa-customer target="_blank" rel="noopener" href="#"><i class="fab fa-whatsapp"></i> ابعت للزبون</a>
+          <div class="od-wa-sep"></div>
+          <span class="label">إرسال الطلب للمندوبين</span>
+          <div class="od-btns">
+            <a class="btn btn-ghost btn-sm" data-wa-group target="_blank" rel="noopener" href="#"><i class="fas fa-users"></i> لقروب المندوبين</a>
+            ${dl && dl.phone ? `<a class="btn btn-ghost btn-sm" data-wa-delegate target="_blank" rel="noopener" href="#"><i class="fas fa-id-badge"></i> للمندوب ${esc(dlName)}</a>` : ''}
+          </div>
+          <small class="hint">القروب: ملخص الطلب بدون اسم ورقم الزبون — تختار القروب من واتساب. ${esc(dlHint)}</small>
+        </div>`;
+    }
+
+    function bindWa(body, o) {
+      const box = body.querySelector('[data-wa]');
+      if (!box) return;
+      const T = (tpls && tpls.bodies) || wa.DEFAULTS;
+      const vars = wa.orderVars(o);
+      const sel = box.querySelector('select[name="tpl"]');
+      const ta = box.querySelector('textarea[name="text"]');
+      const custLinks = body.querySelectorAll('[data-wa-customer]');
+      const syncCustomer = () => {
+        const href = wa.waUrl(o.customer_phone, ta.value.trim());
+        custLinks.forEach(a => { a.href = href; });
+      };
+      const applyTemplate = () => { ta.value = wa.fill(T[sel.value], vars); syncCustomer(); };
+      sel.addEventListener('change', applyTemplate);
+      ta.addEventListener('input', syncCustomer);
+      applyTemplate();
+      const g = box.querySelector('[data-wa-group]');
+      if (g) g.href = wa.waUrl('', wa.fill(T.delegates_group, vars));
+      const d = box.querySelector('[data-wa-delegate]');
+      if (d && o.delegate) d.href = wa.waUrl(o.delegate.phone, wa.fill(T.delegate_assigned, vars));
     }
 
     function orderHtml(o, events) {
@@ -397,7 +467,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             ${ui.statusBadge(o.status)}
             <span class="muted nowrap">${esc(db.formatDate(o.created_at))}</span>
           </div>
-          <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${esc(waLink(o.customer_phone))}"><i class="fab fa-whatsapp"></i> واتساب الزبون</a>
+          <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" data-wa-customer href="#" title="يفتح واتساب الزبون والرد الموحد للحالة الحالية مكتوب"><i class="fab fa-whatsapp"></i> رد على الزبون</a>
         </div>
 
         <div class="od-grid">
@@ -410,6 +480,8 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           </section>
 
           <section class="od-col">
+            ${waHtml(o)}
+
             <h3 class="od-title"><i class="fas fa-arrows-rotate"></i> تغيير الحالة</h3>
             <form class="od-form" data-form="status" novalidate>
               <label class="field">
@@ -546,6 +618,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     function bindOrderActions(m, o) {
       const body = m.querySelector('.modal-body');
+      bindWa(body, o);
       const afterChange = async (row, okMsg) => {
         if (row) patchRow(o.id, { status: row.status, total: row.total, delegate_id: row.delegate_id });
         ui.toast(okMsg, 'ok');
@@ -588,6 +661,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             if (!ok) return;
           }
           const row = rowOf(await db.setOrderStatus(o.id, status, opts));
+          if (changed) waFlash = 'customer';
           await afterChange(row, changed ? 'تم تحديث الحالة' : (note ? 'تمت إضافة الملاحظة' : 'تم الحفظ'));
         });
       });
@@ -612,6 +686,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           const row = rowOf(await db.assignOrder(o.id, delegateId, note));
           const d = delegateId && lookups ? lookups.delegates.find(x => x.id === delegateId) : null;
           patchRow(o.id, { delegate: d ? { full_name: d.full_name, phone: d.phone, email: d.email } : null });
+          if (delegateId) waFlash = 'delegate';
           await afterChange(row, delegateId ? 'تم تعيين المندوب' : 'تم إلغاء التعيين');
         });
         fDel.addEventListener('submit', e => {

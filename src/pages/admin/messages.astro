@@ -1,0 +1,168 @@
+---
+// الرسائل الجاهزة لواتساب — الإدارة تعدّل النصوص (جدول message_templates) مع معاينة حيّة بطلب تجريبي.
+// النص الأصلي في src/lib/wa-templates.js؛ «رجوع للنص الأصلي» يحذف التعديل.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="الرسائل الجاهزة" portal="admin" page="messages">
+  <div class="card tpl-intro">
+    <p><i class="fab fa-whatsapp"></i> هذي النصوص اللي تطلع في أزرار واتساب داخل تفاصيل كل طلب. عدّلها مرة وحدة، وكل الردود تمشي بنفس الصيغة.</p>
+    <p class="muted">المتغيرات بين قوسين مثل <span class="ltr">{'{الاسم}'}</span> تتعبّى من بيانات الطلب. السطر اللي متغيره فاضي ينحذف تلقائياً، مثلاً سطر القطعة في طلب مش قطع غيار.</p>
+  </div>
+  <div id="tplHost"></div>
+</AdminLayout>
+
+<style is:global>
+  .tpl-intro { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: .4rem; font-size: .92rem; line-height: 1.7; }
+  .tpl-intro i { color: var(--wa); margin-left: .3rem; }
+  .tpl-section { font-size: 1rem; font-weight: 800; color: var(--white); margin: 1.4rem 0 .7rem; }
+  .tpl-card { margin-bottom: 1rem; display: flex; flex-direction: column; gap: .8rem; }
+  .tpl-head { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .tpl-head h2 { font-size: 1rem; font-weight: 800; color: var(--white); }
+  .tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+  .tpl-card textarea { font-size: .9rem; line-height: 1.7; min-height: 210px; }
+  .tpl-preview-wrap { display: flex; flex-direction: column; gap: .4rem; }
+  .tpl-preview { background: #0B3B2E; border: 1px solid rgba(37,211,102,.3); border-radius: 14px 14px 14px 4px; padding: .8rem 1rem; white-space: pre-wrap; word-break: break-word; font-size: .9rem; line-height: 1.7; color: #E7F7EE; }
+  .tpl-vars summary { cursor: pointer; color: var(--primary-light); font-size: .85rem; font-weight: 700; }
+  .tpl-vars .chips { margin-top: .6rem; }
+  .tpl-vars .chip { font-size: .78rem; }
+  .tpl-warn { color: #FCA5A5; font-size: .82rem; }
+  .tpl-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+  @media (max-width: 767px) { .tpl-grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // @ts-nocheck
+  import * as wa from '../../lib/wa-templates.js';
+  const { db, ui, sb, profile } = await window.dawerliReady;
+  if (sb && profile) init();
+
+  async function init() {
+    const esc = db.esc;
+    const host = document.getElementById('tplHost');
+    host.innerHTML = ui.skeleton(4);
+
+    let state;
+    try { state = await wa.loadTemplates(sb, { fresh: true }); }
+    catch (e) { state = { bodies: { ...wa.DEFAULTS }, custom: new Set() }; ui.toast(db.friendlyError(e), 'err'); }
+
+    const sampleVars = wa.orderVars(wa.SAMPLE_ORDER);
+    const known = new Set(wa.PLACEHOLDERS.map(p => p.key));
+    const groups = [
+      { title: 'للزبون — رد موحد مع كل حالة', match: t => t.audience === 'customer' },
+      { title: 'للمندوبين', match: t => t.audience !== 'customer' },
+    ];
+
+    const cardHtml = t => `
+      <article class="card tpl-card" data-key="${esc(t.key)}">
+        <div class="tpl-head">
+          <h2>${esc(t.label)}</h2>
+          <span class="badge off">${esc(wa.AUDIENCE_LABELS[t.audience] || '')}</span>
+          <span class="badge" data-state></span>
+        </div>
+        <div class="tpl-grid">
+          <div class="field">
+            <span class="label">النص</span>
+            <textarea dir="auto" maxlength="2000" aria-label="نص رسالة ${esc(t.label)}"></textarea>
+            <p class="tpl-warn" data-warn hidden></p>
+            <details class="tpl-vars">
+              <summary><i class="fas fa-plus"></i> إدراج متغير</summary>
+              <div class="chips">${wa.PLACEHOLDERS.map(p => `<button type="button" class="chip" data-var="${esc(p.key)}" title="${esc(p.label)}">${esc(p.label)}</button>`).join('')}</div>
+            </details>
+          </div>
+          <div class="tpl-preview-wrap">
+            <span class="label">معاينة بطلب تجريبي</span>
+            <div class="tpl-preview" data-preview></div>
+          </div>
+        </div>
+        <div class="tpl-btns">
+          <button type="button" class="btn btn-primary btn-sm" data-save><i class="fas fa-floppy-disk"></i> حفظ</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-reset><i class="fas fa-rotate-left"></i> رجوع للنص الأصلي</button>
+        </div>
+      </article>`;
+
+    host.innerHTML = groups.map(g =>
+      `<h2 class="tpl-section">${esc(g.title)}</h2>${wa.TEMPLATES.filter(g.match).map(cardHtml).join('')}`).join('');
+
+    for (const card of host.querySelectorAll('.tpl-card')) bindCard(card);
+
+    function bindCard(card) {
+      const key = card.dataset.key;
+      const ta = card.querySelector('textarea');
+      const preview = card.querySelector('[data-preview]');
+      const warn = card.querySelector('[data-warn]');
+      const badge = card.querySelector('[data-state]');
+      const saveBtn = card.querySelector('[data-save]');
+      const resetBtn = card.querySelector('[data-reset]');
+      let saved = state.bodies[key];
+
+      const paintState = () => {
+        const custom = state.custom.has(key);
+        badge.textContent = custom ? 'معدّل' : 'النص الأصلي';
+        badge.className = 'badge ' + (custom ? 'st-quoted' : 'off');
+        resetBtn.hidden = !custom;
+      };
+      const refresh = () => {
+        preview.textContent = wa.fill(ta.value, sampleVars) || '—';
+        const unknown = [...new Set((ta.value.match(/\{([^{}\n]{1,30})\}/g) || []).map(m => m.slice(1, -1)).filter(k => !known.has(k)))];
+        warn.hidden = !unknown.length;
+        warn.textContent = unknown.length ? 'متغير مش معروف (يطلع كما هو في الرسالة): ' + unknown.map(k => '{' + k + '}').join('، ') : '';
+        saveBtn.disabled = ta.value === saved;
+      };
+
+      ta.value = saved;
+      ta.addEventListener('input', refresh);
+      paintState();
+      refresh();
+
+      card.querySelectorAll('[data-var]').forEach(chip => chip.addEventListener('click', () => {
+        const token = '{' + chip.dataset.var + '}';
+        const s = ta.selectionStart ?? ta.value.length, e = ta.selectionEnd ?? s;
+        ta.value = ta.value.slice(0, s) + token + ta.value.slice(e);
+        ta.focus();
+        ta.setSelectionRange(s + token.length, s + token.length);
+        refresh();
+      }));
+
+      saveBtn.addEventListener('click', async () => {
+        const body = ta.value.replace(/\r\n/g, '\n').trim();
+        if (!body) { ui.toast('النص فاضي — اكتب الرسالة أو ارجع للنص الأصلي.', 'err'); return; }
+        saveBtn.disabled = true;
+        try {
+          if (body === wa.DEFAULTS[key]) {
+            const { error } = await sb.from('message_templates').delete().eq('key', key);
+            if (error) throw error;
+            state.custom.delete(key);
+          } else {
+            const { error } = await sb.from('message_templates').upsert({ key, body, updated_by: profile.id });
+            if (error) throw error;
+            state.custom.add(key);
+          }
+          state.bodies[key] = saved = ta.value = body;
+          ui.toast('تم حفظ الرسالة', 'ok');
+        } catch (e) {
+          ui.toast(db.friendlyError(e), 'err');
+        }
+        paintState();
+        refresh();
+      });
+
+      resetBtn.addEventListener('click', async () => {
+        const ok = await ui.confirm('ترجع الرسالة لنصها الأصلي؟ تعديلك ينمسح.', { okText: 'رجوع للأصل' });
+        if (!ok) return;
+        resetBtn.disabled = true;
+        try {
+          const { error } = await sb.from('message_templates').delete().eq('key', key);
+          if (error) throw error;
+          state.custom.delete(key);
+          state.bodies[key] = saved = ta.value = wa.DEFAULTS[key];
+          ui.toast('رجعت للنص الأصلي', 'ok');
+        } catch (e) {
+          ui.toast(db.friendlyError(e), 'err');
+        }
+        resetBtn.disabled = false;
+        paintState();
+        refresh();
+      });
+    }
+  }
+</script>

@@ -118,4 +118,30 @@ select pg_temp.expect('no profile delete policy', pg_temp.try('delete from publi
 select pg_temp.expect('admin reads profiles with email', (select email from public.profiles where id = '22222222-2222-2222-2222-222222222222'), 'delegate@dawerli.local');
 reset role; select set_config('request.jwt.claims', '', false);
 
+-- ── الرسائل الجاهزة (message_templates): الإدارة تكتب، المندوب يقرأ، الباقي لا شيء ──
+set role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', false);
+select pg_temp.expect('anon cannot read templates', pg_temp.try('select count(*) from public.message_templates'), 'ERR permission denied%');
+reset role; select set_config('request.jwt.claims', '', false);
+
+set role authenticated;
+select set_config('request.jwt.claims', '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}', false);
+select pg_temp.expect('admin saves template', pg_temp.try('insert into public.message_templates (key, body) values (''customer_received'', ''أهلاً {الاسم}'') on conflict (key) do update set body = excluded.body'), 'ROWS 1');
+select pg_temp.expect('template key format enforced', pg_temp.try('insert into public.message_templates (key, body) values (''Bad Key!'', ''x'')'), 'ERR %check%');
+reset role; select set_config('request.jwt.claims', '', false);
+
+set role authenticated;
+select set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}', false);
+select pg_temp.expect('delegate reads templates',      pg_temp.try('select * from public.message_templates'), 'ROWS 1');
+select pg_temp.expect('delegate cannot edit templates', pg_temp.try('update public.message_templates set body = ''x'''), 'ROWS 0');
+select pg_temp.expect('delegate cannot add templates',  pg_temp.try('insert into public.message_templates (key, body) values (''delegates_group'', ''x'')'), 'ERR %row-level security%');
+select pg_temp.expect('delegate cannot delete templates', pg_temp.try('delete from public.message_templates'), 'ROWS 0');
+reset role; select set_config('request.jwt.claims', '', false);
+
+update public.profiles set role = 'pending' where id = '33333333-3333-3333-3333-333333333333';
+set role authenticated;
+select set_config('request.jwt.claims', '{"sub":"33333333-3333-3333-3333-333333333333","role":"authenticated"}', false);
+select pg_temp.expect('pending cannot read templates', pg_temp.try('select * from public.message_templates'), 'ROWS 0');
+reset role; select set_config('request.jwt.claims', '', false);
+
 \echo '=== انتهى الاختبار'

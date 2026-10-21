@@ -97,12 +97,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
 <script>
   // @ts-nocheck
+  import * as wa from '../../lib/wa-templates.js';
   const { db, ui, sb, profile } = await window.dawerliReady;
 
   if (sb && profile) init();
 
   function init() {
     const esc = db.esc;
+    // الرد الموحد للزبون (نفس نصوص الإدارة) — الأصل فوراً، ثم تعديلات الإدارة لما توصل
+    let tplBodies = wa.DEFAULTS;
+    wa.loadTemplates(sb).then(t => { tplBodies = t.bodies; if (orders.length) renderList(); }).catch(() => {});
     const ACTIVE = ['received', 'searching', 'quoted', 'purchasing', 'shipping'];
     // الخطوة التالية المسموحة للمندوب (الحارس في القاعدة يفرضها أيضاً)
     const NEXT = { received: 'searching', searching: 'quoted', quoted: 'purchasing', purchasing: 'shipping', shipping: 'delivered' };
@@ -229,13 +233,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       return `<span class="badge ${cls}">${u === 'عاجل' ? '<i class="fas fa-bolt"></i> ' : ''}${esc(u || 'عادي')}</span>`;
     }
 
-    function waHref(phone) {
-      let d = String(phone || '').replace(/\D/g, '');
-      if (!d) return '#';
-      if (d.startsWith('00')) d = d.slice(2);
-      if (d.startsWith('0')) d = '218' + d.slice(1);
-      else if (!d.startsWith('218')) d = '218' + d;
-      return 'https://wa.me/' + d;
+    // واتساب الزبون والرسالة الموحدة لحالة الطلب الحالية مكتوبة
+    function waHref(o) {
+      if (!wa.waPhone(o.customer_phone)) return '#';
+      return wa.waUrl(o.customer_phone, wa.fill(tplBodies[wa.statusKey(o.status)], wa.orderVars(o)));
     }
 
     function partHtml(o) {
@@ -299,7 +300,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <span class="oc-cust-phone ltr mono">${esc(phone)}</span>
           </div>
           <div class="oc-contact">
-            <a class="btn btn-wa btn-sm" href="${esc(waHref(phone))}" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> واتساب</a>
+            <a class="btn btn-wa btn-sm" href="${esc(waHref(o))}" target="_blank" rel="noopener" title="يفتح واتساب الزبون والرد الموحد للحالة مكتوب"><i class="fab fa-whatsapp"></i> واتساب</a>
             <a class="btn btn-ghost btn-sm" href="tel:${esc(phone)}"><i class="fas fa-phone"></i> اتصال</a>
           </div>
         </div>
