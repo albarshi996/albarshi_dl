@@ -45,7 +45,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     try { state = await wa.loadTemplates(sb, { fresh: true }); }
     catch (e) { state = { bodies: { ...wa.DEFAULTS }, custom: new Set() }; ui.toast(db.friendlyError(e), 'err'); }
 
-    const sampleVars = wa.orderVars(wa.SAMPLE_ORDER);
+    const sampleVars = {
+      ...wa.orderVars(wa.SAMPLE_ORDER),
+      ...wa.digestVars([wa.SAMPLE_ORDER, { code: 'DW-2026-1921', city: 'طرابلس', category: 'إلكترونيات', urgency: 'عادي', details: 'شاحن سامسونج سريع' }]),
+    };
     const known = new Set(wa.PLACEHOLDERS.map(p => p.key));
     const groups = [
       { title: 'للزبون — رد موحد مع كل حالة', match: t => t.audience === 'customer' },

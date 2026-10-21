@@ -252,3 +252,11 @@ body[data-page="reset"] .sidebar, body[data-page="reset"] .topbar { display: non
 .ib-pop-head { font-weight: 800; color: #86EFAC; font-size: .85rem; margin-bottom: .5rem; }
 .ib-pop-head i { margin-left: .3rem; }
 .ib-pop .ib-item { background: transparent; border: 0; padding: 0; }
+.ib-filters { margin-bottom: .8rem; }
+.ib-filters .chip .cnt { opacity: .75; font-weight: 500; margin-right: .3rem; }
+.ib-digest { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .7rem .8rem; margin-bottom: .8rem; border: 1px dashed rgba(37,211,102,.45); border-radius: var(--r); background: rgba(37,211,102,.06); }
+.ib-digest small { font-size: .8rem; }
+.ib-flags { display: flex; gap: .35rem; flex-wrap: wrap; }
+.ib-flag { display: inline-flex; align-items: center; gap: .3rem; font-size: .76rem; font-weight: 600; padding: .18rem .55rem; border-radius: var(--pill); border: 1px solid var(--line); color: var(--muted); background: rgba(255,255,255,.03); }
+.ib-flag.ok { color: #86EFAC; border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); }
+.ib-flag.todo { color: #FDBA74; border-color: rgba(249,115,22,.4); background: rgba(249,115,22,.08); }

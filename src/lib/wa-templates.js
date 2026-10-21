@@ -26,6 +26,8 @@ export const PLACEHOLDERS = [
   { key: 'رابط_التتبع',  label: 'رابط تتبع الطلب' },
   { key: 'رابط_البوابة', label: 'رابط بوابة المندوبين' },
   { key: 'رابط_طلباتي',  label: 'رابط «طلباتي» للمندوب' },
+  { key: 'الطلبات',      label: 'قائمة الطلبات (للرسالة المجمّعة)' },
+  { key: 'العدد',        label: 'عدد الطلبات (للرسالة المجمّعة)' },
 ];
 
 /** audience: customer = الزبون، group = قروب المندوبين (بدون بيانات الزبون)، delegate = المندوب المعيّن */
@@ -71,6 +73,11 @@ export const TEMPLATES = [
 🔧 {القطعة}
 📝 {التفاصيل}
 اللي يقدر يدوّره يحجزه من البوابة 👇
+{رابط_البوابة}` },
+  { key: 'delegates_digest', audience: 'group', label: 'عدة طلبات للقروب (رسالة مجمّعة)', body:
+`📋 طلبات متاحة للمندوبين — دورلي ({العدد})
+{الطلبات}
+اللي يقدر على طلب يحجزه من البوابة 👇
 {رابط_البوابة}` },
   { key: 'delegate_assigned', audience: 'delegate', label: 'تعيين الطلب لمندوب', body:
 `السلام عليكم {اسم_المندوب} 👋
@@ -171,6 +178,23 @@ export function waUrl(phone, text) {
   const p = waPhone(phone);
   const q = text ? '?text=' + encodeURIComponent(text) : '';
   return 'https://wa.me/' + p + q;
+}
+
+/** سطر واحد لطلب في الرسالة المجمّعة — بدون اسم ورقم الزبون. */
+export function digestLine(o) {
+  const det = clip(o.details || o.part_description, 70);
+  return `• ${o.code} · ${o.city} · ${o.category}${o.urgency === 'عاجل' ? ' · ⚡ عاجل' : ''}${det ? ` — ${det}` : ''}`;
+}
+
+/** متغيرات الرسالة المجمّعة لعدة طلبات (حد أقصى للسطور باش رابط واتساب ما يطولش). */
+export function digestVars(list, max = 15) {
+  const shown = list.slice(0, max);
+  const more = list.length - shown.length;
+  return {
+    'الطلبات': shown.map(digestLine).join('\n') + (more > 0 ? `\n… و${more} طلب آخر في البوابة` : ''),
+    'العدد': String(list.length),
+    'رابط_البوابة': `${SITE}/delegate/`,
+  };
 }
 
 /** رقم مؤقت لطلب ما تسجّلش في القاعدة (الشبكة/الخادم واقف) — صيغة مختلفة ما تتلخبطش مع أرقام القاعدة. */

@@ -1,15 +1,16 @@
-// صندوق الطلبات الجديدة للإدارة: جرس في الشريط العلوي + تنبيه فوري (صوت وبطاقة) أول ما يوصل طلب،
-// وكل بطاقة فيها الرد الموحد جاهز وزر قروب المندوبين. كل رسالة تنبعت تنسجّل في سجل الطلب (داخلي)،
-// فالطلب نفسه هو مصدر الردود وسجلّها.
+// صندوق الطلبات للإدارة: جرس في الشريط العلوي فيه كل الطلبات المفتوحة (من «استلمنا طلبك» لين «في الطريق»)،
+// مع تتبّع شن انبعت لكل طلب: للقروب، للزبون (لحالته الحالية)، وللمندوب — وكل شي ينسجّل في سجل الطلب نفسه.
+// تنبيه فوري (صوت وبطاقة) أول ما يوصل طلب جديد، وإرسال عدة طلبات للقروب في رسالة وحدة.
 // مصمم ما يكسرش اللوحة: أي فشل هنا يتسجّل في الكونسول بس، وRealtime لو تعطّل فيه تحديث دوري احتياطي.
 import * as wa from './wa-templates.js';
 
-const SELECT = 'id,code,status,customer_name,customer_phone,city,category,details,quantity,urgency,car_model,part_condition,part_description,created_at';
-const REPLIED_PREFIX = '📤 واتساب للزبون';
+const OPEN = ['received', 'searching', 'quoted', 'purchasing', 'shipping'];
+const SELECT = 'id,code,status,delegate_id,customer_name,customer_phone,city,category,details,quantity,urgency,car_model,part_condition,part_description,quoted_price,service_fee,total,cancel_reason,created_at,delegate:profiles!orders_delegate_id_fkey(full_name,phone)';
+const PREFIX = { customer: '📤 واتساب للزبون', group: '📤 واتساب لقروب المندوبين', delegate: '📤 واتساب للمندوب' };
 const POLL_MS = 90_000;
 
 /**
- * يسجّل إرسال رسالة واتساب في سجل الطلب كملاحظة داخلية (ما تظهرش للزبون).
+ * يسجّل إرسال رسالة واتساب في سجل الطلب كملاحظة داخلية (ما تظهرش للزبون)، بحالة الطلب وقت الإرسال.
  * للإدارة فقط — حارس الأحداث يجبر ملاحظات المندوب تكون ظاهرة للزبون، فما نسجّلوش من بوابة المندوب.
  */
 export async function logWaSend(sb, profile, order, note) {
@@ -22,10 +23,12 @@ export async function logWaSend(sb, profile, order, note) {
 }
 
 export const waNotes = {
-  customer: label => `${REPLIED_PREFIX}: «${label}»`,
-  group: () => '📤 واتساب لقروب المندوبين',
-  delegate: name => `📤 واتساب للمندوب ${name || ''}`.trim(),
+  customer: label => `${PREFIX.customer}: «${label}»`,
+  group: extra => PREFIX.group + (extra ? ` (${extra})` : ''),
+  delegate: name => `${PREFIX.delegate} ${name || ''}`.trim(),
 };
+
+const firstName = s => String(s || '').trim().split(/\s+/)[0] || '';
 
 export function startInbox({ db, ui, sb, profile }) {
   if (!sb || !profile || profile.role !== 'admin') return;
@@ -38,10 +41,11 @@ export function startInbox({ db, ui, sb, profile }) {
 
   const baseTitle = document.title;
   let orders = [];
-  let replied = new Set();
-  let known = null;              // معرّفات الطلبات المعروفة — null قبل أول تحميل (ما ننبّهوش على القديم)
+  let sends = new Map();          // order_id → { group: [iso], customer: Set(status), delegate: [iso] }
+  let known = null;               // معرّفات معروفة — null قبل أول تحميل (ما ننبّهوش على القديم)
   let tpls = null;
   let modal = null;
+  let filter = 'todo';
   let reloadTimer = null;
 
   btn.addEventListener('click', openInbox);
@@ -66,20 +70,29 @@ export function startInbox({ db, ui, sb, profile }) {
     try {
       if (!tpls) tpls = await wa.loadTemplates(sb).catch(() => null);
       const { data, error } = await sb.from('orders').select(SELECT)
-        .eq('status', 'received').order('created_at', { ascending: false }).limit(50);
+        .in('status', OPEN).order('created_at', { ascending: false }).limit(100);
       if (error) throw error;
       const list = data || [];
       const ids = list.map(o => o.id);
-      let rep = new Set();
+      const map = new Map(ids.map(id => [id, { group: [], customer: new Set(), delegate: [] }]));
       if (ids.length) {
-        const ev = await sb.from('order_events').select('order_id')
-          .in('order_id', ids).eq('kind', 'note').eq('visible_to_customer', false).like('note', REPLIED_PREFIX + '%');
-        if (!ev.error) rep = new Set((ev.data || []).map(e => e.order_id));
+        const ev = await sb.from('order_events').select('order_id,status,note,created_at')
+          .in('order_id', ids).eq('kind', 'note').eq('visible_to_customer', false).like('note', '📤 واتساب%')
+          .order('created_at', { ascending: true });
+        for (const e of (ev.error ? [] : ev.data || [])) {
+          const s = map.get(e.order_id);
+          if (!s) continue;
+          if (e.note.startsWith(PREFIX.group)) s.group.push(e.created_at);
+          else if (e.note.startsWith(PREFIX.customer)) s.customer.add(e.status);
+          else if (e.note.startsWith(PREFIX.delegate)) s.delegate.push(e.created_at);
+        }
       }
-      const fresh = known ? list.filter(o => !known.has(o.id)) : [];
+      // تنبيه فقط على الطلبات الجديدة فعلاً (مش طلب رجع مفتوح بعد إلغاء)
+      const recent = o => o.status === 'received' && Date.now() - new Date(o.created_at).getTime() < 6 * 3600e3;
+      const fresh = known ? list.filter(o => !known.has(o.id) && recent(o)) : [];
       known = new Set([...(known || []), ...ids]);
       orders = list;
-      replied = rep;
+      sends = map;
       paint();
       if (fresh.length) {
         beep();
@@ -92,41 +105,76 @@ export function startInbox({ db, ui, sb, profile }) {
     }
   }
 
-  function unrepliedCount() { return orders.filter(o => !replied.has(o.id)).length; }
+  // ── شن ناقص كل طلب؟ ──
+  const S = o => sends.get(o.id) || { group: [], customer: new Set(), delegate: [] };
+  const needsGroup = o => !o.delegate_id && ['received', 'searching'].includes(o.status) && !S(o).group.length;
+  const needsReply = o => !S(o).customer.has(o.status);
+  const needsDelegate = o => !!(o.delegate_id && o.delegate && o.delegate.phone) && !S(o).delegate.length;
+  const needsAny = o => needsGroup(o) || needsReply(o) || needsDelegate(o);
+  const FILTERS = [
+    { key: 'todo',     label: 'تحتاج إرسال', match: needsAny },
+    { key: 'group',    label: 'للقروب',      match: needsGroup },
+    { key: 'customer', label: 'رد للزبون',   match: needsReply },
+    { key: 'all',      label: 'كل المفتوحة', match: () => true },
+  ];
 
   function paint() {
-    const n = unrepliedCount();
+    const n = orders.filter(needsAny).length;
     countEl.textContent = n > 99 ? '99+' : String(n);
     countEl.hidden = !n;
     btn.classList.toggle('has-new', n > 0);
-    btn.title = n ? `${n} طلب جديد بدون رد` : 'صندوق الطلبات الجديدة';
+    btn.title = n ? `${n} طلب يحتاج إرسال` : 'صندوق الطلبات';
     document.title = (n ? `(${n}) ` : '') + baseTitle;
     if (modal && modal.isConnected) modal.querySelector('.modal-body').innerHTML = listHtml();
   }
 
-  // ── الروابط والرسائل ──
+  // ── الرسائل والروابط ──
   const bodies = () => (tpls && tpls.bodies) || wa.DEFAULTS;
-  const replyUrl = o => wa.waUrl(o.customer_phone, wa.fill(bodies().customer_received, wa.orderVars(o)));
+  const statusTpl = o => wa.TEMPLATES.find(t => t.key === wa.statusKey(o.status)) || { label: db.STATUS_LABELS[o.status] || o.status };
+  const replyUrl = o => wa.waUrl(o.customer_phone, wa.fill(bodies()[wa.statusKey(o.status)], wa.orderVars(o)));
   const groupUrl = o => wa.waUrl('', wa.fill(bodies().delegates_group, wa.orderVars(o)));
-  const receivedLabel = (wa.TEMPLATES.find(t => t.key === 'customer_received') || {}).label || 'استلام الطلب';
+  const delegateUrl = o => wa.waUrl(o.delegate.phone, wa.fill(bodies().delegate_assigned, wa.orderVars(o)));
+  const digestList = () => orders.filter(needsGroup);
+  const digestUrl = list => wa.waUrl('', wa.fill(bodies().delegates_digest, { ...wa.orderVars({}), ...wa.digestVars(list) }));
+
+  function flagsHtml(o) {
+    const s = S(o);
+    const f = [];
+    if (o.delegate_id) {
+      const nm = esc(firstName(o.delegate && o.delegate.full_name) || 'معيّن');
+      f.push(s.delegate.length ? `<span class="ib-flag ok"><i class="fas fa-check"></i> المندوب ${nm}</span>`
+        : `<span class="ib-flag ${o.delegate && o.delegate.phone ? 'todo' : ''}"><i class="fas fa-id-badge"></i> المندوب ${nm}${o.delegate && o.delegate.phone ? ' — ما وصلته التفاصيل' : ''}</span>`);
+    } else if (s.group.length) {
+      f.push(`<span class="ib-flag ok"><i class="fas fa-check"></i> القروب${s.group.length > 1 ? ` ×${s.group.length}` : ''} · ${esc(ago(s.group[s.group.length - 1]))}</span>`);
+    } else if (needsGroup(o)) {
+      f.push('<span class="ib-flag todo"><i class="fas fa-users"></i> لسّا ما انبعتش للقروب</span>');
+    }
+    f.push(s.customer.has(o.status)
+      ? `<span class="ib-flag ok"><i class="fas fa-check"></i> الزبون: ${esc(statusTpl(o).label)}</span>`
+      : `<span class="ib-flag todo"><i class="fas fa-user"></i> الزبون ما وصله «${esc(statusTpl(o).label)}»</span>`);
+    return `<div class="ib-flags">${f.join('')}</div>`;
+  }
 
   function itemHtml(o, { compact = false } = {}) {
-    const done = replied.has(o.id);
     const urgent = o.urgency === 'عاجل';
+    const replied = !needsReply(o);
     return `
-      <div class="ib-item${done ? ' is-done' : ''}${urgent ? ' is-urgent' : ''}" data-id="${esc(o.id)}">
+      <div class="ib-item${needsAny(o) ? '' : ' is-done'}${urgent ? ' is-urgent' : ''}" data-id="${esc(o.id)}">
         <div class="ib-top">
           <span class="mono ltr ib-code">${esc(o.code)}</span>
+          ${ui.statusBadge(o.status)}
           ${urgent ? '<span class="badge badge-urgent"><i class="fas fa-bolt"></i> عاجل</span>' : ''}
-          ${done ? '<span class="badge st-delivered"><i class="fas fa-check"></i> تم الرد</span>' : ''}
           <span class="muted ib-ago">${esc(ago(o.created_at))}</span>
           ${compact ? '<button type="button" class="icon-btn ib-x" data-act="dismiss" aria-label="إخفاء"><i class="fas fa-xmark"></i></button>' : ''}
         </div>
         <div class="ib-who"><i class="fas fa-user"></i> ${esc(o.customer_name)} <span class="muted">· ${esc(o.city)} · ${esc(o.category)}</span></div>
         ${o.details ? `<div class="ib-det muted">${esc(String(o.details).slice(0, 140))}</div>` : ''}
+        ${compact ? '' : flagsHtml(o)}
         <div class="ib-btns">
-          <a class="btn btn-wa btn-sm" data-act="reply" target="_blank" rel="noopener" href="${esc(replyUrl(o))}"><i class="fab fa-whatsapp"></i> ${done ? 'رد ثاني' : 'رد موحد'}</a>
-          <a class="btn btn-ghost btn-sm" data-act="group" target="_blank" rel="noopener" href="${esc(groupUrl(o))}"><i class="fas fa-users"></i> للقروب</a>
+          <a class="btn ${replied ? 'btn-ghost' : 'btn-wa'} btn-sm" data-act="reply" target="_blank" rel="noopener" href="${esc(replyUrl(o))}"><i class="fab fa-whatsapp"></i> ${replied ? 'رد ثاني' : 'رد'}: ${esc(statusTpl(o).label)}</a>
+          ${o.delegate_id
+            ? (o.delegate && o.delegate.phone ? `<a class="btn ${needsDelegate(o) ? 'btn-wa' : 'btn-ghost'} btn-sm" data-act="delegate" target="_blank" rel="noopener" href="${esc(delegateUrl(o))}"><i class="fas fa-id-badge"></i> للمندوب ${esc(firstName(o.delegate.full_name))}</a>` : '')
+            : `<a class="btn ${needsGroup(o) ? 'btn-wa' : 'btn-ghost'} btn-sm" data-act="group" target="_blank" rel="noopener" href="${esc(groupUrl(o))}"><i class="fas fa-users"></i> ${S(o).group.length ? 'للقروب مرة ثانية' : 'للقروب'}</a>`}
           <a class="btn btn-ghost btn-sm" href="/admin/orders/?id=${esc(o.id)}"><i class="fas fa-up-right-from-square"></i> افتح</a>
         </div>
       </div>`;
@@ -136,16 +184,25 @@ export function startInbox({ db, ui, sb, profile }) {
     const perm = ('Notification' in window) ? Notification.permission : 'denied';
     const notifBtn = perm === 'default'
       ? '<button type="button" class="btn btn-ghost btn-sm" data-act="notify"><i class="fas fa-bell"></i> فعّل تنبيهات المتصفح (حتى لو الصفحة في الخلفية)</button>' : '';
-    if (!orders.length) return `${notifBtn}<div class="empty"><i class="fas fa-inbox"></i>ما فيش طلبات جديدة توا — أول ما يوصل طلب يطلع هنا مع تنبيه.</div>`;
-    const n = unrepliedCount();
-    return `<p class="muted ib-sum">${orders.length} طلب «استلمنا طلبك»${n ? ` — <strong>${n} بدون رد</strong>` : ' — كلهم تم الرد عليهم ✓'}. الطلب يطلع من هنا لما يتعيّن له مندوب أو تتغيّر حالته.</p>
+    if (!orders.length) return `${notifBtn}<div class="empty"><i class="fas fa-inbox"></i>ما فيش طلبات مفتوحة توا — أول ما يوصل طلب يطلع هنا مع تنبيه.</div>`;
+    const f = FILTERS.find(x => x.key === filter) || FILTERS[0];
+    const shown = orders.filter(f.match);
+    const dg = digestList();
+    const chips = FILTERS.map(x => `<button type="button" class="chip${x.key === f.key ? ' active' : ''}" data-filter="${x.key}">${esc(x.label)} <span class="cnt">${orders.filter(x.match).length}</span></button>`).join('');
+    const digest = dg.length > 1
+      ? `<div class="ib-digest"><a class="btn btn-wa btn-sm" data-act="digest" target="_blank" rel="noopener" href="${esc(digestUrl(dg))}"><i class="fas fa-users"></i> ابعت ${dg.length} طلبات للقروب في رسالة وحدة</a>
+         <small class="muted">الطلبات اللي بدون مندوب ولسّا ما انبعتتش — بدون أسماء وأرقام الزبائن.</small></div>` : '';
+    return `<div class="chips ib-filters">${chips}</div>
+      ${digest}
       ${notifBtn}
-      <div class="ib-list">${orders.map(o => itemHtml(o)).join('')}</div>`;
+      ${shown.length ? `<div class="ib-list">${shown.map(o => itemHtml(o)).join('')}</div>`
+        : `<div class="empty"><i class="fas fa-circle-check"></i>${f.key === 'all' ? 'ما فيش طلبات مفتوحة.' : 'كل شي منبعت ✓ — ما فيش حاجة ناقصة هنا.'}</div>`}`;
   }
 
   function openInbox() {
     if (modal && modal.isConnected) { load(); return; }   // مفتوح أصلاً — نحدّثه بس
-    modal = ui.modal({ title: 'طلبات جديدة', body: listHtml(), footer: '<button type="button" class="btn btn-ghost" data-close>إغلاق</button>' });
+    filter = orders.some(needsAny) ? 'todo' : 'all';
+    modal = ui.modal({ title: 'صندوق الطلبات', body: listHtml(), wide: true, footer: '<button type="button" class="btn btn-ghost" data-close>إغلاق</button>' });
     modal.addEventListener('click', onAction);
     load();
   }
@@ -160,24 +217,32 @@ export function startInbox({ db, ui, sb, profile }) {
     requestAnimationFrame(() => el.classList.add('show'));
   }
 
-  // نقرة على رد/قروب: الرابط يفتح واتساب (السلوك الطبيعي للرابط) وإحنا نسجّل الإرسال في سجل الطلب
+  // نقرة على رابط واتساب: الرابط يفتح واتساب (سلوكه الطبيعي) وإحنا نسجّل الإرسال في سجل الطلب ونحدّث العلامات
   function onAction(e) {
+    const fb = e.target.closest('[data-filter]');
+    if (fb) { filter = fb.dataset.filter; paint(); return; }
     const a = e.target.closest('[data-act]');
     if (!a) return;
     const act = a.dataset.act;
     if (act === 'notify') { Notification.requestPermission().then(paint); return; }
+    if (act === 'dismiss') { const p = a.closest('.ib-pop'); if (p) p.remove(); return; }
+    if (act === 'digest') {
+      const list = digestList().slice(0, 15);
+      list.forEach(o => { S(o).group.push(new Date().toISOString()); logWaSend(sb, profile, o, waNotes.group('رسالة مجمّعة')); });
+      setTimeout(paint, 50);
+      return;
+    }
     const item = a.closest('[data-id]');
     const o = item && orders.find(x => x.id === item.dataset.id);
-    if (act === 'dismiss') { const p = a.closest('.ib-pop'); if (p) p.remove(); return; }
     if (!o) return;
-    if (act === 'reply') {
-      replied.add(o.id);
-      logWaSend(sb, profile, o, waNotes.customer(receivedLabel));
-      setTimeout(paint, 50);
-      const p = a.closest('.ib-pop'); if (p) setTimeout(() => p.remove(), 400);
-    } else if (act === 'group') {
-      logWaSend(sb, profile, o, waNotes.group());
-    }
+    const s = S(o);
+    if (!sends.has(o.id)) sends.set(o.id, s);
+    if (act === 'reply') { s.customer.add(o.status); logWaSend(sb, profile, o, waNotes.customer(statusTpl(o).label)); }
+    else if (act === 'group') { s.group.push(new Date().toISOString()); logWaSend(sb, profile, o, waNotes.group()); }
+    else if (act === 'delegate') { s.delegate.push(new Date().toISOString()); logWaSend(sb, profile, o, waNotes.delegate(firstName(o.delegate && o.delegate.full_name))); }
+    setTimeout(paint, 50);
+    const p = a.closest('.ib-pop');
+    if (p && act === 'reply') setTimeout(() => p.remove(), 400);
   }
 
   function notifyBrowser(o, n) {
