@@ -7,6 +7,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 <AdminLayout title="الطلبات" portal="admin" page="orders">
   <Fragment slot="actions">
     <button type="button" class="btn btn-ghost btn-sm" id="refreshBtn" aria-label="تحديث"><i class="fas fa-rotate"></i></button>
+    <button type="button" class="btn btn-ghost btn-sm" id="pasteWaBtn" title="الصق رسالة طلب وصلتك على واتساب — نلقوا الطلب أو نسجّلوه"><i class="fab fa-whatsapp"></i> لصق من واتساب</button>
     <button type="button" class="btn btn-primary btn-sm" id="newOrderBtn"><i class="fas fa-plus"></i> طلب جديد</button>
   </Fragment>
 
@@ -71,6 +72,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 <script>
   // @ts-nocheck
   import * as wa from '../../lib/wa-templates.js';
+  import { logWaSend, waNotes } from '../../lib/order-inbox.js';
   const { db, ui, sb, profile } = await window.dawerliReady;
   if (sb && profile) init();
 
@@ -127,7 +129,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     }, 300));
 
     document.getElementById('refreshBtn').addEventListener('click', () => { loadOrders(); loadCounts(); });
-    document.getElementById('newOrderBtn').addEventListener('click', newOrder);
+    document.getElementById('newOrderBtn').addEventListener('click', () => newOrder());
+    document.getElementById('pasteWaBtn').addEventListener('click', pasteFromWhatsApp);
+    // صندوق الطلبات (في التخطيط) يبلّغنا لما يوصل طلب جديد → نحدّث القائمة بدون ما نلمسوا نافذة مفتوحة
+    window.addEventListener('dawerli:new-order', () => { loadOrders(); loadCounts(); });
 
     renderChips();
     loadOrders();
@@ -372,9 +377,17 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
         </div>`;
     }
 
-    function bindWa(body, o) {
+    // refresh: يعيد رسم الطلب بعد تسجيل الإرسال باش يبان في سجل الأحداث
+    function bindWa(body, o, refresh) {
       const box = body.querySelector('[data-wa]');
       if (!box) return;
+      // كل إرسال ينسجّل في سجل الطلب كملاحظة داخلية — الطلب نفسه هو مصدر الردود وسجلّها
+      const logged = note => () => { logWaSend(sb, profile, o, note).then(() => setTimeout(refresh, 600)); };
+      const tplLabel = () => (wa.TEMPLATES.find(t => t.key === box.querySelector('select[name="tpl"]').value) || {}).label || '';
+      body.querySelectorAll('[data-wa-customer]').forEach(a => a.addEventListener('click', () => logged(waNotes.customer(tplLabel()))()));
+      box.querySelector('[data-wa-group]')?.addEventListener('click', logged(waNotes.group()));
+      box.querySelector('[data-wa-delegate]')?.addEventListener('click',
+        logged(waNotes.delegate(o.delegate && String(o.delegate.full_name || '').trim().split(/\s+/)[0])));
       const T = (tpls && tpls.bodies) || wa.DEFAULTS;
       const vars = wa.orderVars(o);
       const sel = box.querySelector('select[name="tpl"]');
@@ -618,7 +631,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     function bindOrderActions(m, o) {
       const body = m.querySelector('.modal-body');
-      bindWa(body, o);
+      bindWa(body, o, () => { if (m.isConnected) renderOrder(m, o.id); });
       const afterChange = async (row, okMsg) => {
         if (row) patchRow(o.id, { status: row.status, total: row.total, delegate_id: row.delegate_id });
         ui.toast(okMsg, 'ok');
@@ -753,7 +766,49 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     // ───────────────────────── طلب جديد ─────────────────────────
 
-    async function newOrder() {
+    // ───────────────────────── لصق رسالة طلب من واتساب ─────────────────────────
+    // الطريق الموازي: رسالة الزبون على واتساب فيها كل بيانات الطلب، فحتى لو القاعدة كانت واقفة وقت الطلب ما يضيعش.
+    // فيها رقم مسجّل → نفتح الطلب. رقم مؤقت أو بدون رقم → نموذج طلب جديد معبّى من الرسالة.
+    async function pasteFromWhatsApp() {
+      let found = null;
+      let parsed = null;
+      const values = await ui.form({
+        title: 'لصق رسالة طلب من واتساب',
+        submitText: 'افتح / سجّل الطلب',
+        wide: true,
+        fields: [{ name: 'text', label: 'رسالة الطلب كما وصلتك', type: 'textarea', rows: 10, required: true,
+          placeholder: '📦 طلب توصيل جديد — دورلي\n🔖 رقم الطلب: DW-2026-…\n👤 الاسم: …',
+          hint: 'من واتساب: اضغط مطوّلاً على رسالة الطلب ← نسخ، وبعدين الصقها هنا.' }],
+        onSubmit: async v => {
+          parsed = wa.parseOrderMessage(v.text);
+          if (parsed.code && !parsed.temp) {
+            const { data, error } = await sb.from('orders').select('id').eq('code', parsed.code).maybeSingle();
+            if (error) throw new Error(db.friendlyError(error));
+            if (data) { found = data; return; }
+          }
+          const f = parsed.fields;
+          if (!f.customer_name && !f.customer_phone && !f.details) throw new Error('ما لقيناش بيانات طلب في الرسالة — تأكد إنك نسخت رسالة الطلب كاملة.');
+        },
+      });
+      if (!values) return;
+      if (found) { ui.toast(`الطلب ${parsed.code} مسجّل — فتحناه`, 'ok'); openOrder(found.id); return; }
+      const f = parsed.fields;
+      const prefill = {
+        ...f,
+        city: CITIES.includes(f.city) ? f.city : (f.city ? 'أخرى' : ''),
+        category: CATEGORIES.includes(f.category) ? f.category : (f.category ? 'أخرى' : ''),
+        urgency: URGENCIES.includes(f.urgency) ? f.urgency : 'عادي',
+        source: 'whatsapp',
+      };
+      if (f.city && !CITIES.includes(f.city)) prefill.details = `[المدينة: ${f.city}] ` + (prefill.details || '');
+      const why = parsed.temp ? `الرقم ${parsed.code} مؤقت (القاعدة كانت واقفة وقت الطلب)`
+        : parsed.code ? `الرقم ${parsed.code} مش موجود في القاعدة` : 'الرسالة بدون رقم طلب';
+      ui.toast(`${why} — راجع البيانات وسجّل الطلب`, 'info', 5000);
+      newOrder(prefill, { note: parsed.code ? `وصل على واتساب برقم ${parsed.code}` : 'سُجّل من رسالة واتساب' });
+    }
+
+    // prefill: قيم مبدئية للنموذج (من رسالة واتساب مثلاً)، meta.note: ملاحظة داخلية تنحفظ مع الطلب
+    async function newOrder(prefill = {}, meta = {}) {
       setUrlParam('new', null);
       const opt = v => ({ value: v, label: v });
       const fields = [
@@ -773,8 +828,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
       let created = null;
       const values = await ui.form({
-        title: 'طلب جديد',
+        title: prefill.source === 'whatsapp' ? 'تسجيل طلب من واتساب' : 'طلب جديد',
         fields,
+        values: prefill,
         submitText: 'إنشاء الطلب',
         wide: true,
         onSubmit: async v => {
@@ -794,6 +850,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             part_condition: v.part_condition || null,
             part_description: v.part_description ? String(v.part_description).slice(0, 500) : null,
             source: v.source in NEW_ORDER_SOURCES ? v.source : 'admin',
+            internal_notes: meta.note ? String(meta.note).slice(0, 300) : null,
           };
           // الرقم يولّده المحفّز في القاعدة، والعميل يُربط بهاتفه تلقائياً، وحدث "استلمنا طلبك" يُسجَّل تلقائياً
           const { data, error } = await sb.from('orders').insert(payload).select('id,code').single();

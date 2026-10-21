@@ -224,3 +224,31 @@ body[data-page="reset"] .sidebar, body[data-page="reset"] .topbar { display: non
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* ───── صندوق الطلبات الجديدة (src/lib/order-inbox.js) ───── */
+.inbox-btn { position: relative; }
+.inbox-btn.has-new { color: var(--primary-light); }
+.inbox-btn.has-new i { animation: ib-ring 1.6s ease-in-out infinite; transform-origin: 50% 10%; }
+.inbox-count { position: absolute; top: 2px; left: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #EF4444; color: #fff; font-size: .7rem; font-weight: 800; line-height: 18px; text-align: center; }
+@keyframes ib-ring { 0%, 70%, 100% { transform: rotate(0); } 75% { transform: rotate(14deg); } 85% { transform: rotate(-12deg); } 95% { transform: rotate(6deg); } }
+@media (prefers-reduced-motion: reduce) { .inbox-btn.has-new i { animation: none; } }
+.badge.badge-urgent { background: rgba(239,68,68,.16); color: #FCA5A5; border-color: rgba(239,68,68,.4); }
+.ib-sum { margin-bottom: .8rem; font-size: .9rem; }
+.ib-list { display: flex; flex-direction: column; gap: .7rem; margin-top: .8rem; }
+.ib-item { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r); padding: .8rem .9rem; display: flex; flex-direction: column; gap: .45rem; }
+.ib-item.is-urgent { border-color: rgba(239,68,68,.45); }
+.ib-item.is-done { opacity: .72; }
+.ib-top { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.ib-code { font-weight: 800; color: var(--primary-light); }
+.ib-ago { font-size: .8rem; margin-inline-start: auto; }
+.ib-x { width: 30px; height: 30px; }
+.ib-who { font-size: .92rem; }
+.ib-who i { color: var(--muted-2); margin-left: .25rem; }
+.ib-det { font-size: .84rem; line-height: 1.6; }
+.ib-btns { display: flex; gap: .4rem; flex-wrap: wrap; }
+.inbox-pop { position: fixed; bottom: 1.2rem; left: 1.2rem; z-index: 210; display: flex; flex-direction: column; gap: .6rem; width: min(380px, calc(100vw - 2rem)); }
+.ib-pop { background: var(--panel-2); border: 1px solid rgba(37,211,102,.5); border-radius: var(--r-lg); padding: .7rem; box-shadow: 0 16px 40px rgba(0,0,0,.5); opacity: 0; transform: translateY(12px); transition: all 280ms var(--ease); }
+.ib-pop.show { opacity: 1; transform: none; }
+.ib-pop-head { font-weight: 800; color: #86EFAC; font-size: .85rem; margin-bottom: .5rem; }
+.ib-pop-head i { margin-left: .3rem; }
+.ib-pop .ib-item { background: transparent; border: 0; padding: 0; }

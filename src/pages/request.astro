@@ -649,7 +649,7 @@ import Layout from '../layouts/Layout.astro';
           alert('يرجى إكمال بيانات الطلب أولاً (الاسم، الهاتف، المدينة، النوع، التفاصيل) قبل الانتقال للدفع');
           return;
         }
-        const orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
+        const orderNum = 'DW-TMP-' + Date.now().toString(36).slice(-5).toUpperCase();   // ما يتلخبطش مع أرقام القاعدة
         const params = new URLSearchParams({
           ref:  orderNum,
           cat:  category,
@@ -672,8 +672,10 @@ import Layout from '../layouts/Layout.astro';
         return;
       }
 
-      // رقم احتياطي يُستبدل برقم قاعدة البيانات إن نجح التسجيل
-      let orderNum = 'DW-2026-' + String(Math.floor(Math.random()*9000)+1000);
+      // رقم مؤقت يُستبدل برقم قاعدة البيانات إن نجح التسجيل. صيغته مختلفة (DW-TMP-…) باش ما يتلخبطش مع
+      // أرقام القاعدة؛ الإدارة تسجّل الطلب من الرسالة («لصق من واتساب») والزبون ياخذ رقمه النهائي في الرد.
+      let orderNum = 'DW-TMP-' + Date.now().toString(36).slice(-5).toUpperCase();
+      let codeLabel = 'رقم مؤقت';
       let trackLine = '';
 
       // Spare parts extra fields (Task 14-B)
@@ -713,6 +715,7 @@ import Layout from '../layouts/Layout.astro';
           });
           if (saved && saved.code) {
             orderNum = saved.code;
+            codeLabel = 'رقم الطلب';
             trackLine = `🔎 تابع طلبك: https://dawerli.org.ly/track/?id=${orderNum}\n`;
           }
         } catch (err) {
@@ -730,7 +733,7 @@ import Layout from '../layouts/Layout.astro';
       const header = isCarPart ? '*🔧 طلب قطع غيار جديد — دورلي*' : '*📦 طلب توصيل جديد — دورلي*';
 
       let message = `${header}\n\n`;
-      message += `🔖 رقم الطلب: ${orderNum}\n`;
+      message += `🔖 ${codeLabel}: ${orderNum}\n`;
       message += trackLine;
       message += `👤 الاسم: ${name}\n`;
       message += `📞 الهاتف: ${phone}\n`;

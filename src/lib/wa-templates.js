@@ -173,6 +173,43 @@ export function waUrl(phone, text) {
   return 'https://wa.me/' + p + q;
 }
 
+/** رقم مؤقت لطلب ما تسجّلش في القاعدة (الشبكة/الخادم واقف) — صيغة مختلفة ما تتلخبطش مع أرقام القاعدة. */
+export const tempOrderCode = () => 'DW-TMP-' + Date.now().toString(36).slice(-5).toUpperCase();
+
+/**
+ * يقرأ رسالة الطلب اللي يبعتها الزبون من صفحة /request/ على واتساب (ولو منسوخة مع اسم المرسل والوقت).
+ * يُرجع { code, temp, fields } — fields بأسماء أعمدة orders. الحقول الناقصة تبقى فاضية.
+ */
+export function parseOrderMessage(text) {
+  const t = String(text || '').replace(/\r/g, '').replace(/[‎‏⁦-⁩]/g, '').replace(/\*/g, '');
+  const pick = label => {
+    const m = t.match(new RegExp(label + '\\s*[:：]\\s*(.+)'));
+    return m ? m[1].trim() : '';
+  };
+  const codeM = t.match(/DW-(?:TMP-[A-Z0-9]{3,8}|\d{4}-\d{3,6})/i);
+  const code = codeM ? codeM[0].toUpperCase() : '';
+  // التفاصيل: من «ملاحظات إضافية:» لين آخر الرسالة (قبل ملاحظات الصورة)
+  const detM = t.match(/ملاحظات إضافية\s*[:：]\s*([\s\S]*?)(?:\n\s*\n?\s*(?:📸|📷)|$)/);
+  const phoneRaw = pick('الهاتف').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/\D/g, '');
+  const phone = phoneRaw.replace(/^(00218|218)/, '0').replace(/^9/, '09');
+  const qty = parseInt(pick('الكمية').replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))), 10);
+  const pay = pick('طريقة الدفع');
+  const fields = {
+    customer_name: pick('الاسم').slice(0, 120),
+    customer_phone: /^09\d{8}$/.test(phone) ? phone : '',
+    city: pick('مدينة التسليم'),
+    category: pick('نوع الطلب'),
+    details: detM ? detM[1].trim().slice(0, 2000) : '',
+    quantity: qty > 0 && qty < 1000 ? qty : 1,
+    urgency: pick('الاستعجال'),
+    payment_method: /تحويل/.test(pay) ? 'bank' : 'cash',
+    car_model: pick('الموديل').slice(0, 120),
+    part_condition: pick('• الحالة') || pick('الحالة'),
+    part_description: pick('وصف القطعة').slice(0, 500),
+  };
+  return { code, temp: /^DW-TMP-/.test(code), fields };
+}
+
 /** طلب تجريبي لمعاينة النصوص في صفحة الرسائل الجاهزة. */
 export const SAMPLE_ORDER = {
   code: 'DW-2026-1920', customer_name: 'أحمد', customer_phone: '0912345678', city: 'بنغازي',

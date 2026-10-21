@@ -75,7 +75,10 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
       <header class="topbar">
         <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="القائمة"><i class="fas fa-bars"></i></button>
         <h1 class="page-title">{title}</h1>
-        <div class="topbar-actions" id="topbarActions"><slot name="actions" /></div>
+        <div class="topbar-actions" id="topbarActions">
+          {portal === 'admin' && <button type="button" class="icon-btn inbox-btn" id="inboxBtn" hidden aria-label="صندوق الطلبات الجديدة"><i class="fas fa-bell"></i><span class="inbox-count" hidden></span></button>}
+          <slot name="actions" />
+        </div>
       </header>
       <main class="content" id="content">
         <div id="gate" class="gate" hidden></div>
@@ -88,10 +91,12 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
 
   <div id="modalRoot"></div>
   <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  {portal === 'admin' && <div id="inboxPop" class="inbox-pop" aria-live="polite"></div>}
 
   <script>
     import * as db from '../lib/db.js';
     import { ui } from '../lib/admin-ui.js';
+    import { startInbox } from '../lib/order-inbox.js';
 
     const body = document.body;
     const portal = body.dataset.portal;
@@ -164,6 +169,8 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
       }
       body.classList.add('is-' + profile.role);
       window.__dawerliResolveReady({ db, ui, sb, profile });
+      // صندوق الطلبات الجديدة (للإدارة) — منفصل تماماً: لو فشل، الصفحة تكمل عادي
+      if (portal === 'admin') { try { startInbox({ db, ui, sb, profile }); } catch (e) { console.warn('inbox:', e); } }
     })();
   </script>
 </body>
