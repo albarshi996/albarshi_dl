@@ -36,6 +36,39 @@ export const ui = {
   },
 
   /**
+   * نافذة سبب: أسباب جاهزة بضغطة + نص حر (3 أحرف على الأقل). يُرجع Promise<string|null>.
+   * تُستخدم لإلغاء الطلب (الإدارة) ولإرجاع الطلب (المندوب).
+   */
+  reasonPrompt({ title, intro = '', reasons = [], okText = 'تأكيد', danger = false, placeholder = 'أو اكتب السبب هنا…' } = {}) {
+    return new Promise(resolve => {
+      const m = this.modal({
+        title,
+        body: `${intro ? `<p class="confirm-text rp-intro">${esc(intro)}</p>` : ''}
+          ${reasons.length ? `<div class="chips rp-chips">${reasons.map(r => `<button type="button" class="chip" data-reason="${esc(r)}">${esc(r)}</button>`).join('')}</div>` : ''}
+          <label class="field"><span class="label">السبب <span class="req">*</span></span>
+            <textarea rows="2" maxlength="300" placeholder="${esc(placeholder)}"></textarea></label>
+          <p class="form-error" data-error hidden></p>`,
+        footer: `<button type="button" class="btn btn-ghost" data-close>رجوع</button>
+                 <button type="button" class="btn ${danger ? 'btn-danger' : 'btn-primary'}" data-ok>${esc(okText)}</button>`,
+      });
+      const ta = m.querySelector('textarea');
+      const err = m.querySelector('[data-error]');
+      m.querySelectorAll('[data-reason]').forEach(c => c.addEventListener('click', () => {
+        m.querySelectorAll('[data-reason]').forEach(x => x.classList.toggle('active', x === c));
+        ta.value = c.dataset.reason;
+        err.hidden = true;
+      }));
+      let done = false;
+      m.querySelector('[data-ok]').addEventListener('click', () => {
+        const v = ta.value.trim();
+        if (v.length < 3) { err.textContent = 'اختار سبب من فوق أو اكتبه.'; err.hidden = false; ta.focus(); return; }
+        done = true; m.close(); resolve(v.slice(0, 300));
+      });
+      m.addEventListener('closed', () => { if (!done) resolve(null); }, { once: true });
+    });
+  },
+
+  /**
    * نافذة عامة. يُرجع عنصر .modal مع close().
    * opts: { title, body (html), footer (html), wide }
    */

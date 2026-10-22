@@ -157,6 +157,15 @@ export async function claimOrder(orderId) {
   return data === true;
 }
 
+/** المندوب يرجّع طلب حجزه (قبل عرض السعر) مع السبب — يرجع للطلبات المتاحة والسبب يوصل للإدارة. */
+export async function releaseOrder(orderId, reason) {
+  const sb = await getClient();
+  if (!sb) throw new Error('not_configured');
+  const { data, error } = await sb.rpc('release_order', { p_order_id: orderId, p_reason: reason });
+  if (error) throw error;
+  return data === true;
+}
+
 export async function adminStats() {
   const sb = await getClient();
   if (!sb) return null;
@@ -228,6 +237,8 @@ export function friendlyError(err) {
     ['rate_limited',                'وصلتنا طلبات كثيرة من رقمك في وقت قصير — جرّب بعد شوية أو كلمنا على الواتساب.'],
     ['not_allowed',                 'ما عندكش صلاحية لهذا الإجراء.'],
     ['too_many_active',             'عندك 5 طلبات جارية — كمّل واحد منها قبل ما تحجز طلباً جديداً.'],
+    ['reason_required',             'اكتب السبب من فضلك.'],
+    ['cannot_release',              'ما تقدرش ترجّع الطلب بعد عرض السعر — كلّم الإدارة.'],
     ['last_admin',                  'ما ينفعش — هذا آخر مدير نشط في المنصة.'],
     ['invalid_delegate',            'المندوب المختار غير نشط أو غير معتمد.'],
     ['not_found',                   'الطلب غير موجود أو ما عندكش صلاحية عليه.'],

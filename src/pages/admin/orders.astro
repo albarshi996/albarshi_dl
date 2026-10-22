@@ -72,7 +72,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 <script>
   // @ts-nocheck
   import * as wa from '../../lib/wa-templates.js';
-  import { logWaSend, waNotes } from '../../lib/order-inbox.js';
+  import { logWaSend, waNotes, quickCancel, CANCEL_REASONS } from '../../lib/order-inbox.js';
   const { db, ui, sb, profile } = await window.dawerliReady;
   if (sb && profile) init();
 
@@ -480,7 +480,10 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             ${ui.statusBadge(o.status)}
             <span class="muted nowrap">${esc(db.formatDate(o.created_at))}</span>
           </div>
-          <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" data-wa-customer href="#" title="يفتح واتساب الزبون والرد الموحد للحالة الحالية مكتوب"><i class="fab fa-whatsapp"></i> رد على الزبون</a>
+          <div class="od-btns">
+            <a class="btn btn-wa btn-sm" target="_blank" rel="noopener" data-wa-customer href="#" title="يفتح واتساب الزبون والرد الموحد للحالة الحالية مكتوب"><i class="fab fa-whatsapp"></i> رد على الزبون</a>
+            ${isFinal ? '' : '<button type="button" class="btn btn-ghost btn-sm ib-cancel" data-quick-cancel><i class="fas fa-ban"></i> إلغاء الطلب</button>'}
+          </div>
         </div>
 
         <div class="od-grid">
@@ -511,6 +514,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
                 <small class="hint od-span">الزبون يشوف السعر والرسوم والإجمالي في صفحة التتبع ويردّ بالموافقة أو الرفض.</small>
               </div>
               <div class="od-when" data-when="cancelled" hidden>
+                <div class="chips">${CANCEL_REASONS.map(r => `<button type="button" class="chip" data-cancel-reason="${esc(r)}">${esc(r)}</button>`).join('')}</div>
                 <label class="field"><span class="label">سبب الإلغاء <span class="req">*</span></span>
                   <textarea name="cancel_reason" rows="2" placeholder="مثال: الزبون ألغى بعد عرض السعر / القطعة غير متوفرة في ليبيا">${esc(o.cancel_reason || '')}</textarea></label>
                 <small class="hint">يظهر السبب للزبون في صفحة التتبع.</small>
@@ -645,6 +649,22 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       const syncWhen = () => fStatus.querySelectorAll('[data-when]').forEach(b => { b.hidden = b.dataset.when !== sel.value; });
       sel.addEventListener('change', syncWhen);
       syncWhen();
+      fStatus.querySelectorAll('[data-cancel-reason]').forEach(c => c.addEventListener('click', () => {
+        fStatus.querySelectorAll('[data-cancel-reason]').forEach(x => x.classList.toggle('active', x === c));
+        fStatus.elements.cancel_reason.value = c.dataset.cancelReason;
+      }));
+
+      // إلغاء سريع: سبب جاهز → «ملغي» → رسالة الإلغاء للزبون جاهزة
+      body.querySelector('[data-quick-cancel]')?.addEventListener('click', async () => {
+        try {
+          const done = await quickCancel({ db, ui, sb, profile }, o);
+          if (!done) return;
+          patchRow(o.id, { status: 'cancelled' });
+          ui.toast(`تم إلغاء الطلب ${o.code}`, 'ok');
+          loadCounts();
+          if (m.isConnected) await renderOrder(m, o.id);
+        } catch (e) { ui.toast(db.friendlyError(e), 'err'); }
+      });
       bindAutoTotal(fStatus);
       fStatus.addEventListener('submit', e => {
         e.preventDefault();

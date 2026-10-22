@@ -14,7 +14,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <h1>لوحة تحكم دورلي</h1>
       <p class="sub">سجّل دخولك بحساب الإدارة.</p>
 
-      <form id="loginForm" class="form-grid" novalidate>
+      <form id="loginForm" class="form-grid" method="post" novalidate>
         <label class="field" for="email">
           <span class="label">الإيميل</span>
           <input id="email" name="email" type="email" class="ltr" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
@@ -24,7 +24,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <input id="password" name="password" type="password" class="ltr" autocomplete="current-password" required>
         </label>
         <p class="form-error" id="loginError" hidden></p>
-        <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+        <button type="submit" class="btn btn-primary btn-block" id="loginBtn" disabled>
           <i class="fas fa-right-to-bracket"></i> دخول
         </button>
       </form>
@@ -50,6 +50,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     const form = document.getElementById('loginForm');
     const errEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
+    btn.disabled = false;   // معطّل في HTML لين يجهز السكربت (ما يمشيش كنموذج عادي بكلمة السر في الرابط)
 
     const showError = (msg) => { errEl.textContent = msg; errEl.hidden = false; };
 

@@ -29,6 +29,50 @@ export const waNotes = {
 };
 
 const firstName = s => String(s || '').trim().split(/\s+/)[0] || '';
+const RELEASE_PREFIX = 'المندوب رجّع الطلب';
+
+/** أسباب الإلغاء الجاهزة للإدارة (والنص الحر متاح دايماً). */
+export const CANCEL_REASONS = [
+  'المطلوب مش متوفر في ليبيا حالياً',
+  'الزبون ألغى الطلب',
+  'الزبون ما ردّش علينا',
+  'الزبون رفض عرض السعر',
+  'طلب مكرر',
+  'خارج نطاق خدمتنا',
+];
+
+/**
+ * إلغاء سريع للإدارة: سبب جاهز أو مكتوب → الحالة «ملغي» (السبب يظهر للزبون في التتبع)،
+ * وبعدها رسالة «ملغي» جاهزة للزبون على واتساب (تتعدّل قبل الإرسال، والإرسال ينسجّل في سجل الطلب).
+ * يُرجع الطلب بعد الإلغاء، أو null لو تراجع المدير.
+ */
+export async function quickCancel({ db, ui, sb, profile }, o) {
+  const reason = await ui.reasonPrompt({
+    title: `إلغاء الطلب ${o.code}`,
+    intro: 'الزبون يشوف «ملغي» مع السبب في صفحة التتبع، وبعدها نجهّزولك رسالة الإلغاء له على واتساب.',
+    reasons: CANCEL_REASONS, okText: 'إلغاء الطلب', danger: true,
+  });
+  if (!reason) return null;
+  const res = await db.setOrderStatus(o.id, 'cancelled', { cancel_reason: reason });
+  const row = Array.isArray(res) ? res[0] : res;
+  const done = { ...o, ...(row || {}), status: 'cancelled', cancel_reason: reason };
+  const T = ((await wa.loadTemplates(sb).catch(() => null)) || {}).bodies || wa.DEFAULTS;
+  const label = (wa.TEMPLATES.find(t => t.key === 'customer_cancelled') || {}).label || 'ملغي';
+  const m = ui.modal({
+    title: `تم إلغاء الطلب ${o.code} ✓`,
+    body: `<p class="confirm-text">بلّغ الزبون بالرسالة الجاهزة (تقدر تعدّلها قبل الإرسال):</p>
+      <textarea rows="6" dir="auto" aria-label="رسالة الإلغاء">${db.esc(wa.fill(T.customer_cancelled, wa.orderVars(done)))}</textarea>`,
+    footer: `<button type="button" class="btn btn-ghost" data-close>بعدين</button>
+      <a class="btn btn-wa" data-send target="_blank" rel="noopener" href="#"><i class="fab fa-whatsapp"></i> ابعت للزبون</a>`,
+  });
+  const ta = m.querySelector('textarea');
+  const send = m.querySelector('[data-send]');
+  const sync = () => { send.href = wa.waUrl(done.customer_phone, ta.value.trim()); };
+  ta.addEventListener('input', sync);
+  sync();
+  send.addEventListener('click', () => { logWaSend(sb, profile, done, waNotes.customer(label)); setTimeout(m.close, 300); });
+  return done;
+}
 
 export function startInbox({ db, ui, sb, profile }) {
   if (!sb || !profile || profile.role !== 'admin') return;
@@ -47,6 +91,7 @@ export function startInbox({ db, ui, sb, profile }) {
   let modal = null;
   let filter = 'todo';
   let reloadTimer = null;
+  let seenReleases = null;        // أحداث إرجاع شفناها — null قبل أول تحميل (ما ننبّهوش على القديم)
 
   btn.addEventListener('click', openInbox);
   load();
@@ -74,19 +119,41 @@ export function startInbox({ db, ui, sb, profile }) {
       if (error) throw error;
       const list = data || [];
       const ids = list.map(o => o.id);
-      const map = new Map(ids.map(id => [id, { group: [], customer: new Set(), delegate: [] }]));
+      const map = new Map(ids.map(id => [id, { group: [], customer: new Set(), delegate: [], lastAssign: null, lastUnassign: null, release: null }]));
+      const newReleases = [];
       if (ids.length) {
-        const ev = await sb.from('order_events').select('order_id,status,note,created_at')
-          .in('order_id', ids).eq('kind', 'note').eq('visible_to_customer', false).like('note', '📤 واتساب%')
-          .order('created_at', { ascending: true });
+        const [ev, asg] = await Promise.all([
+          sb.from('order_events').select('order_id,status,note,created_at')
+            .in('order_id', ids).eq('kind', 'note').eq('visible_to_customer', false).like('note', '📤 واتساب%')
+            .order('created_at', { ascending: true }),
+          sb.from('order_events').select('id,order_id,kind,note,created_at')
+            .in('order_id', ids).in('kind', ['assign', 'unassign']).order('created_at', { ascending: true }),
+        ]);
+        // تعيين/إرجاع: إرسال القروب قبل آخر إرجاع ما يتحسبش (الطلب رجع متاح ويحتاج يتبعت من جديد)،
+        // وإرسال المندوب قبل آخر تعيين ما يتحسبش (مندوب جديد ما وصلته التفاصيل)
+        const releaseIds = [];
+        for (const e of (asg.error ? [] : asg.data || [])) {
+          const s = map.get(e.order_id);
+          if (!s) continue;
+          if (e.kind === 'assign') { s.lastAssign = e.created_at; s.release = null; continue; }
+          s.lastUnassign = e.created_at;
+          const isRelease = String(e.note || '').startsWith(RELEASE_PREFIX);
+          s.release = isRelease ? String(e.note).slice(RELEASE_PREFIX.length).replace(/^\s*:\s*/, '') : null;
+          if (isRelease) {
+            releaseIds.push(e.id);
+            if (seenReleases && !seenReleases.has(e.id)) newReleases.push(e.order_id);
+          }
+        }
+        seenReleases = new Set([...(seenReleases || []), ...releaseIds]);
         for (const e of (ev.error ? [] : ev.data || [])) {
           const s = map.get(e.order_id);
           if (!s) continue;
-          if (e.note.startsWith(PREFIX.group)) s.group.push(e.created_at);
+          if (e.note.startsWith(PREFIX.group)) { if (!s.lastUnassign || e.created_at > s.lastUnassign) s.group.push(e.created_at); }
           else if (e.note.startsWith(PREFIX.customer)) s.customer.add(e.status);
-          else if (e.note.startsWith(PREFIX.delegate)) s.delegate.push(e.created_at);
+          else if (e.note.startsWith(PREFIX.delegate)) { if (!s.lastAssign || e.created_at > s.lastAssign) s.delegate.push(e.created_at); }
         }
       }
+      if (!seenReleases) seenReleases = new Set();
       // تنبيه فقط على الطلبات الجديدة فعلاً (مش طلب رجع مفتوح بعد إلغاء)
       const recent = o => o.status === 'received' && Date.now() - new Date(o.created_at).getTime() < 6 * 3600e3;
       const fresh = known ? list.filter(o => !known.has(o.id) && recent(o)) : [];
@@ -96,9 +163,15 @@ export function startInbox({ db, ui, sb, profile }) {
       paint();
       if (fresh.length) {
         beep();
-        fresh.slice(0, 3).reverse().forEach(showPop);
+        fresh.slice(0, 3).reverse().forEach(o => showPop(o));
         notifyBrowser(fresh[0], fresh.length);
         window.dispatchEvent(new CustomEvent('dawerli:new-order', { detail: { ids: fresh.map(o => o.id) } }));
+      }
+      const released = [...new Set(newReleases)].map(id => list.find(o => o.id === id)).filter(o => o && !o.delegate_id);
+      if (released.length) {
+        beep();
+        released.slice(0, 3).forEach(o => showPop(o, '<i class="fas fa-rotate-left"></i> مندوب رجّع طلب — يحتاج مندوب ثاني'));
+        window.dispatchEvent(new CustomEvent('dawerli:new-order', { detail: { ids: released.map(o => o.id) } }));
       }
     } catch (e) {
       console.warn('inbox:', e && e.message ? e.message : e);
@@ -106,7 +179,7 @@ export function startInbox({ db, ui, sb, profile }) {
   }
 
   // ── شن ناقص كل طلب؟ ──
-  const S = o => sends.get(o.id) || { group: [], customer: new Set(), delegate: [] };
+  const S = o => sends.get(o.id) || { group: [], customer: new Set(), delegate: [], lastAssign: null, lastUnassign: null, release: null };
   const needsGroup = o => !o.delegate_id && ['received', 'searching'].includes(o.status) && !S(o).group.length;
   const needsReply = o => !S(o).customer.has(o.status);
   const needsDelegate = o => !!(o.delegate_id && o.delegate && o.delegate.phone) && !S(o).delegate.length;
@@ -140,6 +213,7 @@ export function startInbox({ db, ui, sb, profile }) {
   function flagsHtml(o) {
     const s = S(o);
     const f = [];
+    if (!o.delegate_id && s.release) f.push(`<span class="ib-flag todo"><i class="fas fa-rotate-left"></i> رجّعه المندوب: ${esc(s.release)}</span>`);
     if (o.delegate_id) {
       const nm = esc(firstName(o.delegate && o.delegate.full_name) || 'معيّن');
       f.push(s.delegate.length ? `<span class="ib-flag ok"><i class="fas fa-check"></i> المندوب ${nm}</span>`
@@ -176,6 +250,7 @@ export function startInbox({ db, ui, sb, profile }) {
             ? (o.delegate && o.delegate.phone ? `<a class="btn ${needsDelegate(o) ? 'btn-wa' : 'btn-ghost'} btn-sm" data-act="delegate" target="_blank" rel="noopener" href="${esc(delegateUrl(o))}"><i class="fas fa-id-badge"></i> للمندوب ${esc(firstName(o.delegate.full_name))}</a>` : '')
             : `<a class="btn ${needsGroup(o) ? 'btn-wa' : 'btn-ghost'} btn-sm" data-act="group" target="_blank" rel="noopener" href="${esc(groupUrl(o))}"><i class="fas fa-users"></i> ${S(o).group.length ? 'للقروب مرة ثانية' : 'للقروب'}</a>`}
           <a class="btn btn-ghost btn-sm" href="/admin/orders/?id=${esc(o.id)}"><i class="fas fa-up-right-from-square"></i> افتح</a>
+          ${compact ? '' : '<button type="button" class="btn btn-ghost btn-sm ib-cancel" data-act="cancel"><i class="fas fa-ban"></i> إلغاء</button>'}
         </div>
       </div>`;
   }
@@ -207,10 +282,10 @@ export function startInbox({ db, ui, sb, profile }) {
     load();
   }
 
-  function showPop(o) {
+  function showPop(o, head = '<i class="fas fa-bell"></i> طلب جديد وصل') {
     const el = document.createElement('div');
     el.className = 'ib-pop';
-    el.innerHTML = `<div class="ib-pop-head"><i class="fas fa-bell"></i> طلب جديد وصل</div>${itemHtml(o, { compact: true })}`;
+    el.innerHTML = `<div class="ib-pop-head">${head}</div>${itemHtml(o, { compact: true })}`;
     el.addEventListener('click', onAction);
     pop.prepend(el);
     while (pop.children.length > 3) pop.lastElementChild.remove();
@@ -235,6 +310,12 @@ export function startInbox({ db, ui, sb, profile }) {
     const item = a.closest('[data-id]');
     const o = item && orders.find(x => x.id === item.dataset.id);
     if (!o) return;
+    if (act === 'cancel') {
+      quickCancel({ db, ui, sb, profile }, o)
+        .then(done => { if (done) { ui.toast(`تم إلغاء الطلب ${o.code}`, 'ok'); load(); window.dispatchEvent(new CustomEvent('dawerli:new-order', { detail: { ids: [o.id] } })); } })
+        .catch(err => ui.toast(db.friendlyError(err), 'err'));
+      return;
+    }
     const s = S(o);
     if (!sends.has(o.id)) sends.set(o.id, s);
     if (act === 'reply') { s.customer.add(o.status); logWaSend(sb, profile, o, waNotes.customer(statusTpl(o).label)); }

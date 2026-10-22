@@ -12,7 +12,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       <section id="resetPane" hidden>
         <h1>اختار كلمة سر جديدة</h1>
         <p class="sub">اكتبها مرتين، وبعدها تدخل على طول.</p>
-        <form id="resetForm" class="form-grid" novalidate>
+        <form id="resetForm" class="form-grid" method="post" novalidate>
           <label class="field" for="newPassword">
             <span class="label">كلمة السر الجديدة</span>
             <input id="newPassword" type="password" name="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف على الأقل" class="ltr">
@@ -23,7 +23,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
             <small class="hint">تأكد إن الكيبورد على الإنجليزي</small>
           </label>
           <p class="form-error" data-error hidden></p>
-          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-key"></i> احفظ كلمة السر</button>
+          <button type="submit" class="btn btn-primary btn-block" data-submit disabled><i class="fas fa-key"></i> احفظ كلمة السر</button>
         </form>
       </section>
 
@@ -62,6 +62,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       return;
     }
     resetPane.hidden = false;
+    btn.disabled = false;
 
     form.addEventListener('submit', async e => {
       e.preventDefault();

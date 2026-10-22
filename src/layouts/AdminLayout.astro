@@ -124,7 +124,14 @@ const portalTitle = portal === 'admin' ? 'لوحة تحكم دورلي' : 'بو�
         window.__dawerliResolveReady({ db, ui, sb: null, profile: null });
         return;
       }
-      const sb = await db.getClient();
+      let sb;
+      try { sb = await db.getClient(); }
+      catch (e) {
+        // مكتبة القاعدة ما تحمّلتش (شبكة ضعيفة/انقطاع) — رسالة واضحة بدل صفحة معلّقة
+        console.error(e);
+        showGate(ui.gateHtml('تعذّر تحميل الصفحة', 'تأكد من الإنترنت وحدّث الصفحة.', location.pathname + location.search, 'تحديث الصفحة'));
+        return;
+      }
       if (page === 'reset') {
         // صفحة كلمة السر الجديدة: جلسة الاستعادة تُقرأ من الرابط، وما فيش تحويل تلقائي
         window.__dawerliResolveReady({ db, ui, sb, profile: null });

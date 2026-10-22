@@ -18,7 +18,7 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
       <section id="tab-login" class="auth-pane" role="tabpanel">
         <h1>يا هلا بيك</h1>
         <p class="sub">سجّل دخولك وشوف الطلبات المتاحة في مدينتك.</p>
-        <form id="loginForm" class="form-grid" novalidate>
+        <form id="loginForm" class="form-grid" method="post" novalidate>
           <label class="field" for="loginEmail">
             <span class="label">الإيميل</span>
             <input id="loginEmail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="you@example.com" class="ltr">
@@ -32,20 +32,20 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
           <div class="resend-row" id="resendRow" hidden>
             <button type="button" class="btn btn-ghost btn-sm" id="resendBtn"><i class="fas fa-envelope"></i> ابعتلي رسالة التأكيد من جديد</button>
           </div>
-          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-right-to-bracket"></i> دخول</button>
+          <button type="submit" class="btn btn-primary btn-block" data-submit disabled><i class="fas fa-right-to-bracket"></i> دخول</button>
         </form>
       </section>
 
       <section id="tab-forgot" class="auth-pane" role="tabpanel" hidden>
         <h1>نسيت كلمة السر؟</h1>
         <p class="sub">اكتب إيميلك ونبعتولك رابط تختار منه كلمة سر جديدة.</p>
-        <form id="forgotForm" class="form-grid" novalidate>
+        <form id="forgotForm" class="form-grid" method="post" novalidate>
           <label class="field" for="forgotEmail">
             <span class="label">الإيميل</span>
             <input id="forgotEmail" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required placeholder="you@example.com" class="ltr">
           </label>
           <p class="form-error" data-error hidden></p>
-          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-paper-plane"></i> ابعتلي الرابط</button>
+          <button type="submit" class="btn btn-primary btn-block" data-submit disabled><i class="fas fa-paper-plane"></i> ابعتلي الرابط</button>
         </form>
         <div class="form-ok" id="forgotOk" hidden>
           <p><i class="fas fa-circle-check"></i> لو الإيميل مسجّل عندنا، بيوصلك رابط خلال دقايق — شوف الـSpam كمان، وافتحه من نفس الجوال.</p>
@@ -55,7 +55,7 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
       <section id="tab-register" class="auth-pane" role="tabpanel" hidden>
         <h1>ندوّروا مع بعض</h1>
         <p class="sub">سجّل كمندوب دورلي — تدوّر، تشتري، وتوصّل، ودورلي يجيبلك الطلبات من مدينتك والمدن القريبة.</p>
-        <form id="registerForm" class="form-grid" novalidate>
+        <form id="registerForm" class="form-grid" method="post" novalidate>
           <label class="field" for="regName">
             <span class="label">الاسم الكامل <span class="req">*</span></span>
             <input id="regName" type="text" name="full_name" autocomplete="name" required maxlength="120" placeholder="مثال: سالم عبدالله">
@@ -81,7 +81,7 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
             <input id="regPassword" type="password" name="password" autocomplete="new-password" required minlength="6" placeholder="6 أحرف على الأقل" class="ltr">
           </label>
           <p class="form-error" data-error hidden></p>
-          <button type="submit" class="btn btn-primary btn-block" data-submit><i class="fas fa-user-plus"></i> سجّلني كمندوب</button>
+          <button type="submit" class="btn btn-primary btn-block" data-submit disabled><i class="fas fa-user-plus"></i> سجّلني كمندوب</button>
           <p class="muted small">بعد التسجيل يراجع فريق دورلي بياناتك ويعتمد حسابك، وبعدها تقدر تحجز الطلبات.</p>
         </form>
         <div class="form-ok" id="registerOk" hidden>
@@ -130,6 +130,8 @@ const CITIES = ['طرابلس', 'بنغازي', 'مصراتة', 'الزاوية'
   if (sb) init();
 
   function init() {
+    // الأزرار معطّلة في HTML لين يجهز السكربت — قبلها الإرسال كان يمشي كنموذج عادي ويحط كلمة السر في الرابط
+    document.querySelectorAll('[data-submit]').forEach(b => { b.disabled = false; });
     const tabs = Array.from(document.querySelectorAll('.auth-tab'));
     const panes = { login: document.getElementById('tab-login'), register: document.getElementById('tab-register'), forgot: document.getElementById('tab-forgot') };
     const switchText = document.getElementById('switchText');

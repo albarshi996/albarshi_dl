@@ -144,4 +144,33 @@ select set_config('request.jwt.claims', '{"sub":"33333333-3333-3333-3333-3333333
 select pg_temp.expect('pending cannot read templates', pg_temp.try('select * from public.message_templates'), 'ROWS 0');
 reset role; select set_config('request.jwt.claims', '', false);
 
+-- ── المندوب يرجّع طلب (release_order): قبل عرض السعر فقط، بسبب، وطلبه هو بس ──
+update public.orders set delegate_id = '22222222-2222-2222-2222-222222222222', status = 'searching' where code = 'DW-2026-1002';
+update public.orders set delegate_id = '22222222-2222-2222-2222-222222222222', status = 'quoted'    where code = 'DW-2026-1004';
+update public.orders set delegate_id = null, status = 'received' where code = 'DW-2026-1001';
+
+set role anon;
+select set_config('request.jwt.claims', '{"role":"anon"}', false);
+select pg_temp.expect('anon cannot release', pg_temp.try('select public.release_order((select gen_random_uuid()), ''سبب'')'), 'ERR permission denied%');
+reset role; select set_config('request.jwt.claims', '', false);
+
+set role authenticated;
+select set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}', false);
+select pg_temp.expect('release needs a reason',    pg_temp.try('select public.release_order((select id from public.delegate_my_orders where code = ''DW-2026-1002''), '' '')'), 'ERR reason_required');
+select pg_temp.expect('cannot release after quote', pg_temp.try('select public.release_order((select id from public.delegate_my_orders where code = ''DW-2026-1004''), ''ما لقيتش المطلوب'')'), 'ERR cannot_release');
+select pg_temp.expect('cannot release others order', pg_temp.try('select public.release_order((select id from public.delegate_open_orders where code = ''DW-2026-1001''), ''ما لقيتش المطلوب'')'), 'ERR not_found');
+select pg_temp.expect('delegate releases own order', public.release_order((select id from public.delegate_my_orders where code = 'DW-2026-1002'), 'مش في مدينتي')::text, 'true');
+select pg_temp.expect('released order back in pool', (select count(*)::text from public.delegate_open_orders where code = 'DW-2026-1002'), '1');
+reset role; select set_config('request.jwt.claims', '', false);
+
+select pg_temp.expect('released order reset', (select (delegate_id is null and status = 'received')::text from public.orders where code = 'DW-2026-1002'), 'true');
+select pg_temp.expect('release reason internal', (select (visible_to_customer = false and note like 'المندوب رجّع الطلب: مش في مدينتي')::text from public.order_events
+  where order_id = (select id from public.orders where code = 'DW-2026-1002') and kind = 'unassign' order by created_at desc limit 1), 'true');
+select pg_temp.expect('customer sees no release reason', (select (public.get_order_status('DW-2026-1002', '0922222223'))::text not like '%رجّع%')::text, 'true');
+
+set role authenticated;
+select set_config('request.jwt.claims', '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}', false);
+select pg_temp.expect('admin cannot use release', pg_temp.try('select public.release_order((select id from public.orders where code = ''DW-2026-1004''), ''سبب'')'), 'ERR not_allowed');
+reset role; select set_config('request.jwt.claims', '', false);
+
 \echo '=== انتهى الاختبار'
