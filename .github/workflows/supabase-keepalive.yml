@@ -8,7 +8,9 @@ on:
     - cron: '17 3,15 * * *'
   workflow_dispatch:
 
-permissions: {}
+# actions: write — باش الخطوة الأخيرة تعيد تفعيل الـ workflow نفسه
+permissions:
+  actions: write
 
 jobs:
   ping:
@@ -30,3 +32,11 @@ jobs:
             echo "::error::قاعدة البيانات ما ردّتش — غالباً المشروع موقوف. رجّعه من https://supabase.com/dashboard/project/ubyzdzbubmffdxtygoah"
             exit 1
           fi
+
+      # GitHub يوقف الـ workflows المجدولة في المستودعات العامة بعد 60 يوم بلا نشاط في المستودع.
+      # إعادة التفعيل عبر الـ API في كل تشغيل تخلّي المؤقت يبدا من جديد، فالـ ping ما يوقفش أبداً.
+      - name: Keep this workflow enabled
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/supabase-keepalive.yml/enable" && echo "workflow re-enabled" || echo "::warning::تعذّر إعادة التفعيل"
