@@ -23,8 +23,8 @@ jobs:
         run: |
           code=$(curl -s -o out.json -w '%{http_code}' --retry 3 --retry-delay 15 --max-time 30 \
             -X POST "$SUPABASE_URL/rest/v1/rpc/public_stats" \
-            -H "apikey: $SUPABASE_KEY" -H "Content-Type: application/json" -d '{}' || echo 000)
-          echo "HTTP $code"
+            -H "apikey: $SUPABASE_KEY" -H "Content-Type: application/json" -d '{}') || true
+          echo "HTTP ${code:-000}"
           head -c 300 out.json 2>/dev/null; echo
           if [ "$code" != "200" ]; then
             echo "::error::قاعدة البيانات ما ردّتش — غالباً المشروع موقوف. رجّعه من https://supabase.com/dashboard/project/ubyzdzbubmffdxtygoah"
